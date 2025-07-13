@@ -3,13 +3,30 @@
 
 #include "Character/DaisyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardComponent.h"
+#include "Player/DaisyPlayerController.h"
+
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Character/DaisyEnemyCharacter.h"
+#include "Debug/DebugHelper.h"
 
 class AAIController;
 
 ADaisyCharacter::ADaisyCharacter()
 {
+	PrimaryActorTick.bCanEverTick = false;
+
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(GetRootComponent());
+	CameraBoom->TargetArmLength = 350.f;
+	CameraBoom->bUsePawnControlRotation = true;
+	
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(CameraBoom);
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -18,16 +35,110 @@ ADaisyCharacter::ADaisyCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 }
 
-void ADaisyCharacter::SetControlMode()
+void ADaisyCharacter::BeginPlay()
 {
-	if (DaisyAIController) {
-		DaisyAIController->UnPossess();
-		DaisyAIController->Destroy();
-		DaisyAIController = nullptr;
-	}
-	DaisyAIController = GetWorld()->SpawnActor<ADaisyAIController>(AIControllerClass);
-	DaisyAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	DaisyAIController->RunBehaviorTree(BehaviorTree);
-	DaisyAIController->Possess(this);
+	Super::BeginPlay();
+	check(DaisyContext);
+	PC = Cast<ADaisyPlayerController>(Controller);
+	if (PC == nullptr) return;
 	
+	PC->SetInputMode(FInputModeGameOnly());
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
+	check(Subsystem);
+	Subsystem->AddMappingContext(DaisyContext,0);
+}
+
+void ADaisyCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent)) {
+
+		// Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADaisyCharacter::Move);
+
+		// Looking
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADaisyCharacter::Look);
+
+		// Attack
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ADaisyCharacter::Attack);
+
+	}
+}
+
+void ADaisyCharacter::Attack()
+{
+	if (!bOpenTeamUI && !bAttack)
+	{
+		bAttack = true;
+		Attack_Test();
+	}
+}
+
+void ADaisyCharacter::Attack_Test()
+{
+	TArray<FHitResult> OutResults;
+	FVector Start = GetActorLocation() + GetActorForwardVector() * 150.0f;
+	FCollisionObjectQueryParams ObjQueryParams;
+	ObjQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+	FCollisionShape MySphere = FCollisionShape::MakeSphere(150.0f);
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this); 
+
+	GetWorld()->SweepMultiByObjectType(OutResults, Start, Start, FQuat(0,0,0,0), ObjQueryParams,
+		MySphere, Params);
+
+	// 显示测试球体
+	DrawDebugSphere(GetWorld(), Start, 150.0f, 12, FColor::White, false, 5.0f, 0.0f, 4.0f);
+
+	// 若球体碰到敌人ExplorerEnemies，则立刻进入战斗
+	for (auto ArrayElem : OutResults)
+	{
+		AActor* DetectedActor = Cast<ADaisyEnemyCharacter>(ArrayElem.GetActor());
+		if (DetectedActor != nullptr)
+		{
+			Debug::Print("Enter Battle !!");
+			// 跳出函数
+			return;
+		}
+	}
+}
+
+void ADaisyCharacter::Move(const FInputActionValue& Value)
+{
+	if (!bOpenTeamUI && !bAttack)
+	{
+		// input is a Vector2D
+		FVector2D MovementVector = Value.Get<FVector2D>();
+	
+		APawn* ControlledPawn = PC->GetPawn();
+		if (ControlledPawn != nullptr)
+		{
+			// find out which way is forward
+			const FRotator Rotation = ControlledPawn->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+    
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+    
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+    
+			// add movement 
+			ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
+			ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
+		}
+	}
+}
+
+void ADaisyCharacter::Look(const FInputActionValue& Value)
+{
+	// input is a Vector2D
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	APawn* ControlledPawn = PC->GetPawn();
+	if (ControlledPawn != nullptr)
+	{
+		// add yaw and pitch input to controller
+		ControlledPawn->AddControllerYawInput(LookAxisVector.X);
+		ControlledPawn->AddControllerPitchInput(LookAxisVector.Y);
+	}
 }

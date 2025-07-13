@@ -7,7 +7,13 @@
 #include "Character/DaisyCharacterBase.h"
 #include "DaisyCharacter.generated.h"
 
+struct FInputActionValue;
+class USpringArmComponent;
+class UCameraComponent;
 class UBehaviorTree;
+class UInputAction;
+class UInputMappingContext;
+class ADaisyPlayerController;
 /**
  * 
  */
@@ -17,16 +23,44 @@ class DAISY_API ADaisyCharacter : public ADaisyCharacterBase
 	GENERATED_BODY()
 public:
 	ADaisyCharacter();
-	
-	bool IsPlayerCharacter;
-	
-	UFUNCTION(BlueprintCallable)
-	void SetControlMode();
 
-	UPROPERTY(EditAnywhere,Category = "AI")
-	TObjectPtr<UBehaviorTree> BehaviorTree;
-
-	UPROPERTY()
-	TObjectPtr<ADaisyAIController> DaisyAIController;
+	UPROPERTY(EditAnywhere,Category = "Camera")
+	TObjectPtr<UCameraComponent> Camera;
 	
+	UPROPERTY(EditAnywhere,Category = "Camera")
+	TObjectPtr<USpringArmComponent> CameraBoom;
+	
+	TObjectPtr<ADaisyPlayerController> PC = nullptr;
+
+protected:
+	virtual void BeginPlay() override;
+	
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+private:
+private:
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputMappingContext> DaisyContext;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> AttackAction;
+
+	void Move(const FInputActionValue& Value);
+
+	void Look(const FInputActionValue& Value);
+
+	void Attack();
+
+	void Attack_Test();
+private:
+	bool bOpenTeamUI = false;
+	bool bAttack = false;
 };
