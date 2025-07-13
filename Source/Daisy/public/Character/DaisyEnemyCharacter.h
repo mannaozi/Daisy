@@ -6,6 +6,7 @@
 #include "Character/DaisyCharacterBase.h"
 #include "DaisyEnemyCharacter.generated.h"
 
+class ADaisyCharacter;
 class UBehaviorTree;
 class ADaisyAIController;
 /**
@@ -17,8 +18,10 @@ class DAISY_API ADaisyEnemyCharacter : public ADaisyCharacterBase
 	GENERATED_BODY()
 public:
 	ADaisyEnemyCharacter();
-public:
+
 	virtual void PossessedBy(AController* NewController) override;
+
+	void EnterBattle(ADaisyCharacter* Player);
 
 protected:
 	UPROPERTY(EditAnywhere,Category = "AI")
@@ -26,4 +29,5 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ADaisyAIController> DaisyAIController;
+	
 };

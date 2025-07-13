@@ -35,6 +35,13 @@ ADaisyCharacter::ADaisyCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 }
 
+void ADaisyCharacter::FindEnemyInfo(AActor* Enemy)
+{
+	ADaisyEnemyCharacter* HitEnemy = Cast<ADaisyEnemyCharacter>(Enemy);
+	check(HitEnemy);
+	HitEnemy->EnterBattle(this);
+}
+
 void ADaisyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -69,7 +76,6 @@ void ADaisyCharacter::Attack()
 {
 	if (!bOpenTeamUI && !bAttack)
 	{
-		bAttack = true;
 		Attack_Test();
 	}
 }
@@ -97,6 +103,8 @@ void ADaisyCharacter::Attack_Test()
 		if (DetectedActor != nullptr)
 		{
 			Debug::Print("Enter Battle !!");
+			bAttack = true;
+			FindEnemyInfo(DetectedActor);
 			// 跳出函数
 			return;
 		}

@@ -32,11 +32,11 @@ public:
 	
 	TObjectPtr<ADaisyPlayerController> PC = nullptr;
 
+	void FindEnemyInfo(AActor* Enemy);
 protected:
 	virtual void BeginPlay() override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-private:
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> DaisyContext;

@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "daisy/DaisyBlueprintFunctionLibrary.h"
+#include "Game/BattleManager.h"
 
 ADaisyEnemyCharacter::ADaisyEnemyCharacter()
 {
@@ -22,4 +24,11 @@ void ADaisyEnemyCharacter::PossessedBy(AController* NewController)
 	DaisyAIController = Cast<ADaisyAIController>(NewController);
 	DaisyAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	DaisyAIController->RunBehaviorTree(BehaviorTree);
+}
+
+void ADaisyEnemyCharacter::EnterBattle(ADaisyCharacter* Player)
+{
+	ABattleManager* BattleManager = UDaisyBlueprintFunctionLibrary::FindBattleManager();
+	check(BattleManager);
+	BattleManager->InitBattle(Player, this);
 }
