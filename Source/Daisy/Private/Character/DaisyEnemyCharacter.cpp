@@ -30,5 +30,5 @@ void ADaisyEnemyCharacter::EnterBattle(ADaisyCharacter* Player)
 {
 	ABattleManager* BattleManager = UDaisyBlueprintFunctionLibrary::FindBattleManager();
 	check(BattleManager);
-	BattleManager->InitBattle(Player, this);
+	BattleManager->InitBattle(Player, this,EnemyInfo);
 }

@@ -9,6 +9,7 @@
 
 class ADaisyEnemyCharacter;
 class ADaisyCharacter;
+class ABattleEnemy;
 
 UCLASS()
 class DAISY_API ABattleManager : public AActor
@@ -18,7 +19,7 @@ class DAISY_API ABattleManager : public AActor
 public:	
 	ABattleManager();
 
-	void InitBattle(ADaisyCharacter* Player,ADaisyEnemyCharacter* Enemy);
+	void InitBattle(ADaisyCharacter* Player,ADaisyEnemyCharacter* Enemy,TMap<int32,TSubclassOf<ABattleEnemy>> EnemyInfo);
 	
 protected:
 	virtual void BeginPlay() override;

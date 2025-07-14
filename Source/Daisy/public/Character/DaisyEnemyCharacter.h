@@ -9,6 +9,8 @@
 class ADaisyCharacter;
 class UBehaviorTree;
 class ADaisyAIController;
+class ABattleEnemy;
+
 /**
  * 
  */
@@ -18,6 +20,9 @@ class DAISY_API ADaisyEnemyCharacter : public ADaisyCharacterBase
 	GENERATED_BODY()
 public:
 	ADaisyEnemyCharacter();
+
+	UPROPERTY(EditDefaultsOnly,Category="Asset")
+	TMap<int32,TSubclassOf<ABattleEnemy>> EnemyInfo;
 
 	virtual void PossessedBy(AController* NewController) override;
 
