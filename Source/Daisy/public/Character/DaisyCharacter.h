@@ -7,6 +7,7 @@
 #include "Character/DaisyCharacterBase.h"
 #include "DaisyCharacter.generated.h"
 
+class ABattlePlayer;
 struct FInputActionValue;
 class USpringArmComponent;
 class UCameraComponent;
@@ -33,6 +34,10 @@ public:
 	TObjectPtr<ADaisyPlayerController> PC = nullptr;
 
 	void FindEnemyInfo(AActor* Enemy);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Presets")
+	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
+	
 protected:
 	virtual void BeginPlay() override;
 	

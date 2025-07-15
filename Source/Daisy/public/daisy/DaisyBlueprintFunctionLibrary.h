@@ -7,6 +7,7 @@
 #include "DaisyBlueprintFunctionLibrary.generated.h"
 
 class ABattleManager;
+class UDaisyGameInstance;
 /**
  * 
  */
@@ -17,4 +18,5 @@ class DAISY_API UDaisyBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 public:
 
 	static ABattleManager* FindBattleManager();
+	static UDaisyGameInstance* GetGameInstance();
 };

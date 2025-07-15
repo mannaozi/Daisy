@@ -14,4 +14,7 @@ class DAISY_API ABattlePlayer : public ABattleCharacterBase
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditAnywhere, Category = "Runtime")
+	int32 positionID = -1;
 };

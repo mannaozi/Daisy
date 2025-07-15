@@ -13,6 +13,7 @@ class ADaisyEnemyCharacter;
 class ADaisyCharacter;
 class ABattleEnemy;
 class ABattlePawn;
+class ACameraActor;
 
 UCLASS()
 class DAISY_API ABattleManager : public AActor
@@ -26,7 +27,14 @@ public:
 	
 	void InitBattle(ADaisyCharacter* Player,ADaisyEnemyCharacter* Enemy,TMap<int32,TSubclassOf<ABattleEnemy>> EnemyInfo);
 	void ChangeCameraAndStopMovement();
+	
+	ACameraActor* RetrieveCamera(FName Tag);
 
+	void RetrieveEnemyPosition(int32 PosIndex, FVector &TargetPos, float &Yaw);
+	void RetrievePlayerPosition(int32 PosIndex, FVector &TargetPos, float &Yaw);
+	void SpawnEnemiesAndDecideLocation();
+	void SpawnPlayersAndDecideLocation();
+	
 	void A1_PreInitializeBattle();
 	
 protected:
@@ -38,12 +46,18 @@ public:
 	UPROPERTY()
 	ADaisyEnemyCharacter* Enemy_World = nullptr;
 	TMap<int32, TSubclassOf<ABattleEnemy>> EnemyTeamInfo;
-
+	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
+	TMap<int32, ABattlePlayer*> TeamInstForUI;
+	
 	TArray<ABattleEnemy*> Enemies_Arr;
 	TArray<ABattleEnemy*> Dead_Enemies_Arr;
 	TArray<ABattlePlayer*> Player_Arr;
 	TArray<ABattlePlayer*> Dead_Player_Arr;
-
+	
+	TArray<ACameraActor*> Cameras_Arr;
+	TArray<AActor*> EnemySpawnPoints_Arr;
+	TArray<AActor*> PlayerSpawnPoints_Arr;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
 	TSubclassOf<ABattlePawn> BattlePawnClass;
 	
