@@ -8,12 +8,14 @@
 #include "daisy/daisyEnum.h"
 #include "BattleManager.generated.h"
 
+class UBattleUserWidget;
 class ABattlePlayer;
 class ADaisyEnemyCharacter;
 class ADaisyCharacter;
 class ABattleEnemy;
 class ABattlePawn;
 class ACameraActor;
+class UUserWidget;
 
 UCLASS()
 class DAISY_API ABattleManager : public AActor
@@ -47,7 +49,7 @@ public:
 	ADaisyEnemyCharacter* Enemy_World = nullptr;
 	TMap<int32, TSubclassOf<ABattleEnemy>> EnemyTeamInfo;
 	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
-	TMap<int32, ABattlePlayer*> TeamInstForUI;
+	
 	
 	TArray<ABattleEnemy*> Enemies_Arr;
 	TArray<ABattleEnemy*> Dead_Enemies_Arr;
@@ -60,6 +62,14 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
 	TSubclassOf<ABattlePawn> BattlePawnClass;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
+	TMap<int32, ABattlePlayer*> TeamInstForUI;
+
+	UPROPERTY(EditAnywhere,Category="Battle")
+	TSubclassOf<UUserWidget> BattleLayoutClass;
+
+	UBattleUserWidget* BattleLayout;
 	
 	UPROPERTY()
 	ABattlePawn* BattlePawn;

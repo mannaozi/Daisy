@@ -13,6 +13,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/TargetPoint.h"
 #include "Game/DaisyGameInstance.h"
+#include "UI/BattleUserWidget.h"
+#include "UI/DaisyUserWidget.h"
 
 ABattleManager::ABattleManager()
 {
@@ -92,6 +94,17 @@ void ABattleManager::A1_PreInitializeBattle()
 
 	// 根据玩家队伍信息在指定站位生成玩家角色
 	SpawnPlayersAndDecideLocation();
+
+	//生成UI
+	if (BattleLayoutClass)
+	{
+		BattleLayout = CreateWidget<UBattleUserWidget>(GetWorld(),BattleLayoutClass);
+		if (BattleLayout)
+		{
+			BattleLayout->ConstructDeferred(this);
+			BattleLayout->AddToViewport();
+		}
+	}
 }
 
 void ABattleManager::BeginPlay()
