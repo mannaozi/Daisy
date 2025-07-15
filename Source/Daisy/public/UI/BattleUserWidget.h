@@ -18,4 +18,7 @@ class DAISY_API UBattleUserWidget : public UDaisyUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ConstructDeferred(ABattleManager* BattleMannager);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RefreshActionOrder(const TArray<ACharacter*> &CharRefs);
 };

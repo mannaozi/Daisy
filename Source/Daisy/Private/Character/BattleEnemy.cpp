@@ -3,3 +3,7 @@
 
 #include "Character/BattleEnemy.h"
 
+void ABattleEnemy::UpdateLockIcon(bool bHide)
+{
+	
+}

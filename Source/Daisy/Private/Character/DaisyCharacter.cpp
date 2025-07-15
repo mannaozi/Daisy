@@ -102,7 +102,6 @@ void ADaisyCharacter::Attack_Test()
 		AActor* DetectedActor = Cast<ADaisyEnemyCharacter>(ArrayElem.GetActor());
 		if (DetectedActor != nullptr)
 		{
-			Debug::Print("Enter Battle !!");
 			bAttack = true;
 			FindEnemyInfo(DetectedActor);
 			// 跳出函数

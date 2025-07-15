@@ -38,6 +38,9 @@ public:
 	void SpawnPlayersAndDecideLocation();
 	
 	void A1_PreInitializeBattle();
+	void PostInitializeBattle();
+
+	void B1a_CalculateActionValue();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -66,11 +69,15 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
 	TMap<int32, ABattlePlayer*> TeamInstForUI;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
+	float EnemyDisplayTime = 2.0f;
 	UPROPERTY(EditAnywhere,Category="Battle")
 	TSubclassOf<UUserWidget> BattleLayoutClass;
-
+	
 	UBattleUserWidget* BattleLayout;
 	
 	UPROPERTY()
 	ABattlePawn* BattlePawn;
+
+	FTimerHandle DisplayEnemyTimerHandle;
 };

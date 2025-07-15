@@ -10,11 +10,14 @@
 #include "Player/BattlePawn.h"
 #include "Camera/CameraActor.h"
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
+#include "Debug/DebugHelper.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/TargetPoint.h"
 #include "Game/DaisyGameInstance.h"
 #include "UI/BattleUserWidget.h"
 #include "UI/DaisyUserWidget.h"
+#include "Kismet/KismetMathLibrary.h"
+
 
 ABattleManager::ABattleManager()
 {
@@ -28,9 +31,99 @@ void ABattleManager::InitBattle(ADaisyCharacter* Player, ADaisyEnemyCharacter* E
 	Enemy_World = Enemy;
 	EnemyTeamInfo = EnemyInfo;
 	PlayerTeamInfo = Player->PlayerTeamInfo;
-	
+
+	//初始化
 	A1_PreInitializeBattle();
 
+	GetWorld()->GetTimerManager().SetTimer(DisplayEnemyTimerHandle,
+		this,
+		&ABattleManager::PostInitializeBattle,
+		EnemyDisplayTime,
+		false);
+}
+
+void ABattleManager::PostInitializeBattle()
+{
+	//计算行动值
+	B1a_CalculateActionValue();
+}
+
+void ABattleManager::B1a_CalculateActionValue()
+{
+	ProgressPhase = EProgressPhase::PP_B1_CalculateActionValue;
+	//检查玩家状态
+	TMap<ABattleEnemy*,float> Enemy_ActionValue;
+	TMap<ABattlePlayer*,float> Player_ActionValue;
+	TMap<ACharacter*,float> CharacterQueue;
+	TArray<ACharacter*> SortedCharacters;
+	float WinnerActionValue = 0.0f;
+	//获取最新行动值，剔除不能行动的
+	for (auto ArrayElem : Enemies_Arr)
+	{
+		if (!ArrayElem->bDead)
+		{
+			Enemy_ActionValue.Add(ArrayElem,ArrayElem->ActionValue);
+			CharacterQueue.Add(ArrayElem,ArrayElem->ActionValue);
+		}
+		else
+		{
+			//TODO 被消灭敌人解绑函数
+			Dead_Enemies_Arr.Add(ArrayElem);
+		}
+	}
+	for (auto ArrayElem : Player_Arr)
+	{
+		if (!ArrayElem->bDead)
+		{
+			Player_ActionValue.Add(ArrayElem,ArrayElem->ActionValue);
+			CharacterQueue.Add(ArrayElem,ArrayElem->ActionValue);
+		}
+		else
+		{
+			Dead_Player_Arr.Add(ArrayElem);
+		}
+	}
+
+	//刷新两个数组，排除死亡的
+	Enemy_ActionValue.GenerateKeyArray(Enemies_Arr);
+	Player_ActionValue.GenerateKeyArray(Player_Arr);
+
+	//排序
+	TMap<ACharacter*,float> NumDummy;
+	NumDummy = CharacterQueue;
+	for (auto ArrayElem : NumDummy)
+	{
+		TArray<float> LocalFloats;
+		TArray<ACharacter*> LocalCharacters;
+		int32 minIndex;
+		float minValue;
+		CharacterQueue.GenerateValueArray(LocalFloats);
+		CharacterQueue.GenerateKeyArray(LocalCharacters);
+		UKismetMathLibrary::MinOfFloatArray(LocalFloats,minIndex,minValue);
+		SortedCharacters.Add(LocalCharacters[minIndex]);
+		CharacterQueue.Remove(LocalCharacters[minIndex]);
+	}
+
+	//获取行动值最小的角色的行动值
+	if (SortedCharacters[0] == nullptr) return;
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(SortedCharacters[0]);
+	if (CombatInterface == nullptr) return;
+	CombatInterface ->GetActionValue(WinnerActionValue);
+
+	//更新其余角色的行动值
+	for (auto ArrayElem : SortedCharacters)
+	{
+		ICombatInterface* CombatInterface_temp = Cast<ICombatInterface>(ArrayElem);
+		if (CombatInterface == nullptr) return;
+		CombatInterface_temp->UpdateActionValue(WinnerActionValue);
+	}
+
+	//更新UI的角色执行顺序
+	BattleLayout->RefreshActionOrder(SortedCharacters);
+	for (auto ArrayElem : Enemies_Arr)
+	{
+		ArrayElem->UpdateLockIcon(true);
+	}
 }
 
 void ABattleManager::ChangeCameraAndStopMovement()

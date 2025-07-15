@@ -13,5 +13,6 @@ UCLASS()
 class DAISY_API ABattleEnemy : public ABattleCharacterBase
 {
 	GENERATED_BODY()
-	
+public:
+	void UpdateLockIcon(bool bHide);
 };
