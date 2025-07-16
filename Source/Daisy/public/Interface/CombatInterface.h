@@ -18,4 +18,5 @@ class DAISY_API ICombatInterface
 public:
 	virtual void GetActionValue(float & ActionVal) = 0;
 	virtual void UpdateActionValue(float WinnerVal) = 0;
+	virtual void RefreshActionValueBySpd() = 0;
 };

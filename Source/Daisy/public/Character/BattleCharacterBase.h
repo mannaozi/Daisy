@@ -27,5 +27,6 @@ public:
 	/* Combat Interface */
 	virtual void GetActionValue(float& ActionVal) override;
 	virtual void UpdateActionValue(float WinnerVal) override;
+	virtual void RefreshActionValueBySpd() override;
 	/* Combat Interface */
 };

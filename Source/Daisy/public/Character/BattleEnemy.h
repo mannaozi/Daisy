@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/BattleCharacterBase.h"
+#include "daisy/daisyEnum.h"
 #include "BattleEnemy.generated.h"
 
 /**
@@ -15,4 +16,20 @@ class DAISY_API ABattleEnemy : public ABattleCharacterBase
 	GENERATED_BODY()
 public:
 	void UpdateLockIcon(bool bHide);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
+	FEnemyCharAttributes enemyInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	UDataTable* EnemyCharsDT;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	FName DataRow = FName("1");
+	
+	/* Combat Interface */
+	virtual void RefreshActionValueBySpd() override;
+	/* Combat Interface */
+
+protected:
+	virtual void BeginPlay() override;
 };

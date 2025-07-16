@@ -26,6 +26,11 @@ void ABattleCharacterBase::GetActionValue(float& ActionVal)
 
 void ABattleCharacterBase::UpdateActionValue(float WinnerVal)
 {
+	ActionValue -= WinnerVal;
+}
+
+void ABattleCharacterBase::RefreshActionValueBySpd()
+{
 	
 }
 

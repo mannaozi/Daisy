@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/BattleCharacterBase.h"
+#include "daisy/daisyEnum.h"
 #include "BattlePlayer.generated.h"
 
 /**
@@ -17,4 +18,20 @@ class DAISY_API ABattlePlayer : public ABattleCharacterBase
 public:
 	UPROPERTY(EditAnywhere, Category = "Runtime")
 	int32 positionID = -1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
+	FPlayerCharAttributes playerAtr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	UDataTable* PlayerCharsDT;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	FName DataRow = FName("1");
+	
+	/* Combat Interface */
+	virtual void RefreshActionValueBySpd() override;
+	/* Combat Interface */
+
+protected:
+	virtual void BeginPlay() override;
 };
