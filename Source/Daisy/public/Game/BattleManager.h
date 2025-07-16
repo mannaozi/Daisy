@@ -41,6 +41,13 @@ public:
 	void PostInitializeBattle();
 
 	void B1a_CalculateActionValue();
+	EBattleFlags CheckGameOver(TMap<ABattleEnemy*, float> eArr, TMap <ABattlePlayer*, float> pArr);
+
+	void A2_BattleEnd(EBattleFlags endResult);
+
+	void B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar);
+
+	void B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar);
 	
 protected:
 	virtual void BeginPlay() override;

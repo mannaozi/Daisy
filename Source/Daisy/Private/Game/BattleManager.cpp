@@ -125,6 +125,77 @@ void ABattleManager::B1a_CalculateActionValue()
 		//隐藏锁定标志
 		ArrayElem->UpdateLockIcon(true);
 	}
+
+	//检查是否战斗结束
+	EBattleFlags curBattleFlag = EBattleFlags::BF_EMAX;
+	curBattleFlag = CheckGameOver(Enemy_ActionValue, Player_ActionValue);
+	switch (curBattleFlag)
+	{
+	case EBattleFlags::BF_EMAX:
+		return;
+		break;
+	case EBattleFlags::BF_ContinueBattle:
+		// 跳出，继续执行后续内容
+			break;
+	case EBattleFlags::BF_PlayerWin:
+		A2_BattleEnd(curBattleFlag);
+		return;
+		break;
+	case EBattleFlags::BF_EnemyWin:
+		A2_BattleEnd(curBattleFlag);
+		return;
+		break;
+	}
+	// 当前行动对象进入准备状态（判断敌人和玩家的数组中行动值谁最小）
+	TArray<float> l_LocalFloatsEAV;
+	TArray<float> l_LocalFloatsPAV;
+	int32 minIndex_E;
+	float minValue_E;
+	int32 minIndex_P;
+	float minValue_P;
+	Enemy_ActionValue.GenerateValueArray(l_LocalFloatsEAV);
+	Player_ActionValue.GenerateValueArray(l_LocalFloatsPAV);
+	UKismetMathLibrary::MinOfFloatArray(l_LocalFloatsEAV, minIndex_E, minValue_E);
+	UKismetMathLibrary::MinOfFloatArray(l_LocalFloatsPAV, minIndex_P, minValue_P);
+	if (minValue_E > minValue_P)
+	{
+		// 玩家角色的行动值小，玩家行动，进入B2a阶段
+		TArray<ABattlePlayer*> l_LocalPlayerChars;
+		Player_ActionValue.GenerateKeyArray(l_LocalPlayerChars);
+		B2a_HandlePlayerAttack(l_LocalPlayerChars[minIndex_P]);
+	}
+	else
+	{
+		// 敌人的行动值小，敌人行动，进入B2b阶段
+		TArray<ABattleEnemy*> l_LocalEnemyChars;
+		Enemy_ActionValue.GenerateKeyArray(l_LocalEnemyChars);
+		B2b_HandleEnemyAttack(l_LocalEnemyChars[minIndex_E]);
+	}
+}
+
+EBattleFlags ABattleManager::CheckGameOver(TMap<ABattleEnemy*, float> eArr, TMap<ABattlePlayer*, float> pArr)
+{
+	// 若敌人数组为0，则玩家胜利
+	if(eArr.Num() == 0) return EBattleFlags::BF_PlayerWin;
+	// 若玩家数组为0，则敌人胜利
+	if(pArr.Num() == 0) return EBattleFlags::BF_EnemyWin;
+	// 否则继续战斗循环
+	return EBattleFlags::BF_ContinueBattle;
+}
+
+void ABattleManager::A2_BattleEnd(EBattleFlags endResult)
+{
+	
+}
+
+void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
+{
+	Debug::Print("Player Turn !!");
+}
+
+void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
+{
+	Debug::Print("Enemy Turn !!");
 }
 
 void ABattleManager::ChangeCameraAndStopMovement()
