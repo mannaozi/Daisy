@@ -122,6 +122,7 @@ void ABattleManager::B1a_CalculateActionValue()
 	BattleLayout->RefreshActionOrder(SortedCharacters);
 	for (auto ArrayElem : Enemies_Arr)
 	{
+		//隐藏锁定标志
 		ArrayElem->UpdateLockIcon(true);
 	}
 }

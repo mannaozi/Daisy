@@ -2,11 +2,18 @@
 
 
 #include "Character/BattleEnemy.h"
+#include "Components/WidgetComponent.h"
 
+ABattleEnemy::ABattleEnemy()
+{
+	HeadBar = CreateDefaultSubobject<UWidgetComponent>("Head Bar");
+	HeadBar->SetupAttachment(RootComponent);
+	HeadBar->bHiddenInGame = true;
+}
 
 void ABattleEnemy::UpdateLockIcon(bool bHide)
 {
-	
+	LockIcon->bHiddenInGame = bHide;
 }
 
 void ABattleEnemy::RefreshActionValueBySpd()

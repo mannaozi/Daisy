@@ -6,6 +6,10 @@
 #include "Interface/CombatInterface.h"
 #include "BattleCharacterBase.generated.h"
 
+class UWidgetComponent;
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS()
 class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface
 {
@@ -21,12 +25,20 @@ public:
 
 	bool bPlayerFaction = false;
 	UTexture2D* AvatarIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UWidgetComponent> LockIcon;
 	
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	void GetFactionAVAvatar(bool &bPF,float &aV,UTexture2D* &AI);

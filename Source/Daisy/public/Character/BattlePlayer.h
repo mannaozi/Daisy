@@ -16,6 +16,8 @@ class DAISY_API ABattlePlayer : public ABattleCharacterBase
 	GENERATED_BODY()
 	
 public:
+	ABattlePlayer();
+	
 	UPROPERTY(EditAnywhere, Category = "Runtime")
 	int32 positionID = -1;
 	
@@ -27,6 +29,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	FName DataRow = FName("1");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	UWidgetComponent* MarkedIcon;
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;

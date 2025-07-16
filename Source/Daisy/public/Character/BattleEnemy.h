@@ -15,6 +15,9 @@ class DAISY_API ABattleEnemy : public ABattleCharacterBase
 {
 	GENERATED_BODY()
 public:
+
+	ABattleEnemy();
+	
 	void UpdateLockIcon(bool bHide);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
@@ -25,6 +28,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	FName DataRow = FName("1");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	UWidgetComponent* HeadBar;
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;

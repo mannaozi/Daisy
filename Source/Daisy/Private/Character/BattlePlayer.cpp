@@ -2,6 +2,14 @@
 
 
 #include "Character/BattlePlayer.h"
+#include "Components/WidgetComponent.h"
+
+ABattlePlayer::ABattlePlayer()
+{
+	MarkedIcon = CreateDefaultSubobject<UWidgetComponent>("Marked Icon");
+	MarkedIcon->SetupAttachment(RootComponent);
+	MarkedIcon->bHiddenInGame = true;
+}
 
 void ABattlePlayer::RefreshActionValueBySpd()
 {
