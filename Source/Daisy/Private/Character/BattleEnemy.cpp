@@ -11,7 +11,7 @@ void ABattleEnemy::UpdateLockIcon(bool bHide)
 
 void ABattleEnemy::RefreshActionValueBySpd()
 {
-	ActionValue = Distance / enemyInfo.SPD;
+	ActionValue = Distance / EnemyAtr.SPD;
 }
 
 void ABattleEnemy::BeginPlay()
@@ -19,8 +19,11 @@ void ABattleEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	FString s = DataRow.ToString();
-	enemyInfo = *(EnemyCharsDT->FindRow<FEnemyCharAttributes>(DataRow, s, true));
-
+	EnemyAtr = *(EnemyCharsDT->FindRow<FEnemyCharAttributes>(DataRow, s, true));
+	
+	//初始化数据
+	bPlayerFaction = false;
+	AvatarIcon = EnemyAtr.CharIcon_Banner;
 	// 初始化行动值
 	RefreshActionValueBySpd();
 }

@@ -18,7 +18,7 @@ public:
 	void UpdateLockIcon(bool bHide);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
-	FEnemyCharAttributes enemyInfo;
+	FEnemyCharAttributes EnemyAtr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	UDataTable* EnemyCharsDT;

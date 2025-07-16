@@ -34,4 +34,9 @@ void ABattleCharacterBase::RefreshActionValueBySpd()
 	
 }
 
-
+void ABattleCharacterBase::GetFactionAVAvatar(bool& bPF, float& aV, UTexture2D* &AI)
+{
+	bPF = bPlayerFaction;
+	aV = ActionValue;
+	AI = AvatarIcon;
+}

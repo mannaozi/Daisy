@@ -15,6 +15,10 @@ void ABattlePlayer::BeginPlay()
 	FString s = DataRow.ToString();
 	playerAtr = *(PlayerCharsDT->FindRow<FPlayerCharAttributes>(DataRow, s, true));
 
+	//初始化数据
+	bPlayerFaction = true;
+	AvatarIcon = playerAtr.CharIcon_Banner;
+	
 	// 初始化行动值
 	RefreshActionValueBySpd();
 }
