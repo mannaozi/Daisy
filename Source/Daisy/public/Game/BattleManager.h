@@ -47,6 +47,24 @@ public:
 
 	void B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar);
 
+	//Lock
+	void SwitchEnemyLockIcon(bool bNext);
+	void SetMultipeEnemyLocks();
+	bool IsMultipleTargets();
+	void ShowEnemyLockIconByIndex(int32 index);
+	void ShowEnemyMultipleLockIcons(TArray<ABattleEnemy*> indexRefs);
+	void ShowPlayerLockIconByIndex(int32 index);
+	void ShowPlayerMultipleLockIcons(TArray<ABattlePlayer*> indexRefs);
+	bool NotResurrectSkill();
+	void CalculateLockIndex(bool bNext);
+	bool IsBuffTarget();
+	void SetDeadPlayerLockedIcon();
+	void SetPlayerLockedIcons();
+	void HideAllLockedIcons();
+	void DisplayLockedIconsAndSetTargets();
+	void UpdatePlayerLockedIconToMultiple();
+	void UpdateEnemyLockedIconToMultiple();
+	
 	void B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar);
 	
 protected:
@@ -85,6 +103,14 @@ public:
 	
 	UPROPERTY()
 	ABattlePawn* BattlePawn;
+	ABattlePlayer* ActivePlayerRef;
+	ABattleEnemy* CurrentEnemyTarget;
+	ABattlePlayer* CurrentPlayerTarget;
+	TArray<ABattleEnemy*> CurrentEnemyTargets;
+	TArray<ABattlePlayer*> CurrentPlayerTargets;
+	AActor* LastClickedActor;
 
+	int32 IndexForLockedTarget = 2; //初始选择的敌人
+	
 	FTimerHandle DisplayEnemyTimerHandle;
 };

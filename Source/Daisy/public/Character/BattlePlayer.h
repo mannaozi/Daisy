@@ -17,6 +17,8 @@ class DAISY_API ABattlePlayer : public ABattleCharacterBase
 	
 public:
 	ABattlePlayer();
+
+	void UpdateLockIcon(bool bHide);
 	
 	UPROPERTY(EditAnywhere, Category = "Runtime")
 	int32 positionID = -1;
@@ -37,6 +39,8 @@ public:
 	virtual void RefreshActionValueBySpd() override;
 	/* Combat Interface */
 
+	EAttackType AttackType {EAttackType::AT_NormalATK};
+	
 protected:
 	virtual void BeginPlay() override;
 };

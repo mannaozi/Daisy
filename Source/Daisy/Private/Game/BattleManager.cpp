@@ -48,6 +48,51 @@ void ABattleManager::PostInitializeBattle()
 	B1a_CalculateActionValue();
 }
 
+EBattleFlags ABattleManager::CheckGameOver(TMap<ABattleEnemy*, float> eArr, TMap<ABattlePlayer*, float> pArr)
+{
+	// 若敌人数组为0，则玩家胜利
+	if(eArr.Num() == 0) return EBattleFlags::BF_PlayerWin;
+	// 若玩家数组为0，则敌人胜利
+	if(pArr.Num() == 0) return EBattleFlags::BF_EnemyWin;
+	// 否则继续战斗循环
+	return EBattleFlags::BF_ContinueBattle;
+}
+
+void ABattleManager::A1_PreInitializeBattle()
+{
+	ProgressPhase = EProgressPhase::PP_A1_PreInitialization;
+	
+	Enemies_Arr.Empty();
+	Dead_Enemies_Arr.Empty();
+	Player_Arr.Empty();
+	Dead_Player_Arr.Empty();
+	
+	// 生成战斗时的指挥Pawn，确定是动态摄像机还是固定摄像机（BOSS、测试时使用），停止探索模式下的玩家角色
+	ChangeCameraAndStopMovement();
+	
+	// 根据敌人阵容信息在指定站位生成敌人
+	SpawnEnemiesAndDecideLocation();
+
+	// 根据玩家队伍信息在指定站位生成玩家角色
+	SpawnPlayersAndDecideLocation();
+
+	//生成UI
+	if (BattleLayoutClass)
+	{
+		BattleLayout = CreateWidget<UBattleUserWidget>(GetWorld(),BattleLayoutClass);
+		if (BattleLayout)
+		{
+			BattleLayout->ConstructDeferred(this);
+			BattleLayout->AddToViewport();
+		}
+	}
+}
+
+void ABattleManager::A2_BattleEnd(EBattleFlags endResult)
+{
+	
+}
+
 void ABattleManager::B1a_CalculateActionValue()
 {
 	ProgressPhase = EProgressPhase::PP_B1_CalculateActionValue;
@@ -173,29 +218,322 @@ void ABattleManager::B1a_CalculateActionValue()
 	}
 }
 
-EBattleFlags ABattleManager::CheckGameOver(TMap<ABattleEnemy*, float> eArr, TMap<ABattlePlayer*, float> pArr)
-{
-	// 若敌人数组为0，则玩家胜利
-	if(eArr.Num() == 0) return EBattleFlags::BF_PlayerWin;
-	// 若玩家数组为0，则敌人胜利
-	if(pArr.Num() == 0) return EBattleFlags::BF_EnemyWin;
-	// 否则继续战斗循环
-	return EBattleFlags::BF_ContinueBattle;
-}
-
-void ABattleManager::A2_BattleEnd(EBattleFlags endResult)
-{
-	
-}
-
 void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
 {
-	Debug::Print("Player Turn !!");
+	ActivePlayerRef = activePlayerChar;
+
+	ProgressPhase = EProgressPhase::PP_B2a_PlayerActionTime;
+	
+	DisplayLockedIconsAndSetTargets();
 }
 
 void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
 {
 	Debug::Print("Enemy Turn !!");
+}
+
+void ABattleManager::SwitchEnemyLockIcon(bool bNext)
+{
+	if (ProgressPhase != EProgressPhase::PP_B2a_PlayerActionTime) return;
+
+	if (NotResurrectSkill())
+	{
+		CalculateLockIndex(bNext);
+	}
+	else
+	{
+		if (IndexForLockedTarget == -1)
+		{
+			
+		}
+		else
+		{
+			CalculateLockIndex(bNext);
+		}
+	}
+}
+
+bool ABattleManager::IsBuffTarget()
+{
+	if (!ActivePlayerRef) return false;
+	bool result = ActivePlayerRef->playerAtr.BuffSkillStats.Contains(ActivePlayerRef->AttackType);
+	return result;
+}
+
+void ABattleManager::SetMultipeEnemyLocks()
+{
+	if (IsMultipleTargets())
+	{
+		CurrentEnemyTargets.Empty();
+		if (Enemies_Arr.IsValidIndex(IndexForLockedTarget))
+		{
+			CurrentEnemyTargets.Add(Enemies_Arr[IndexForLockedTarget]);
+		}
+		if (Enemies_Arr.IsValidIndex(IndexForLockedTarget-1))
+		{
+			CurrentEnemyTargets.Add(Enemies_Arr[IndexForLockedTarget-1]);
+		}
+		if (Enemies_Arr.IsValidIndex(IndexForLockedTarget+1))
+		{
+			CurrentEnemyTargets.Add(Enemies_Arr[IndexForLockedTarget+1]);
+		}
+		ShowEnemyMultipleLockIcons(CurrentEnemyTargets);
+	}
+	else
+	{
+		CurrentEnemyTarget = Enemies_Arr[IndexForLockedTarget];
+		LastClickedActor = CurrentEnemyTarget;
+		ShowEnemyLockIconByIndex(IndexForLockedTarget);
+	}
+}
+
+bool ABattleManager::IsMultipleTargets()
+{
+	if (!ActivePlayerRef) return false;
+	bool result = *(ActivePlayerRef->playerAtr.MultipleTargets.Find(ActivePlayerRef->AttackType));
+	
+	return result;
+}
+
+void ABattleManager::ShowEnemyLockIconByIndex(int32 index)
+{
+	for (auto ArrayElement:Enemies_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+	if (Enemies_Arr[index])
+	{
+		Enemies_Arr[index]->UpdateLockIcon(false);
+	}
+}
+
+void ABattleManager::ShowEnemyMultipleLockIcons(TArray<ABattleEnemy*> indexRefs)
+{
+	for (auto Element : Enemies_Arr)
+	{
+		Element->UpdateLockIcon(true);
+	}
+	for (auto ArrayElement:indexRefs)
+	{
+		if (!ArrayElement) return;
+		if (ArrayElement->bDead) return;
+		ArrayElement->UpdateLockIcon(false);
+	}
+}
+
+void ABattleManager::ShowPlayerLockIconByIndex(int32 index)
+{
+	for (auto ArrayElement:Player_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+	if (Player_Arr[index])
+	{
+		Player_Arr[index]->UpdateLockIcon(false);
+	}
+}
+
+void ABattleManager::ShowPlayerMultipleLockIcons(TArray<ABattlePlayer*> indexRefs)
+{
+	for (auto ArrayElement:Player_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+
+	for (auto ArrayElement:indexRefs)
+	{
+		if (ArrayElement)
+		{
+			ArrayElement->UpdateLockIcon(false);
+		}
+	}
+}
+
+bool ABattleManager::NotResurrectSkill()
+{
+	bool result = false;
+	if (!ActivePlayerRef) return false;
+	if (ActivePlayerRef->playerAtr.BuffSkillStats.Contains(ActivePlayerRef->AttackType))
+	{
+		FBuffInfo tempFuffType = *(ActivePlayerRef->playerAtr.BuffSkillStats.Find(ActivePlayerRef->AttackType));
+		result = tempFuffType.BuffType != EBuffTypes::BT_Resurrection;
+	}
+	else
+	{
+		result = true;
+	}
+	return result;
+}
+
+void ABattleManager::CalculateLockIndex(bool bNext)
+{
+	int32 t1 = -1;
+	//判断是否为增益技能
+	if (IsBuffTarget())
+	{
+		if (NotResurrectSkill())
+		{
+			t1 = Player_Arr.Num();
+		}
+		else
+		{
+			t1 = Dead_Player_Arr.Num();
+		}
+	}
+	else
+	{
+		t1 = Enemies_Arr.Num();
+	}
+	//切换锁定目标
+	if (bNext)
+	{
+		if ((IndexForLockedTarget +1) < t1)
+		{
+			IndexForLockedTarget += 1;
+		}
+		else
+		{
+			IndexForLockedTarget = 0;
+		}
+	}
+	else
+	{ 
+		if (IndexForLockedTarget > 0)
+		{
+			IndexForLockedTarget -= 1;
+		}
+		else
+		{
+			IndexForLockedTarget = t1 - 1;
+		}
+	}
+
+	//检查是否是复活
+	if (NotResurrectSkill())
+	{
+		if (IsBuffTarget())
+		{
+			SetPlayerLockedIcons();
+		}
+		else
+		{
+			SetMultipeEnemyLocks();
+		}
+	}
+	else
+	{
+		SetDeadPlayerLockedIcon();
+	}
+}
+
+void ABattleManager::SetPlayerLockedIcons()
+{
+	if (IsMultipleTargets())
+	{
+		CurrentPlayerTargets = Player_Arr;
+		//向队伍全体施加
+		ShowPlayerMultipleLockIcons(CurrentPlayerTargets);
+	}
+	else
+	{
+		if (!Player_Arr.IsValidIndex(IndexForLockedTarget)) return;
+		CurrentPlayerTarget = Player_Arr[IndexForLockedTarget];
+		LastClickedActor = CurrentPlayerTarget;
+		ShowPlayerLockIconByIndex(IndexForLockedTarget);
+	}
+}
+
+void ABattleManager::HideAllLockedIcons()
+{
+	for (auto ArrayElement:Player_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+	for (auto ArrayElement:Enemies_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+	for (auto ArrayElement:Dead_Player_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+	for (auto ArrayElement:Dead_Enemies_Arr)
+	{
+		ArrayElement->UpdateLockIcon(true);
+	}
+}
+
+void ABattleManager::DisplayLockedIconsAndSetTargets()
+{
+	HideAllLockedIcons();
+
+	Debug::Print("Debug");
+	//是否切换到buff魔法
+	if (IsBuffTarget())
+	{
+		UpdatePlayerLockedIconToMultiple();
+	}
+	else
+	{
+		UpdateEnemyLockedIconToMultiple();
+	}
+}
+
+void ABattleManager::UpdatePlayerLockedIconToMultiple()
+{
+	if (NotResurrectSkill())
+	{
+		IndexForLockedTarget = (Player_Arr.Num()-1) / 2;
+		SetPlayerLockedIcons();
+	}
+	else
+	{
+		if (Dead_Player_Arr.Num() != 0)
+		{
+			IndexForLockedTarget = (Dead_Player_Arr.Num()-1) / 2;
+		}
+		else
+		{
+			IndexForLockedTarget = -1;
+		}
+		if (!Dead_Player_Arr.IsValidIndex(IndexForLockedTarget)) return;
+		if (Dead_Player_Arr[IndexForLockedTarget])
+		{
+			Dead_Player_Arr[IndexForLockedTarget]->UpdateLockIcon(false);
+		}
+	}
+}
+
+void ABattleManager::UpdateEnemyLockedIconToMultiple()
+{
+	//筛选敌人
+	TArray<ABattleEnemy*> ValidEnemies;
+	
+	for (auto ArrayElement:Enemies_Arr)
+	{
+		if (!ArrayElement) return;
+		if (!ArrayElement->bDead)
+		{
+			ValidEnemies.Add(ArrayElement);
+		}
+	}
+	IndexForLockedTarget = (ValidEnemies.Num()-1) / 2;
+	if (!Enemies_Arr.IsValidIndex(IndexForLockedTarget)) return;
+	SetMultipeEnemyLocks();
+}
+
+void ABattleManager::SetDeadPlayerLockedIcon()
+{
+	if (! Dead_Player_Arr.IsValidIndex(IndexForLockedTarget)) return;
+	
+	HideAllLockedIcons();
+
+	CurrentPlayerTarget = Dead_Player_Arr[IndexForLockedTarget];
+	LastClickedActor = CurrentPlayerTarget;
+	if (CurrentPlayerTarget)
+	{
+		CurrentPlayerTarget->UpdateLockIcon(false);
+	}
 }
 
 void ABattleManager::ChangeCameraAndStopMovement()
@@ -242,36 +580,6 @@ ACameraActor* ABattleManager::RetrieveCamera(FName Tag)
 	return nullptr;
 }
 
-void ABattleManager::A1_PreInitializeBattle()
-{
-	ProgressPhase = EProgressPhase::PP_A1_PreInitialization;
-	
-	Enemies_Arr.Empty();
-	Dead_Enemies_Arr.Empty();
-	Player_Arr.Empty();
-	Dead_Player_Arr.Empty();
-	
-	// 生成战斗时的指挥Pawn，确定是动态摄像机还是固定摄像机（BOSS、测试时使用），停止探索模式下的玩家角色
-	ChangeCameraAndStopMovement();
-	
-	// 根据敌人阵容信息在指定站位生成敌人
-	SpawnEnemiesAndDecideLocation();
-
-	// 根据玩家队伍信息在指定站位生成玩家角色
-	SpawnPlayersAndDecideLocation();
-
-	//生成UI
-	if (BattleLayoutClass)
-	{
-		BattleLayout = CreateWidget<UBattleUserWidget>(GetWorld(),BattleLayoutClass);
-		if (BattleLayout)
-		{
-			BattleLayout->ConstructDeferred(this);
-			BattleLayout->AddToViewport();
-		}
-	}
-}
-
 void ABattleManager::BeginPlay()
 {
 	Super::BeginPlay();
@@ -306,7 +614,6 @@ void ABattleManager::BeginPlay()
 	}
 }
 
-
 void ABattleManager::RetrieveEnemyPosition(int32 PosIndex, FVector& TargetPos, float& Yaw)
 {
 	for (auto ArrayElem : EnemySpawnPoints_Arr)
@@ -325,6 +632,7 @@ void ABattleManager::RetrieveEnemyPosition(int32 PosIndex, FVector& TargetPos, f
 	Yaw = 0.0f;
 	return;
 }
+
 void ABattleManager::RetrievePlayerPosition(int32 PosIndex, FVector& TargetPos, float& Yaw)
 {
 	for (auto ArrayElem : PlayerSpawnPoints_Arr)

@@ -11,6 +11,11 @@ ABattlePlayer::ABattlePlayer()
 	MarkedIcon->bHiddenInGame = true;
 }
 
+void ABattlePlayer::UpdateLockIcon(bool bHide)
+{
+	LockIcon->bHiddenInGame = bHide;
+}
+
 void ABattlePlayer::RefreshActionValueBySpd()
 {
 	ActionValue = Distance / playerAtr.SPD;

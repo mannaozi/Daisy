@@ -1,7 +1,10 @@
 
 
 #include "Player/BattlePawn.h"
+
+#include "daisy/DaisyBlueprintFunctionLibrary.h"
 #include "Debug/DebugHelper.h"
+#include "Game/BattleManager.h"
 #include "Player/DaisyPlayerController.h"
 
 ABattlePawn::ABattlePawn()
@@ -12,6 +15,11 @@ ABattlePawn::ABattlePawn()
 void ABattlePawn::TryNormalATK()
 {
 	Debug::Print("ABattlePawn::TryNormalATK");
+}
+
+void ABattlePawn::TrySwitchingEnemyLockIcon(bool bNext)
+{
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchEnemyLockIcon(bNext);
 }
 
 void ABattlePawn::Destroyed()

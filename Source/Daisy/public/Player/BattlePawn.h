@@ -17,6 +17,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TryNormalATK();
+
+	UFUNCTION(BlueprintCallable)
+	void TrySwitchingEnemyLockIcon(bool bNext);
 	
 	UPROPERTY()
 	TObjectPtr<ADaisyPlayerController> PC; 
