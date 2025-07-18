@@ -12,9 +12,9 @@ ABattlePawn::ABattlePawn()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-void ABattlePawn::TryNormalATK()
+void ABattlePawn::TryAction(EAttackType ATKType)
 {
-	Debug::Print("ABattlePawn::TryNormalATK");
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ExecuteAction(ATKType);
 }
 
 void ABattlePawn::TrySwitchingEnemyLockIcon(bool bNext)

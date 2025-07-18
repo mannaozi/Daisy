@@ -5,6 +5,7 @@
 #include "GameFramework/Pawn.h"
 #include "BattlePawn.generated.h"
 
+enum class EAttackType : uint8;
 class ADaisyPlayerController;
 
 UCLASS()
@@ -16,7 +17,7 @@ public:
 	ABattlePawn();
 
 	UFUNCTION(BlueprintCallable)
-	void TryNormalATK();
+	void TryAction(EAttackType ATKType);
 
 	UFUNCTION(BlueprintCallable)
 	void TrySwitchingEnemyLockIcon(bool bNext);

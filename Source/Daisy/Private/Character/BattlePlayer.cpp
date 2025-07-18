@@ -21,6 +21,35 @@ void ABattlePlayer::RefreshActionValueBySpd()
 	ActionValue = Distance / playerAtr.SPD;
 }
 
+void ABattlePlayer::InitializeData()
+{
+	//初始化数据
+	bPlayerFaction = true;
+	AvatarIcon = playerAtr.CharIcon_Banner;
+	MaxHP = playerAtr.HP;
+	CurHp = MaxHP;
+	MaxEnergy = playerAtr.Energy;
+	CurEnergy = MaxEnergy;
+	GetMesh()->SetSkeletalMesh(playerAtr.SKM);
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetAnimInstanceClass(playerAtr.AnimClass);
+	OriginLocation = GetActorLocation();
+    OriginRotation = GetActorRotation();
+	
+	// 初始化行动值
+	RefreshActionValueBySpd();
+}
+
+void ABattlePlayer::SingleAtk(AActor* Target, bool bConsumeTurn, bool bMelee, EAttackType ATKType)
+{
+	
+}
+
+void ABattlePlayer::MultipleAtk(TArray<AActor*> Target, bool bConsumeTurn, bool bMelee, EAttackType ATKType)
+{
+	
+}
+
 void ABattlePlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -28,10 +57,5 @@ void ABattlePlayer::BeginPlay()
 	FString s = DataRow.ToString();
 	playerAtr = *(PlayerCharsDT->FindRow<FPlayerCharAttributes>(DataRow, s, true));
 
-	//初始化数据
-	bPlayerFaction = true;
-	AvatarIcon = playerAtr.CharIcon_Banner;
-	
-	// 初始化行动值
-	RefreshActionValueBySpd();
+	InitializeData();
 }

@@ -16,6 +16,7 @@ class ABattleEnemy;
 class ABattlePawn;
 class ACameraActor;
 class UUserWidget;
+class USoundBase;
 
 UCLASS()
 class DAISY_API ABattleManager : public AActor
@@ -64,6 +65,13 @@ public:
 	void DisplayLockedIconsAndSetTargets();
 	void UpdatePlayerLockedIconToMultiple();
 	void UpdateEnemyLockedIconToMultiple();
+	bool IsMeleeAction();
+	//Action
+	void ExecuteAction(EAttackType ATKType);
+	void HandlePlayerATK(EAttackType AttackType);
+	void ExecuteUltimate();
+	//Camera
+	void CameraForBuffSelections();
 	
 	void B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar);
 	
@@ -96,10 +104,14 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
 	float EnemyDisplayTime = 2.0f;
+	
 	UPROPERTY(EditAnywhere,Category="Battle")
 	TSubclassOf<UUserWidget> BattleLayoutClass;
 	
 	UBattleUserWidget* BattleLayout;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
+	USoundBase* UnableSFX;
 	
 	UPROPERTY()
 	ABattlePawn* BattlePawn;
@@ -111,6 +123,7 @@ public:
 	AActor* LastClickedActor;
 
 	int32 IndexForLockedTarget = 2; //初始选择的敌人
+	int32 SkillPoints = 2;
 	
 	FTimerHandle DisplayEnemyTimerHandle;
 };

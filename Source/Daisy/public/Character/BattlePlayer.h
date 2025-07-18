@@ -41,6 +41,16 @@ public:
 
 	EAttackType AttackType {EAttackType::AT_NormalATK};
 	
+	void InitializeData();
+	void SingleAtk(AActor* Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
+	void MultipleAtk(TArray<AActor*> Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
+
 protected:
 	virtual void BeginPlay() override;
+	float MaxHP;
+	float CurHp;
+	float MaxEnergy;
+	float CurEnergy;
+	FVector OriginLocation;
+	FRotator OriginRotation;
 };

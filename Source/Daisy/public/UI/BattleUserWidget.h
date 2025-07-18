@@ -21,4 +21,16 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RefreshActionOrder(const TArray<ACharacter*> &CharRefs);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleStatsPanelAnimating(ABattlePlayer* PlayerBase,bool bIncrease);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SwitchATKMode(EAttackType ATKType);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandlePhaseHint_CPP(ABattlePlayer* Player,EAttackType ATKType);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HideATKButtons();
 };
