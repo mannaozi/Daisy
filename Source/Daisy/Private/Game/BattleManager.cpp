@@ -679,7 +679,11 @@ void ABattleManager::HandlePlayerATK(EAttackType AttackType)
 
 void ABattleManager::ExecuteUltimate()
 {
-	
+	//检查大招Queue是否为空 ， 是否是玩家回合
+	if (ProgressPhase == EProgressPhase::PP_B2a_PlayerActionTime && UltimatePlayerQueue.Num() > 0)
+	{
+		HandlePlayerATK(EAttackType::AT_Ultimate);
+	}
 }
 
 void ABattleManager::CameraForBuffSelections()

@@ -8,7 +8,7 @@
 
 ABattleCharacterBase::ABattleCharacterBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
 	CameraBoom->SetupAttachment(RootComponent);
@@ -28,6 +28,11 @@ void ABattleCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ABattleCharacterBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void ABattleCharacterBase::GetActionValue(float& ActionVal)

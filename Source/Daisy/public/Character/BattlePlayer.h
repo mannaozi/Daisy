@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "Character/BattleCharacterBase.h"
 #include "daisy/daisyEnum.h"
+#include "Components/TimelineComponent.h"
 #include "BattlePlayer.generated.h"
+
+struct FPlayerCharAttributes;
+class UCurveFloat;
+struct FTimeline;
 
 /**
  * 
@@ -44,13 +49,29 @@ public:
 	void InitializeData();
 	void SingleAtk(AActor* Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
 	void MultipleAtk(TArray<AActor*> Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
+	void PlayAnimationAndTimeLine();
+	UFUNCTION()
+	void TL_RotateToTarget(float DeltaTime);
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Presets")
+	UCurveFloat* Curve_RotateToTarget;
+
+	FTimeline RotateToTarget_Timeline;
+	
 	float MaxHP;
 	float CurHp;
 	float MaxEnergy;
 	float CurEnergy;
 	FVector OriginLocation;
 	FRotator OriginRotation;
+	bool ConsumeTurn;
+	bool Melee;
+	AActor* TargetActor;
+	AActor* RotateToTargetActor;
+	FVector TargetLocation;
+	TArray<AActor*> TargetActors;
 };

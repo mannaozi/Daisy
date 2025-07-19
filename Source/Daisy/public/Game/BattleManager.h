@@ -91,6 +91,7 @@ public:
 	TArray<ABattleEnemy*> Dead_Enemies_Arr;
 	TArray<ABattlePlayer*> Player_Arr;
 	TArray<ABattlePlayer*> Dead_Player_Arr;
+	TArray<ABattlePlayer*> UltimatePlayerQueue;
 	
 	TArray<ACameraActor*> Cameras_Arr;
 	TArray<AActor*> EnemySpawnPoints_Arr;
