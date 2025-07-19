@@ -224,8 +224,27 @@ void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
 	ActivePlayerRef = activePlayerChar;
 
 	ProgressPhase = EProgressPhase::PP_B2a_PlayerActionTime;
-	
+
+	//设置初始锁定
 	DisplayLockedIconsAndSetTargets();
+
+	//更新UI按钮
+	if (!ActivePlayerRef) return;
+	BattleLayout->SwitchATKMode(ActivePlayerRef->AttackType);
+	
+	//镜头切换
+	if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+	{
+		// None
+	}
+	else
+	{
+		//隐藏其他玩家
+		SwitchAndHideOtherPlayerChars(true,ActivePlayerRef);
+			
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+		SetViewTargetWithBlend(ActivePlayerRef,1.f);
+	}
 }
 
 void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
@@ -544,6 +563,17 @@ bool ABattleManager::IsMeleeAction()
 	}
 }
 
+void ABattleManager::SwitchAndHideOtherPlayerChars(bool bHideOther, ABattlePlayer* ActiveChar)
+{
+	TArray<ABattlePlayer*> TempPlayers;
+	TeamInstForUI.GenerateValueArray(TempPlayers);
+	for (auto ArrayElem : TempPlayers)
+	{
+		ArrayElem->SetHiddenForPlayer(bHideOther);
+	}
+	ActiveChar->SetHiddenForPlayer(false);
+}
+
 void ABattleManager::ExecuteAction(EAttackType ATKType)
 {
 	if (!ActivePlayerRef) return;
@@ -688,7 +718,30 @@ void ABattleManager::ExecuteUltimate()
 
 void ABattleManager::CameraForBuffSelections()
 {
-	
+	if (IsBuffTarget())
+	{
+		//增益
+		SwitchAndHideOtherPlayerChars(false,ActivePlayerRef);
+		
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+			SetViewTargetWithBlend(RetrieveCamera(FName(*fixedCA)));
+	}
+	else
+	{
+		if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+		{
+			UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+			SetViewTargetWithBlend(RetrieveCamera(FName(*fixedCA)));
+		}
+		else
+		{
+			//隐藏其他玩家
+			SwitchAndHideOtherPlayerChars(true,ActivePlayerRef);
+			
+			UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+			SetViewTargetWithBlend(ActivePlayerRef,1.f);
+		}
+	}
 }
 
 void ABattleManager::SetDeadPlayerLockedIcon()
@@ -715,8 +768,6 @@ void ABattleManager::ChangeCameraAndStopMovement()
 	// 改变摄像机视角
 	ACameraActor* TargetCA;
 	UDaisyGameInstance* tempGI;
-	FString normalCA = "tag_c_start_normal";
-	FString fixedCA = "tag_c_boss";
 	tempGI = UDaisyBlueprintFunctionLibrary::GetGameInstance();
 	if(tempGI == nullptr) return;
 

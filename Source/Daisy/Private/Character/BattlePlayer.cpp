@@ -3,7 +3,13 @@
 
 #include "Character/BattlePlayer.h"
 #include "Components/WidgetComponent.h"
+#include "Character/BattleEnemy.h"
+#include "daisy/DaisyBlueprintFunctionLibrary.h"
 #include "Debug/DebugHelper.h"
+#include "Game/DaisyGameInstance.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ABattlePlayer::ABattlePlayer()
 {
@@ -68,12 +74,53 @@ void ABattlePlayer::MultipleAtk(TArray<AActor*> Target, bool bConsumeTurn, bool 
 void ABattlePlayer::PlayAnimationAndTimeLine()
 {
 	RotateToTarget_Timeline.PlayFromStart();
-}
 
+	SetHiddenForPlayer(false);
+	if (Melee)
+	{
+		if (!UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+		{
+			//切换视角
+			float BlendTime = 0.6f;
+			if (AttackType == EAttackType::AT_FollowTK)
+			{
+				BlendTime = 0.0f;
+			}
+			UGameplayStatics::GetPlayerController(GetWorld(),0)->SetViewTargetWithBlend(RotateToTargetActor,BlendTime);
+		}
+		//播放向前运动的动画
+		PlaySpecifiedAnim("Slide_F");
+		//时间轴移动
+		
+	}
+	else
+	{
+		
+	}
+}
+float ABattlePlayer::PlaySpecifiedAnim(FString Str)
+{
+	float AnimTime = 0.0f;
+	if (playerAtr.Montages.Contains(Str))
+	{
+		AnimTime = PlayAnimMontage(*(playerAtr.Montages.Find(Str)));
+	}
+	return AnimTime;
+}
 void ABattlePlayer::TL_RotateToTarget(float DeltaTime)
 {
 	FString str = FString::SanitizeFloat(DeltaTime);
 	Debug::Print(*str);
+	if (!RotateToTargetActor) return;
+	if (!Cast<ABattleEnemy>(RotateToTargetActor)) return;
+	FRotator TargetRotator = (RotateToTargetActor->GetActorLocation() - GetActorLocation()).Rotation();
+	FRotator TempRotator = UKismetMathLibrary::RLerp(OriginRotation,TargetRotator,DeltaTime,true);
+	SetActorRotation(FRotator(0,TempRotator.Yaw,0));
+}
+
+void ABattlePlayer::SetHiddenForPlayer(bool bCustomHidden)
+{
+	SetActorHiddenInGame(bCustomHidden);
 }
 
 void ABattlePlayer::BeginPlay()
@@ -85,6 +132,30 @@ void ABattlePlayer::BeginPlay()
 
 	InitializeData();
 
+	//初始镜头角度
+	float SpringArmYaw = 0.0f;
+	if (positionID != -1)
+	{
+		switch (positionID)
+		{
+			case 0:
+				break;
+			case 1:
+				SpringArmYaw = -40.0f;
+				break;
+			case 2:
+				SpringArmYaw = -30.0f;
+				break;
+			case 3:
+				SpringArmYaw = -20.0f;
+				break;
+			case 4:
+				SpringArmYaw = -10.0f;
+				break;
+		}
+		GetCameraBoom()->SetRelativeRotation(FRotator(0.0f, SpringArmYaw, 0.0f));
+	}
+	
 	//初始化时间轴
 	if (Curve_RotateToTarget)
 	{

@@ -52,7 +52,9 @@ public:
 	void PlayAnimationAndTimeLine();
 	UFUNCTION()
 	void TL_RotateToTarget(float DeltaTime);
-
+	void SetHiddenForPlayer(bool bCustomHidden);
+	float PlaySpecifiedAnim(FString Str);
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -74,4 +76,6 @@ public:
 	AActor* RotateToTargetActor;
 	FVector TargetLocation;
 	TArray<AActor*> TargetActors;
+
+	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}
 };

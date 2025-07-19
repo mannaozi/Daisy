@@ -66,6 +66,8 @@ public:
 	void UpdatePlayerLockedIconToMultiple();
 	void UpdateEnemyLockedIconToMultiple();
 	bool IsMeleeAction();
+	void SwitchAndHideOtherPlayerChars(bool bHideOther,ABattlePlayer* ActiveChar);
+	
 	//Action
 	void ExecuteAction(EAttackType ATKType);
 	void HandlePlayerATK(EAttackType AttackType);
@@ -79,6 +81,10 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:
+	FString normalCA = "tag_c_start_normal";
+	FString fixedCA = "tag_c_boss";
+	FString buffCA = "tag_c_buff";
+	
 	UPROPERTY()
 	ADaisyCharacter* Player_World = nullptr;
 	UPROPERTY()
