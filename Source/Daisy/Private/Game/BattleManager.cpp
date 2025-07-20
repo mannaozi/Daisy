@@ -252,6 +252,11 @@ void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
 	Debug::Print("Enemy Turn !!");
 }
 
+void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
+{
+	//回合结束
+}
+
 void ABattleManager::SwitchEnemyLockIcon(bool bNext)
 {
 	if (ProgressPhase != EProgressPhase::PP_B2a_PlayerActionTime) return;

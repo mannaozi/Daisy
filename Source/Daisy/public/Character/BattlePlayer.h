@@ -50,10 +50,23 @@ public:
 	void SingleAtk(AActor* Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
 	void MultipleAtk(TArray<AActor*> Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
 	void PlayAnimationAndTimeLine();
+	//TIMELINE
 	UFUNCTION()
 	void TL_RotateToTarget(float DeltaTime);
+	UFUNCTION()
+	void TL_SlideF(float DeltaTime);
+	UFUNCTION()
+	void TL_SlideF_Finished();
+	UFUNCTION()
+	void TL_SlideB(float DeltaTime);
+	UFUNCTION()
+	void TL_SlideB_Finished();
+	
 	void SetHiddenForPlayer(bool bCustomHidden);
 	float PlaySpecifiedAnim(FString Str);
+	void PlayATKAnimByATKType();
+	void AfterPlayingMeleeATKAnim();
+	void GeneralPlayerAttackOver();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -63,6 +76,14 @@ public:
 	UCurveFloat* Curve_RotateToTarget;
 
 	FTimeline RotateToTarget_Timeline;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Presets")
+	UCurveFloat* Curve_Sliding;
+	FTimeline Sliding_F_Timeline;
+	FTimeline Sliding_B_Timeline;
+	FTimerHandle PlayATKAnimHandle;
+	FTimerHandle AfterPlayingMeleeATKAnimHandle;
+	FTimerHandle MeleePlayerEndHandle;
 	
 	float MaxHP;
 	float CurHp;

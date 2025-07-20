@@ -6,6 +6,7 @@
 #include "Character/BattleEnemy.h"
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
 #include "Debug/DebugHelper.h"
+#include "Game/BattleManager.h"
 #include "Game/DaisyGameInstance.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -55,6 +56,7 @@ void ABattlePlayer::SingleAtk(AActor* Target, bool bConsumeTurn, bool bMelee, EA
 	TargetActor = Target;
 	RotateToTargetActor = TargetActor;
 	TargetLocation = TargetActor->GetActorLocation() + TargetActor->GetActorForwardVector() * 150.f;
+	TargetLocation = FVector(TargetLocation.X, TargetLocation.Y, GetActorLocation().Z);
 	PlayAnimationAndTimeLine();
 }
 
@@ -68,6 +70,7 @@ void ABattlePlayer::MultipleAtk(TArray<AActor*> Target, bool bConsumeTurn, bool 
 	if (!TargetActors[0]) return;
 	RotateToTargetActor = TargetActors[0];
 	TargetLocation = TargetActors[0]->GetActorLocation() + TargetActors[0]->GetActorForwardVector() * 150.f;
+	TargetLocation = FVector(TargetLocation.X, TargetLocation.Y, GetActorLocation().Z);
 	PlayAnimationAndTimeLine();
 }
 
@@ -91,13 +94,15 @@ void ABattlePlayer::PlayAnimationAndTimeLine()
 		//播放向前运动的动画
 		PlaySpecifiedAnim("Slide_F");
 		//时间轴移动
-		
+		Sliding_F_Timeline.PlayFromStart();
+		//Sliding_B_Timeline.PlayFromStart();
 	}
 	else
 	{
 		
 	}
 }
+
 float ABattlePlayer::PlaySpecifiedAnim(FString Str)
 {
 	float AnimTime = 0.0f;
@@ -107,10 +112,11 @@ float ABattlePlayer::PlaySpecifiedAnim(FString Str)
 	}
 	return AnimTime;
 }
+
 void ABattlePlayer::TL_RotateToTarget(float DeltaTime)
 {
-	FString str = FString::SanitizeFloat(DeltaTime);
-	Debug::Print(*str);
+	//FString str = FString::SanitizeFloat(DeltaTime);
+	//Debug::Print(*str);
 	if (!RotateToTargetActor) return;
 	if (!Cast<ABattleEnemy>(RotateToTargetActor)) return;
 	FRotator TargetRotator = (RotateToTargetActor->GetActorLocation() - GetActorLocation()).Rotation();
@@ -118,9 +124,77 @@ void ABattlePlayer::TL_RotateToTarget(float DeltaTime)
 	SetActorRotation(FRotator(0,TempRotator.Yaw,0));
 }
 
+void ABattlePlayer::TL_SlideF(float DeltaTime)
+{
+	//移动玩家角色
+	FVector targetLocation = UKismetMathLibrary::VLerp(OriginLocation,TargetLocation,DeltaTime);
+	SetActorLocation(targetLocation);
+}
+
+void ABattlePlayer::TL_SlideF_Finished()
+{
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.2f);
+	GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::PlayATKAnimByATKType,0.2f,false);
+}
+
+void ABattlePlayer::TL_SlideB(float DeltaTime)
+{
+	FVector targetLocation = UKismetMathLibrary::VLerp(TargetLocation,OriginLocation,DeltaTime);
+	SetActorLocation(targetLocation);
+}
+
+void ABattlePlayer::TL_SlideB_Finished()
+{
+	//0.4秒后结束回合
+	GetWorldTimerManager().SetTimer(MeleePlayerEndHandle,this,&ABattlePlayer::GeneralPlayerAttackOver,0.4f,false);
+}
+
 void ABattlePlayer::SetHiddenForPlayer(bool bCustomHidden)
 {
 	SetActorHiddenInGame(bCustomHidden);
+}
+
+void ABattlePlayer::PlayATKAnimByATKType()
+{
+	//根据攻击类型播放Montage
+	FString SpecifiedActionString;
+	switch (AttackType)
+	{
+	case EAttackType::AT_EMAX:
+		break;
+	case EAttackType::AT_NormalATK:
+		SpecifiedActionString = "NormalATK";
+		break;
+	case EAttackType::AT_SkillATK:
+		SpecifiedActionString = "SkillATK";
+		break;
+	case EAttackType::AT_FollowTK:
+		SpecifiedActionString = "FollowATK";
+		break;
+	case EAttackType::AT_Ultimate:
+		SpecifiedActionString = "UltimateATK";
+		break;
+	case EAttackType::AT_DelayATK_E:
+		break;
+	}
+	float AnimTime = PlaySpecifiedAnim(SpecifiedActionString);
+
+	//播放动画后执行下一逻辑
+	GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::AfterPlayingMeleeATKAnim,AnimTime,false);
+}
+
+void ABattlePlayer::AfterPlayingMeleeATKAnim()
+{
+	//播放回去的montage
+	PlaySpecifiedAnim("Slide_B");
+	Sliding_B_Timeline.PlayFromStart();
+}
+
+void ABattlePlayer::GeneralPlayerAttackOver()
+{
+	//恢复玩家Rotation
+	RotateToTarget_Timeline.ReverseFromEnd();
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->B3_TurnEnd(this,ConsumeTurn);
 }
 
 void ABattlePlayer::BeginPlay()
@@ -163,6 +237,24 @@ void ABattlePlayer::BeginPlay()
 		RtTHandler.BindUFunction(this,FName("TL_RotateToTarget"));
 		RotateToTarget_Timeline.AddInterpFloat(Curve_RotateToTarget, RtTHandler);
 	}
+	if (Curve_Sliding)
+	{
+		FOnTimelineFloat SLFHandler;
+		SLFHandler.BindUFunction(this,FName("TL_SlideF"));
+		Sliding_F_Timeline.AddInterpFloat(Curve_Sliding, SLFHandler);
+
+		FOnTimelineEvent SLFEventHandler;
+		SLFEventHandler.BindUFunction(this,FName("TL_SlideF_Finished"));
+		Sliding_F_Timeline.SetTimelineFinishedFunc(SLFEventHandler);
+
+		FOnTimelineFloat SLBHandler;
+		SLBHandler.BindUFunction(this,FName("TL_SlideB"));
+		Sliding_B_Timeline.AddInterpFloat(Curve_Sliding, SLBHandler);
+
+		FOnTimelineEvent SLBEventHandler;
+		SLBEventHandler.BindUFunction(this,FName("TL_SlideB_Finished"));
+		Sliding_B_Timeline.SetTimelineFinishedFunc(SLBEventHandler);
+	}
 }
 
 void ABattlePlayer::Tick(float DeltaTime)
@@ -170,4 +262,6 @@ void ABattlePlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//注册时间轴
 	RotateToTarget_Timeline.TickTimeline(DeltaTime);
+	Sliding_F_Timeline.TickTimeline(DeltaTime);
+	Sliding_B_Timeline.TickTimeline(DeltaTime);
 }

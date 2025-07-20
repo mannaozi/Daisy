@@ -48,6 +48,9 @@ public:
 
 	void B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar);
 
+	void B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar);
+
+	void B3_TurnEnd(AActor* EndTurnActor,bool bConsumeTurn);
 	//Lock
 	void SwitchEnemyLockIcon(bool bNext);
 	void SetMultipeEnemyLocks();
@@ -75,7 +78,6 @@ public:
 	//Camera
 	void CameraForBuffSelections();
 	
-	void B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar);
 	
 protected:
 	virtual void BeginPlay() override;
