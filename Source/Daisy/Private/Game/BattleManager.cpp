@@ -729,7 +729,7 @@ void ABattleManager::CameraForBuffSelections()
 		SwitchAndHideOtherPlayerChars(false,ActivePlayerRef);
 		
 		UGameplayStatics::GetPlayerController(GetWorld(), 0)->
-			SetViewTargetWithBlend(RetrieveCamera(FName(*fixedCA)));
+			SetViewTargetWithBlend(RetrieveCamera(FName(*buffCA)));
 	}
 	else
 	{

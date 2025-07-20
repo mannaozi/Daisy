@@ -37,7 +37,9 @@ void ABattlePlayer::InitializeData()
 	MaxHP = playerAtr.HP;
 	CurHp = MaxHP;
 	MaxEnergy = playerAtr.Energy;
-	CurEnergy = MaxEnergy;
+	CurEnergy = 0.0f;
+	MaxShield = 0.0f;
+	CurShield = 0.0f;
 	GetMesh()->SetSkeletalMesh(playerAtr.SKM);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetAnimInstanceClass(playerAtr.AnimClass);
@@ -99,8 +101,18 @@ void ABattlePlayer::PlayAnimationAndTimeLine()
 	}
 	else
 	{
-		
+		PlayATKAnimByATKType();
 	}
+}
+
+void ABattlePlayer::GetPlayerAttributes(float& mHP, float& cHP, float& mEP, float& cEP, float& mT, float& cT)
+{
+	mHP = MaxHP;
+	cHP = CurHp;
+	mEP = MaxEnergy;
+	cEP =  CurEnergy;
+	mT = MaxShield;
+	cT = CurShield;
 }
 
 float ABattlePlayer::PlaySpecifiedAnim(FString Str)
@@ -179,8 +191,18 @@ void ABattlePlayer::PlayATKAnimByATKType()
 	}
 	float AnimTime = PlaySpecifiedAnim(SpecifiedActionString);
 
-	//播放动画后执行下一逻辑
-	GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::AfterPlayingMeleeATKAnim,AnimTime,false);
+	//能量处理
+	HandleEP(AttackType,false,0.0f);
+	
+	if (Melee)
+	{
+		//播放动画后执行下一逻辑
+		GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::AfterPlayingMeleeATKAnim,AnimTime,false);
+	}
+	else
+	{
+		GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::GeneralPlayerAttackOver,AnimTime,false);
+	}
 }
 
 void ABattlePlayer::AfterPlayingMeleeATKAnim()
@@ -195,6 +217,33 @@ void ABattlePlayer::GeneralPlayerAttackOver()
 	//恢复玩家Rotation
 	RotateToTarget_Timeline.ReverseFromEnd();
 	UDaisyBlueprintFunctionLibrary::FindBattleManager()->B3_TurnEnd(this,ConsumeTurn);
+}
+
+void ABattlePlayer::HandleEP(EAttackType ATKType, bool bDirect, float val)
+{
+	float deltaEP = 0.0f;
+	switch (AttackType)
+	{
+	case EAttackType::AT_EMAX:
+		break;
+	case EAttackType::AT_NormalATK:
+		deltaEP = 20.f;
+		break;
+	case EAttackType::AT_SkillATK:
+		deltaEP = 30.f;
+		break;
+	case EAttackType::AT_FollowTK:
+		deltaEP = 10.f;
+		break;
+	case EAttackType::AT_Ultimate:
+		deltaEP = 5.f;
+		break;
+	case EAttackType::AT_DelayATK_E:
+		break;
+	}
+	if (bDirect) {deltaEP = 0.0f;}
+	
+	CurEnergy = CurEnergy + deltaEP * 1.0f;
 }
 
 void ABattlePlayer::BeginPlay()

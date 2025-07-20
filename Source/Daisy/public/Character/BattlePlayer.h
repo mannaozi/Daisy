@@ -50,6 +50,9 @@ public:
 	void SingleAtk(AActor* Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
 	void MultipleAtk(TArray<AActor*> Target,bool bConsumeTurn,bool bMelee,EAttackType ATKType);
 	void PlayAnimationAndTimeLine();
+
+	UFUNCTION(BlueprintCallable)
+	void GetPlayerAttributes(float &mHP,float &cHP,float &mEP,float &cEP,float &mT,float &cT);
 	//TIMELINE
 	UFUNCTION()
 	void TL_RotateToTarget(float DeltaTime);
@@ -67,6 +70,8 @@ public:
 	void PlayATKAnimByATKType();
 	void AfterPlayingMeleeATKAnim();
 	void GeneralPlayerAttackOver();
+
+	void HandleEP(EAttackType ATKType,bool bDirect,float val);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -89,6 +94,8 @@ public:
 	float CurHp;
 	float MaxEnergy;
 	float CurEnergy;
+	float MaxShield;
+	float CurShield;
 	FVector OriginLocation;
 	FRotator OriginRotation;
 	bool ConsumeTurn;
