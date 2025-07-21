@@ -51,6 +51,8 @@ public:
 	void B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar);
 
 	void B3_TurnEnd(AActor* EndTurnActor,bool bConsumeTurn);
+
+	void ResetActionValueAndATKType(bool bConsumeTurn,AActor* TempEndActor);
 	//Lock
 	void SwitchEnemyLockIcon(bool bNext);
 	void SetMultipeEnemyLocks();
@@ -81,7 +83,7 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-	
+	virtual void Tick(float DeltaSeconds) override;
 public:
 	FString normalCA = "tag_c_start_normal";
 	FString fixedCA = "tag_c_boss";
@@ -129,7 +131,10 @@ public:
 	ABattlePlayer* CurrentPlayerTarget;
 	TArray<ABattleEnemy*> CurrentEnemyTargets;
 	TArray<ABattlePlayer*> CurrentPlayerTargets;
+	
 	AActor* LastClickedActor;
+	ACameraActor* BuffCamera;
+	FVector BuffCameraOriginLocation;
 
 	int32 IndexForLockedTarget = 2; //初始选择的敌人
 	int32 SkillPoints = 2;

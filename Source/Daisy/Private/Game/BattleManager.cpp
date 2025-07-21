@@ -22,7 +22,7 @@
 
 ABattleManager::ABattleManager()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 }
 
@@ -255,6 +255,56 @@ void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
 void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 {
 	//回合结束
+	ProgressPhase = EProgressPhase::PP_B3_TurnEnd;
+	//如果释放大招，删除UI
+	
+	//镜头切换
+	if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+	{
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+		SetViewTargetWithBlend(RetrieveCamera(FName(*fixedCA)));
+	}
+	//消耗回合数的情况下，减少Buff的持续回合数，重置ActionValue，检查追加攻击。
+	if (bConsumeTurn)
+	{
+		ResetActionValueAndATKType(bConsumeTurn,EndTurnActor);
+	}
+	//重置UI面板
+	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
+	if (Player)
+	{
+		BattleLayout->HandleStatsPanelAnimating(Player,false);
+	}
+	//检测是否执行追加攻击
+	
+	//检查是否有大招在等待
+	if (UltimatePlayerQueue.Num() > 0)
+	{
+		//释放大招
+	}
+	else
+	{
+		B1a_CalculateActionValue();
+	}
+}
+
+void ABattleManager::ResetActionValueAndATKType(bool bConsumeTurn, AActor* TempEndActor)
+{
+	if (bConsumeTurn)
+	{
+		ICombatInterface* Interface = Cast<ICombatInterface>(TempEndActor);
+		if (Interface)
+		{
+			Interface->RefreshActionValueBySpd();
+		}
+	}
+	//不消耗回合就不刷新行动值
+	//reset ATKType
+	if (ActivePlayerRef)
+	{
+		ActivePlayerRef->AttackType = EAttackType::AT_NormalATK;
+	}
+	ActivePlayerRef = nullptr;
 }
 
 void ABattleManager::SwitchEnemyLockIcon(bool bNext)
@@ -837,6 +887,49 @@ void ABattleManager::BeginPlay()
 			PlayerSpawnPoints_Arr.Add(ArrayElem);
 		}
 	}
+	//平滑移动Buff镜头
+	BuffCamera = RetrieveCamera(FName(*buffCA));
+	BuffCameraOriginLocation = BuffCamera->GetActorLocation();
+}
+
+void ABattleManager::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (ActivePlayerRef == nullptr) return;
+	if (BuffCamera == nullptr) return;
+	
+	float Location_Y;
+	if (IsMultipleTargets())
+	{
+		Location_Y = BuffCameraOriginLocation.Y;
+	}
+	else
+	{
+		AActor* TargetActor;
+		if (CurrentPlayerTarget != nullptr)
+		{
+			TargetActor = CurrentPlayerTarget;
+		}
+		else
+		{
+			bool b1 = ActivePlayerRef->AttackType == EAttackType::AT_SkillATK;
+			FBuffInfo FBI = *(ActivePlayerRef->playerAtr.BuffSkillStats.Find(EAttackType::AT_SkillATK));
+			bool b2 = FBI.BuffType == EBuffTypes::BT_Resurrection;
+			if (b1 && b2)
+			{
+				TargetActor = ActivePlayerRef;
+			}
+			else
+			{
+				return;
+			}
+		}
+		Location_Y = TargetActor->GetActorLocation().Y;
+	}
+
+	float FinalY = FMath::FInterpTo(BuffCamera->GetActorLocation().Y, Location_Y, DeltaSeconds, 1.f);
+	FVector FinalTargetLocation = FVector(BuffCameraOriginLocation.X,FinalY,BuffCameraOriginLocation.Z);
+	BuffCamera->SetActorLocation(FinalTargetLocation);
 }
 
 void ABattleManager::RetrieveEnemyPosition(int32 PosIndex, FVector& TargetPos, float& Yaw)
