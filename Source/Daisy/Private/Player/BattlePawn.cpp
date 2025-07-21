@@ -22,6 +22,16 @@ void ABattlePawn::TrySwitchingEnemyLockIcon(bool bNext)
 	UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchEnemyLockIcon(bNext);
 }
 
+void ABattlePawn::TryCastingUltimate()
+{
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ExecuteUltimate();
+}
+
+void ABattlePawn::TryEnterUltimate(int32 Index)
+{
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->EnterUltimate(Index);
+}
+
 void ABattlePawn::Destroyed()
 {
 	Super::Destroyed();

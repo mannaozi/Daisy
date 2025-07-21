@@ -21,6 +21,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TrySwitchingEnemyLockIcon(bool bNext);
+
+	UFUNCTION(BlueprintCallable)
+	void TryCastingUltimate();
+
+	UFUNCTION(BlueprintCallable)
+	void TryEnterUltimate(int32 Index);
 	
 	UPROPERTY()
 	TObjectPtr<ADaisyPlayerController> PC; 

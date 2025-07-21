@@ -42,6 +42,7 @@ public:
 	void PostInitializeBattle();
 
 	void B1a_CalculateActionValue();
+	void B1b_CalculateActionValue();
 	EBattleFlags CheckGameOver(TMap<ABattleEnemy*, float> eArr, TMap <ABattlePlayer*, float> pArr);
 
 	void A2_BattleEnd(EBattleFlags endResult);
@@ -77,6 +78,10 @@ public:
 	void ExecuteAction(EAttackType ATKType);
 	void HandlePlayerATK(EAttackType AttackType);
 	void ExecuteUltimate();
+	void EnterUltimate(int32 PlayerIndex);
+	void ReadyForUltimate(ABattlePlayer* ReadyPlayer);
+	void RemoveUltimateTurn(AActor* CharRef);
+	void CheckPlayerRevive();
 	//Camera
 	void CameraForBuffSelections();
 	

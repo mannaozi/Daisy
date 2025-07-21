@@ -33,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void HideATKButtons();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RefreshUItimateOrder(const TArray<ABattlePlayer*> &Players);
 };

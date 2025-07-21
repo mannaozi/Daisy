@@ -283,9 +283,11 @@ void ABattlePlayer::HandleEP(EAttackType ATKType, bool bDirect, float val)
 	case EAttackType::AT_DelayATK_E:
 		break;
 	}
-	if (bDirect) {deltaEP = 0.0f;}
-	
-	CurEnergy = CurEnergy + deltaEP * 1.0f;
+	if (bDirect) {deltaEP = CurEnergy + val;}
+	else
+	{
+		CurEnergy = CurEnergy + deltaEP * 1.0f;
+	}
 }
 
 void ABattlePlayer::CalculateDmg(bool Buff, float& hpDmg, float& toughnessDmg)

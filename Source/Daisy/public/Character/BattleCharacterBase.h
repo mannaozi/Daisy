@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/CombatInterface.h"
+#include "Interface/VFXInterface.h"
 #include "BattleCharacterBase.generated.h"
 
 class UWidgetComponent;
@@ -11,7 +12,7 @@ class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface
+class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface,public IVFXInterface
 {
 	GENERATED_BODY()
 
@@ -52,4 +53,5 @@ public:
 	virtual void SetATK(EAttackType ATKType,int32 AttackCountInOneCycle) override;
 	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo) override;
 	/* Combat Interface */
+	
 };

@@ -103,6 +103,8 @@ void ABattleManager::B1a_CalculateActionValue()
 	TMap<ACharacter*,float> CharacterQueue;
 	TArray<ACharacter*> SortedCharacters;
 	float WinnerActionValue = 0.0f;
+	//检查玩家是否复活
+	CheckPlayerRevive();
 	//获取最新行动值，剔除不能行动的
 	for (auto ArrayElem : Enemies_Arr)
 	{
@@ -219,6 +221,114 @@ void ABattleManager::B1a_CalculateActionValue()
 	}
 }
 
+void ABattleManager::B1b_CalculateActionValue()
+{
+	//使用在需要刷新行动值，但不进入下一回合时使用
+	
+	ProgressPhase = EProgressPhase::PP_B1_CalculateActionValue;
+	//检查玩家状态
+	TMap<ABattleEnemy*,float> Enemy_ActionValue;
+	TMap<ABattlePlayer*,float> Player_ActionValue;
+	TMap<ACharacter*,float> CharacterQueue;
+	TArray<ACharacter*> SortedCharacters;
+	float WinnerActionValue = 0.0f;
+	
+	//检查玩家是否复活
+	CheckPlayerRevive();
+	//获取最新行动值，剔除不能行动的
+	for (auto ArrayElem : Enemies_Arr)
+	{
+		if (!ArrayElem->bDead)
+		{
+			Enemy_ActionValue.Add(ArrayElem,ArrayElem->ActionValue);
+			CharacterQueue.Add(ArrayElem,ArrayElem->ActionValue);
+		}
+		else
+		{
+			Dead_Enemies_Arr.Add(ArrayElem);
+		}
+	}
+	for (auto ArrayElem : Player_Arr)
+	{
+		if (!ArrayElem->bDead)
+		{
+			Player_ActionValue.Add(ArrayElem,ArrayElem->ActionValue);
+			CharacterQueue.Add(ArrayElem,ArrayElem->ActionValue);
+		}
+		else
+		{
+			Dead_Player_Arr.Add(ArrayElem);
+		}
+	}
+
+	//刷新两个数组，排除死亡的
+	Enemy_ActionValue.GenerateKeyArray(Enemies_Arr);
+	Player_ActionValue.GenerateKeyArray(Player_Arr);
+
+	//排序
+	TMap<ACharacter*,float> NumDummy;
+	NumDummy = CharacterQueue;
+	for (auto ArrayElem : NumDummy)
+	{
+		TArray<float> LocalFloats;
+		TArray<ACharacter*> LocalCharacters;
+		int32 minIndex;
+		float minValue;
+		CharacterQueue.GenerateValueArray(LocalFloats);
+		CharacterQueue.GenerateKeyArray(LocalCharacters);
+		UKismetMathLibrary::MinOfFloatArray(LocalFloats,minIndex,minValue);
+		SortedCharacters.Add(LocalCharacters[minIndex]);
+		CharacterQueue.Remove(LocalCharacters[minIndex]);
+	}
+
+	//获取行动值最小的角色的行动值
+	if (SortedCharacters[0] == nullptr) return;
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(SortedCharacters[0]);
+	if (CombatInterface == nullptr) return;
+	CombatInterface ->GetActionValue(WinnerActionValue);
+
+	//更新其余角色的行动值
+	for (auto ArrayElem : SortedCharacters)
+	{
+		ICombatInterface* CombatInterface_temp = Cast<ICombatInterface>(ArrayElem);
+		if (CombatInterface == nullptr) return;
+		CombatInterface_temp->UpdateActionValue(WinnerActionValue);
+	}
+
+	//更新UI的角色执行顺序
+	BattleLayout->RefreshActionOrder(SortedCharacters);
+	for (auto ArrayElem : Enemies_Arr)
+	{
+		//隐藏锁定标志
+		ArrayElem->UpdateLockIcon(true);
+	}
+
+	//检查是否战斗结束
+	EBattleFlags curBattleFlag = EBattleFlags::BF_EMAX;
+	curBattleFlag = CheckGameOver(Enemy_ActionValue, Player_ActionValue);
+	switch (curBattleFlag)
+	{
+	case EBattleFlags::BF_EMAX:
+		return;
+		break;
+	case EBattleFlags::BF_ContinueBattle:
+		// 跳出，继续执行后续内容
+			break;
+	case EBattleFlags::BF_PlayerWin:
+		A2_BattleEnd(curBattleFlag);
+		return;
+		break;
+	case EBattleFlags::BF_EnemyWin:
+		A2_BattleEnd(curBattleFlag);
+		return;
+		break;
+	}
+}
+
+void ABattleManager::CheckPlayerRevive()
+{
+	
+}
 void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
 {
 	ActivePlayerRef = activePlayerChar;
@@ -257,6 +367,7 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	//回合结束
 	ProgressPhase = EProgressPhase::PP_B3_TurnEnd;
 	//如果释放大招，删除UI
+	RemoveUltimateTurn(EndTurnActor);
 	
 	//镜头切换
 	if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
@@ -267,8 +378,9 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	//消耗回合数的情况下，减少Buff的持续回合数，重置ActionValue，检查追加攻击。
 	if (bConsumeTurn)
 	{
-		ResetActionValueAndATKType(bConsumeTurn,EndTurnActor);
+		
 	}
+	ResetActionValueAndATKType(bConsumeTurn,EndTurnActor);
 	//重置UI面板
 	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
 	if (Player)
@@ -281,6 +393,28 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	if (UltimatePlayerQueue.Num() > 0)
 	{
 		//释放大招
+		//如果敌人回合按下大招，回合结束检查玩家是否存活
+		for (auto ArrayElem : UltimatePlayerQueue)
+		{
+			if (ArrayElem -> bDead)
+			{
+				UltimatePlayerQueue.Remove(ArrayElem);
+			}
+		}
+		BattleLayout->RefreshUItimateOrder(UltimatePlayerQueue);
+		
+		if (UltimatePlayerQueue[0] != nullptr)
+		{
+			//刷新行动值B1b后执行大招准备
+			B1b_CalculateActionValue();
+			ReadyForUltimate(UltimatePlayerQueue[0]);
+			return;
+		}
+		else
+		{
+			B1a_CalculateActionValue();
+			return;
+		}
 	}
 	else
 	{
@@ -769,6 +903,62 @@ void ABattleManager::ExecuteUltimate()
 	{
 		HandlePlayerATK(EAttackType::AT_Ultimate);
 	}
+}
+
+void ABattleManager::EnterUltimate(int32 PlayerIndex)
+{
+	if (!TeamInstForUI.Contains(PlayerIndex)) return;
+	ABattlePlayer* SpecifiedPlayer = *(TeamInstForUI.Find(PlayerIndex));
+	if (SpecifiedPlayer == nullptr) return;
+	//检查角色是否死亡
+	bool bAlive = !SpecifiedPlayer->bDead;
+	bool bP1 = ProgressPhase == EProgressPhase::PP_A1_PreInitialization;
+	bool bP2 = ProgressPhase == EProgressPhase::PP_A2_BattleEnd;
+	bool bP3 = ProgressPhase == EProgressPhase::PP_EMAX;
+	if (!bAlive || bP1 || bP2 || bP3) return;
+	/*
+	//判断并消耗能量
+	bool bFullEP = (SpecifiedPlayer->CurEnergy / SpecifiedPlayer->MaxEnergy) > 1.0f;
+	if (!bFullEP) return;
+	float AllEP = SpecifiedPlayer->MaxEnergy * (-1.0f);
+	SpecifiedPlayer->HandleEP(EAttackType::AT_EMAX,true,AllEP);
+	*/
+	//加入大招序列
+	UltimatePlayerQueue.Add(SpecifiedPlayer);
+	BattleLayout->RefreshUItimateOrder(UltimatePlayerQueue);
+	//判断是否是玩家回合
+	if (ProgressPhase != EProgressPhase::PP_B2a_PlayerActionTime) return;
+	if (ActivePlayerRef != UltimatePlayerQueue[0] && ActivePlayerRef != nullptr)
+	{
+		BattleLayout->HandleStatsPanelAnimating(ActivePlayerRef,false);
+	}
+	ReadyForUltimate(UltimatePlayerQueue[0]); 
+}
+
+void ABattleManager::ReadyForUltimate(ABattlePlayer* ReadyPlayer)
+{
+	ActivePlayerRef = ReadyPlayer;
+	ActivePlayerRef->AttackType = EAttackType::AT_Ultimate;
+	ProgressPhase = EProgressPhase::PP_B2a_PlayerActionTime;
+	DisplayLockedIconsAndSetTargets();
+	CameraForBuffSelections();
+	IAnimInterface* TempInterface = Cast<IAnimInterface>(ActivePlayerRef->GetMesh()->GetAnimInstance());
+	if (TempInterface)
+	{
+		TempInterface->SetUltimateReadyVFX(true);
+	}
+	BattleLayout->SwitchATKMode(EAttackType::AT_Ultimate);
+}
+
+void ABattleManager::RemoveUltimateTurn(AActor* CharRef)
+{
+	ABattlePlayer* Player = Cast<ABattlePlayer>(CharRef);
+	if (Player == nullptr) return;
+	bool bInUltimateTurn = Player->AttackType == EAttackType::AT_Ultimate;
+	if (!bInUltimateTurn) return;
+	UltimatePlayerQueue.RemoveAt(0);
+	//UI
+	BattleLayout->RefreshUItimateOrder(UltimatePlayerQueue);
 }
 
 void ABattleManager::CameraForBuffSelections()
