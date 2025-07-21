@@ -50,6 +50,16 @@ void ABattleCharacterBase::RefreshActionValueBySpd()
 	
 }
 
+void ABattleCharacterBase::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
+{
+	
+}
+
+void ABattleCharacterBase::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo)
+{
+	
+}
+
 void ABattleCharacterBase::GetFactionAVAvatar(bool& bPF, float& aV, UTexture2D* &AI)
 {
 	bPF = bPlayerFaction;

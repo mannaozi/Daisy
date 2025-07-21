@@ -34,6 +34,7 @@ public:
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;
+	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo) override;
 	/* Combat Interface */
 
 protected:

@@ -3,6 +3,7 @@
 
 #include "Character/BattleEnemy.h"
 #include "Components/WidgetComponent.h"
+#include "Debug/DebugHelper.h"
 
 ABattleEnemy::ABattleEnemy()
 {
@@ -19,6 +20,13 @@ void ABattleEnemy::UpdateLockIcon(bool bHide)
 void ABattleEnemy::RefreshActionValueBySpd()
 {
 	ActionValue = Distance / EnemyAtr.SPD;
+}
+
+void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo)
+{
+	if (bDead) return;
+	FString str = FString::SanitizeFloat(HP_Dmg);
+	Debug::Print(*str);
 }
 
 void ABattleEnemy::BeginPlay()

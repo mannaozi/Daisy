@@ -29,6 +29,48 @@ void ABattlePlayer::RefreshActionValueBySpd()
 	ActionValue = Distance / playerAtr.SPD;
 }
 
+void ABattlePlayer::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
+{
+	attackCountInOneCycle = AttackCountInOneCycle;
+	bool bCastingBuff = playerAtr.BuffSkillStats.Contains(ATKType);
+	if (bCastingBuff)
+	{
+		BuffInfo = *(playerAtr.BuffSkillStats.Find(ATKType));
+	}
+	else
+	{
+		BuffInfo.BuffType = EBuffTypes::BT_EMAX;
+		BuffInfo.BuffRatio = 0.0f;
+	}
+	if (!playerAtr.MultipleTargets.Contains(ATKType)) return;
+	if (*(playerAtr.MultipleTargets.Find(ATKType)))
+	{
+		//多人
+		for (auto ArrayElem : TargetActors)
+		{
+			ICombatInterface* Interface = Cast<ICombatInterface>(ArrayElem);
+			if (Interface)
+			{
+				float hpdmg;
+				float tdmg;
+				CalculateDmg(bCastingBuff,hpdmg,tdmg);
+				Interface->HitHandle(this,hpdmg,tdmg,BuffInfo);
+			}
+		}
+	}
+	else
+	{
+		ICombatInterface* Interface = Cast<ICombatInterface>(TargetActor);
+		if (Interface)
+		{
+			float hpdmg;
+			float tdmg;
+			CalculateDmg(bCastingBuff,hpdmg,tdmg);
+			Interface->HitHandle(this,hpdmg,tdmg,BuffInfo);
+		}
+	}
+}
+
 void ABattlePlayer::InitializeData()
 {
 	//初始化数据
@@ -244,6 +286,53 @@ void ABattlePlayer::HandleEP(EAttackType ATKType, bool bDirect, float val)
 	if (bDirect) {deltaEP = 0.0f;}
 	
 	CurEnergy = CurEnergy + deltaEP * 1.0f;
+}
+
+void ABattlePlayer::CalculateDmg(bool Buff, float& hpDmg, float& toughnessDmg)
+{
+	float f_hpDmg = 0.0f;
+	float f_toughnessDmg = 0.0f;
+	float f_ratio = 0.0f;
+	
+	switch (AttackType)
+	{
+	case EAttackType::AT_EMAX:
+		f_ratio = 0.0f;
+		break;
+	case EAttackType::AT_NormalATK:
+		f_ratio = 1.0f;
+		break;
+	case EAttackType::AT_SkillATK:
+		f_ratio = 1.0f;
+		break;
+	case EAttackType::AT_FollowTK:
+		f_ratio = 1.0f;
+		break;
+	case EAttackType::AT_Ultimate:
+		f_ratio = playerAtr.UltimateRatio;
+		break;
+	case EAttackType::AT_DelayATK_E:
+		f_ratio = 1.0f;
+		break;
+	default:
+		f_ratio = 0.0f;
+		break;
+	}
+	
+	if (Buff)
+	{
+		f_hpDmg = playerAtr.ATK / float(attackCountInOneCycle) * f_ratio * BuffInfo.BuffRatio;
+	}
+	else
+	{
+		f_hpDmg = playerAtr.ATK / float(attackCountInOneCycle) * f_ratio;
+	}
+
+	f_toughnessDmg = playerAtr.ATK / float(attackCountInOneCycle) * f_ratio;
+	
+	hpDmg = f_hpDmg;
+	toughnessDmg = f_toughnessDmg;
+	
 }
 
 void ABattlePlayer::BeginPlay()

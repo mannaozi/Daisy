@@ -42,6 +42,7 @@ public:
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;
+	virtual void SetATK(EAttackType ATKType, int32 AttackCountInOneCycle) override;
 	/* Combat Interface */
 
 	EAttackType AttackType {EAttackType::AT_NormalATK};
@@ -72,6 +73,8 @@ public:
 	void GeneralPlayerAttackOver();
 
 	void HandleEP(EAttackType ATKType,bool bDirect,float val);
+
+	void CalculateDmg(bool Buff,float &hpDmg,float &toughnessDmg);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -104,6 +107,9 @@ public:
 	AActor* RotateToTargetActor;
 	FVector TargetLocation;
 	TArray<AActor*> TargetActors;
+
+	float attackCountInOneCycle;
+	FBuffInfo BuffInfo;
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}
 };
