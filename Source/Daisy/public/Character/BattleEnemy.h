@@ -7,6 +7,7 @@
 #include "daisy/daisyEnum.h"
 #include "BattleEnemy.generated.h"
 
+class UHeadBarUI;
 /**
  * 
  */
@@ -17,8 +18,12 @@ class DAISY_API ABattleEnemy : public ABattleCharacterBase
 public:
 
 	ABattleEnemy();
+
+	void InitializeData();
 	
 	void UpdateLockIcon(bool bHide);
+
+	void UpdateHeadBar();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
 	FEnemyCharAttributes EnemyAtr;
@@ -31,11 +36,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	UWidgetComponent* HeadBar;
+
+	UHeadBarUI* HeadBarUI;
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;
 	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo) override;
 	/* Combat Interface */
+
+	float CurThoughness;
+	float MaxThoughness;
+	float CurHP;
+	float MaxHP;
+	float StunVFXHeight;
+	FVector originLocation;
+	TArray<ECombatType> Weaknesses;
+	TMap<FString,UAnimMontage*> AnimMontages;
+	TMap<FString,FEnemyATKInfo> ValidATKStr;
+	TMap<FString,float> choices;
 
 protected:
 	virtual void BeginPlay() override;

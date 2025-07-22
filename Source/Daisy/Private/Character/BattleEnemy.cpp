@@ -4,12 +4,43 @@
 #include "Character/BattleEnemy.h"
 #include "Components/WidgetComponent.h"
 #include "Debug/DebugHelper.h"
+#include "UI/HeadBarUI.h"
 
 ABattleEnemy::ABattleEnemy()
 {
 	HeadBar = CreateDefaultSubobject<UWidgetComponent>("Head Bar");
 	HeadBar->SetupAttachment(RootComponent);
 	HeadBar->bHiddenInGame = true;
+}
+
+void ABattleEnemy::InitializeData()
+{
+	//初始化数据
+	bPlayerFaction = false;
+	AvatarIcon = EnemyAtr.CharIcon_Banner;
+	CurThoughness = EnemyAtr.Toughness;
+	MaxThoughness = EnemyAtr.Toughness;
+	CurHP = EnemyAtr.HP;
+	MaxHP = EnemyAtr.HP;
+	StunVFXHeight = EnemyAtr.StunVFXHeight;
+	Weaknesses = EnemyAtr.Weaknesses;
+	AnimMontages = EnemyAtr.AnimMontages;
+	ValidATKStr = EnemyAtr.ValidATKStr;
+	choices = EnemyAtr.Choices;
+	originLocation = GetActorLocation();
+	// 初始化行动值
+	RefreshActionValueBySpd();
+	
+	HeadBarUI = Cast<UHeadBarUI>(HeadBar->GetUserWidgetObject());
+	if (HeadBarUI)
+	{
+		UpdateHeadBar();
+	}
+}
+
+void ABattleEnemy::UpdateHeadBar()
+{
+	HeadBarUI->UpdateEnemyHeadBar(CurHP, CurThoughness, MaxHP, MaxThoughness, Weaknesses);
 }
 
 void ABattleEnemy::UpdateLockIcon(bool bHide)
@@ -36,9 +67,5 @@ void ABattleEnemy::BeginPlay()
 	FString s = DataRow.ToString();
 	EnemyAtr = *(EnemyCharsDT->FindRow<FEnemyCharAttributes>(DataRow, s, true));
 	
-	//初始化数据
-	bPlayerFaction = false;
-	AvatarIcon = EnemyAtr.CharIcon_Banner;
-	// 初始化行动值
-	RefreshActionValueBySpd();
+	InitializeData();
 }
