@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/BattleEnemy.h"
 #include "UI/DaisyUserWidget.h"
 #include "BattleUserWidget.generated.h"
 
@@ -36,4 +37,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RefreshUItimateOrder(const TArray<ABattlePlayer*> &Players);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandlePhaseHintEnemy(ABattleEnemy* Player,bool bFixedCamera,EAttackType ATKType);
 };

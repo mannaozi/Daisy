@@ -359,7 +359,21 @@ void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
 
 void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
 {
-	Debug::Print("Enemy Turn !!");
+	
+	ProgressPhase = EProgressPhase::PP_B2b_EnemyActionTime;
+	BattleLayout->HideATKButtons();
+	if (activeEnemyChar->bStun)
+	{
+		activeEnemyChar->RecoverFromStun();
+		B3_TurnEnd(activeEnemyChar,true);
+	}
+	else
+	{
+		EAttackType EnemyAtkType = EAttackType::AT_NormalATK;
+		//
+		BattleLayout->HandlePhaseHintEnemy(activeEnemyChar,UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight,EnemyAtkType);
+		
+	}
 }
 
 void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)

@@ -7,6 +7,7 @@
 #include "daisy/daisyEnum.h"
 #include "BattleEnemy.generated.h"
 
+class AFloatingInicator;
 class UHeadBarUI;
 /**
  * 
@@ -24,6 +25,22 @@ public:
 	void UpdateLockIcon(bool bHide);
 
 	void UpdateHeadBar();
+
+	void HandleFX();
+	void EnterDialtion();
+	void ResetDilation();
+	void PlayerCameraShake();
+	bool HandleToughness(float ReceivedT,ECombatType CauserCType);
+	bool CheckElementATK(ECombatType CauserCType);
+	void HandleIndicatorNums(FVector Location,float FloatingNum);
+	float PlaySpecificAnim(const FString &AnimKey);
+	void EnterStun(int32 DelayTurns);
+	void PlayStunVFX();
+	void SetDelayedTarget(bool Delay,ABattlePlayer* Target);
+	void RecoverFromStun();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ExtraActionWhenStun(bool bEnter);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
 	FEnemyCharAttributes EnemyAtr;
@@ -37,6 +54,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	UWidgetComponent* HeadBar;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Presets")
+	UParticleSystem* StunVFX;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Presets")
+	TSubclassOf<UCameraShakeBase> NormalCS;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Presets")
+	TSubclassOf<UCameraShakeBase> SkillCS;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Presets")
+	TSubclassOf<UCameraShakeBase> FollowCS;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Presets")
+	TSubclassOf<UCameraShakeBase> UltimateCS;
+	
 	UHeadBarUI* HeadBarUI;
 	
 	/* Combat Interface */
@@ -54,7 +86,17 @@ public:
 	TMap<FString,UAnimMontage*> AnimMontages;
 	TMap<FString,FEnemyATKInfo> ValidATKStr;
 	TMap<FString,float> choices;
+	AActor* DmgCauser;
+	float ReceivedHPDmg;
+	int32 RecoverFromStunTurns = 0;
+	UParticleSystemComponent* StunVFXComp;
+	bool bDelayed_ATK = false;
+	ABattlePlayer* DelayedTarget;
+	
+	FTimerHandle DilationHandle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	TSubclassOf<AFloatingInicator> FloatingIndicatorClass;
 protected:
 	virtual void BeginPlay() override;
 };
