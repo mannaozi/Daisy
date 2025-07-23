@@ -38,6 +38,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Presets")
 	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
 	
+	FTimerHandle ResetBattleBooleanTimerHandle;
+	
+	void FinishBattle();
+
+	void ResetBattleBoolean();
 protected:
 	virtual void BeginPlay() override;
 	

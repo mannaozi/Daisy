@@ -40,4 +40,7 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void HandlePhaseHintEnemy(ABattleEnemy* Player,bool bFixedCamera,EAttackType ATKType);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BattleOverHint();
 };

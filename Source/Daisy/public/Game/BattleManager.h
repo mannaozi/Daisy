@@ -90,7 +90,14 @@ public:
 
 	UFUNCTION()
 	void EnemyTurnEnd(ABattleEnemy* enemyRef);
-	
+
+	// Battle Handle
+	void HandleDelays();
+	void BattleEndCameraStartingFade();
+	void CleanBattleField();
+	void PlayerWin();
+	void EnemyWin();
+	void ExitGame();
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -131,6 +138,8 @@ public:
 	
 	UBattleUserWidget* BattleLayout;
 
+	EBattleFlags curBattleFlag {EBattleFlags::BF_EMAX};
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Battle")
 	USoundBase* UnableSFX;
 	
@@ -150,4 +159,8 @@ public:
 	int32 SkillPoints = 2;
 	
 	FTimerHandle DisplayEnemyTimerHandle;
+	FTimerHandle HandleDelaysTimerHandle;
+	FTimerHandle BattleEndCameraStartingFadeTimerHandle;
+	FTimerHandle CleanBattleFieldTimerHandle;
+	FTimerHandle ExitGameTimerHandle;
 };

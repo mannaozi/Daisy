@@ -91,7 +91,100 @@ void ABattleManager::A1_PreInitializeBattle()
 
 void ABattleManager::A2_BattleEnd(EBattleFlags endResult)
 {
-	
+	// 若玩家胜利，从战斗状态过渡回探索状态；如果失败，则退出游戏
+	ProgressPhase = EProgressPhase::PP_A2_BattleEnd;
+
+	BattleLayout->BattleOverHint();
+
+	GetWorld()->GetTimerManager().SetTimer(HandleDelaysTimerHandle, this,
+		&ABattleManager::HandleDelays, 1.5f, false);
+}
+
+void ABattleManager::HandleDelays()
+{
+	// 去除战斗UI
+	BattleLayout->RemoveFromParent();
+	BattleLayout = nullptr;
+
+	// 1s后镜头开始变暗，切换回探索模式
+	GetWorld()->GetTimerManager().SetTimer(BattleEndCameraStartingFadeTimerHandle, this,
+		&ABattleManager::BattleEndCameraStartingFade, 1.0f, false);
+}
+
+void ABattleManager::BattleEndCameraStartingFade()
+{
+	// 开始变暗
+	UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->
+		StartCameraFade(0.0f, 1.0f, 1.0f, FColor::Black, false, true);
+
+	// 再延迟1.1s后，回复屏幕显示
+	GetWorld()->GetTimerManager().SetTimer(CleanBattleFieldTimerHandle, this,
+		&ABattleManager::CleanBattleField, 1.1f, false);
+}
+
+void ABattleManager::CleanBattleField()
+{
+	ActivePlayerRef = nullptr;
+	IndexForLockedTarget = 0;
+	for (auto ArrayElem : Player_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	for (auto ArrayElem : Enemies_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	for (auto ArrayElem : Dead_Enemies_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	for (auto ArrayElem : Dead_Player_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+
+	switch (curBattleFlag)
+	{
+	case EBattleFlags::BF_EMAX:
+		break;
+	case EBattleFlags::BF_ContinueBattle:
+		break;
+	case EBattleFlags::BF_PlayerWin:
+		PlayerWin();
+		break;
+	case EBattleFlags::BF_EnemyWin:
+		EnemyWin();
+		break;
+	default:
+		break;
+	}
+}
+
+void ABattleManager::PlayerWin()
+{
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(Player_World);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(Player_World);
+	BattlePawn->Destroy();
+	BattlePawn = nullptr;
+	Enemy_World->Destroy();
+	Player_World->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	Player_World->FinishBattle();
+	// 回复正常视野
+	UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->
+		StartCameraFade(1.0f, 0.0f, 0.5f, FColor::Black, false, false);
+}
+
+void ABattleManager::EnemyWin()
+{
+	// 延迟3s后退出游戏（也可以是主界面、取档界面等）
+	GetWorld()->GetTimerManager().SetTimer(ExitGameTimerHandle, this,
+		&ABattleManager::ExitGame, 1.1f, false);
+}
+
+void ABattleManager::ExitGame()
+{
+	// 退出游戏
+	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 }
 
 void ABattleManager::B1a_CalculateActionValue()
@@ -177,7 +270,6 @@ void ABattleManager::B1a_CalculateActionValue()
 	}
 
 	//检查是否战斗结束
-	EBattleFlags curBattleFlag = EBattleFlags::BF_EMAX;
 	curBattleFlag = CheckGameOver(Enemy_ActionValue, Player_ActionValue);
 	switch (curBattleFlag)
 	{
@@ -306,7 +398,6 @@ void ABattleManager::B1b_CalculateActionValue()
 	}
 
 	//检查是否战斗结束
-	EBattleFlags curBattleFlag = EBattleFlags::BF_EMAX;
 	curBattleFlag = CheckGameOver(Enemy_ActionValue, Player_ActionValue);
 	switch (curBattleFlag)
 	{

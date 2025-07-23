@@ -110,6 +110,18 @@ void ADaisyCharacter::Attack_Test()
 	}
 }
 
+void ADaisyCharacter::FinishBattle()
+{
+	// 1.8s后再进入战斗，避免连续进入战斗
+	GetWorld()->GetTimerManager().SetTimer(ResetBattleBooleanTimerHandle,
+		this, &ADaisyCharacter::ResetBattleBoolean, 1.8f, false);
+}
+
+void ADaisyCharacter::ResetBattleBoolean()
+{
+	bAttack = false;
+}
+
 void ADaisyCharacter::Move(const FInputActionValue& Value)
 {
 	if (!bOpenTeamUI && !bAttack)
