@@ -253,7 +253,24 @@ void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, 
 	//是否死亡
 	if (CurHP <= 0)
 	{
-		//
+		// TBD - 死亡逻辑
+		bDead = true;
+
+		PlaySpecificAnim("Die");
+
+		HeadBar->SetVisibility(false);
+
+		ExtraActionWhenStun(true);
+
+		// 如果该组件有效，则删除
+		if (StunVFXComp != nullptr)
+		{
+			StunVFXComp->DestroyComponent();
+			StunVFXComp = nullptr;
+		}
+
+		// 将死亡事件派发给Player，添加EP（能量）
+		OnEnemyDeath.Broadcast(this, DmgCauser);
 	}
 	else
 	{

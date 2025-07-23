@@ -7,6 +7,9 @@
 #include "daisy/daisyEnum.h"
 #include "BattleEnemy.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyDeath, ABattleEnemy*, enemyRef, AActor*, causerRef);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyTurnEnd, ABattleEnemy*, enemyRef);
+
 class AFloatingInicator;
 class UHeadBarUI;
 /**
@@ -70,6 +73,12 @@ public:
 	TSubclassOf<UCameraShakeBase> UltimateCS;
 	
 	UHeadBarUI* HeadBarUI;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Dispatcher")
+	FOnEnemyDeath OnEnemyDeath;
+
+	UPROPERTY(BlueprintAssignable, Category = "Dispatcher")
+	FOnEnemyTurnEnd OnEnemyTurnEnd;
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;

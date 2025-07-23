@@ -85,6 +85,11 @@ public:
 	//Camera
 	void CameraForBuffSelections();
 	
+	UFUNCTION()
+	void EnemyDeath(ABattleEnemy* enemyRef, AActor* causerRef);
+
+	UFUNCTION()
+	void EnemyTurnEnd(ABattleEnemy* enemyRef);
 	
 protected:
 	virtual void BeginPlay() override;

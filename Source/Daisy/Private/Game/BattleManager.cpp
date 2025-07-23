@@ -115,7 +115,9 @@ void ABattleManager::B1a_CalculateActionValue()
 		}
 		else
 		{
-			//TODO 被消灭敌人解绑函数
+			ArrayElem->OnEnemyTurnEnd.RemoveDynamic(this, &ABattleManager::EnemyTurnEnd);
+			ArrayElem->OnEnemyDeath.RemoveDynamic(this, &ABattleManager::EnemyDeath);
+			
 			Dead_Enemies_Arr.Add(ArrayElem);
 		}
 	}
@@ -1003,6 +1005,21 @@ void ABattleManager::CameraForBuffSelections()
 	}
 }
 
+void ABattleManager::EnemyDeath(ABattleEnemy* enemyRef, AActor* causerRef)
+{
+	ABattlePlayer* tempPlayerRef = Cast<ABattlePlayer>(causerRef);
+	if (tempPlayerRef != nullptr)
+	{
+		tempPlayerRef->HandleEP(EAttackType::AT_EMAX, true, 10.0f);
+	}	
+}
+
+void ABattleManager::EnemyTurnEnd(ABattleEnemy* enemyRef)
+{
+	// 敌人回合结束，消耗回合
+	B3_TurnEnd(enemyRef, true);
+}
+
 void ABattleManager::SetDeadPlayerLockedIcon()
 {
 	if (! Dead_Player_Arr.IsValidIndex(IndexForLockedTarget)) return;
@@ -1186,8 +1203,13 @@ void ABattleManager::SpawnEnemiesAndDecideLocation()
 		Rotation = FRotator(0,yaw,0);
 		TSubclassOf<ABattleEnemy> tempEnemyClass = *EnemyTeamInfo.Find(It.Key());
 		ABattleEnemy* enemyTemp = GetWorld()->SpawnActor<ABattleEnemy>(tempEnemyClass, Location, Rotation);
-		Enemies_Arr.AddUnique(enemyTemp); 
+		Enemies_Arr.AddUnique(enemyTemp);
+		
+		// 绑定敌人回合结束后的回调
+		enemyTemp->OnEnemyTurnEnd.AddDynamic(this, &ABattleManager::EnemyTurnEnd);
 
+		// 绑定敌人被击败后的回调
+		enemyTemp->OnEnemyDeath.AddDynamic(this, &ABattleManager::EnemyDeath);
 	}
 }
 
