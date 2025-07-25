@@ -36,11 +36,23 @@ public:
 	bool HandleToughness(float ReceivedT,ECombatType CauserCType);
 	bool CheckElementATK(ECombatType CauserCType);
 	void HandleIndicatorNums(FVector Location,float FloatingNum);
+	
+	UFUNCTION(BlueprintCallable)
 	float PlaySpecificAnim(const FString &AnimKey);
+	UFUNCTION(BlueprintCallable)
+	void EndEnemyTurnFromBP(ABattleEnemy* ActiveActor);
+	
 	void EnterStun(int32 DelayTurns);
 	void PlayStunVFX();
 	void SetDelayedTarget(bool Delay,ABattlePlayer* Target);
 	void RecoverFromStun();
+	EAttackType ActionDecision(const TArray<ABattlePlayer*> playersRef);
+	FString RandomActionByRatio();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SingleATK(ABattlePlayer* Target);
+	UFUNCTION(BlueprintImplementableEvent)
+	void RadialATK(const TArray<ABattlePlayer*> &Target);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExtraActionWhenStun(bool bEnter);
@@ -90,6 +102,7 @@ public:
 	float CurHP;
 	float MaxHP;
 	float StunVFXHeight;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FVector originLocation;
 	TArray<ECombatType> Weaknesses;
 	TMap<FString,UAnimMontage*> AnimMontages;
@@ -101,6 +114,16 @@ public:
 	UParticleSystemComponent* StunVFXComp;
 	bool bDelayed_ATK = false;
 	ABattlePlayer* DelayedTarget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")
+	FString actionAnimKey;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")
+	bool bRadialATK;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")
+	bool bRangeATK;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")
+	int32 ATKDistance;
+
 	
 	FTimerHandle DilationHandle;
 

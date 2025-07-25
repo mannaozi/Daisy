@@ -462,7 +462,8 @@ void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
 	}
 	else
 	{
-		EAttackType EnemyAtkType = EAttackType::AT_NormalATK;
+		// 攻击逻辑
+		EAttackType EnemyAtkType = activeEnemyChar->ActionDecision(Player_Arr);	
 		//
 		BattleLayout->HandlePhaseHintEnemy(activeEnemyChar,UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight,EnemyAtkType);
 		
@@ -868,6 +869,8 @@ void ABattleManager::SwitchAndHideOtherPlayerChars(bool bHideOther, ABattlePlaye
 		ArrayElem->SetHiddenForPlayer(bHideOther);
 	}
 	ActiveChar->SetHiddenForPlayer(false);
+	// 自动切换视角
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(ActiveChar);
 }
 
 void ABattleManager::ExecuteAction(EAttackType ATKType)

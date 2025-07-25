@@ -5,10 +5,14 @@
 #include "Actors/FloatingInicator.h"
 #include "Character/BattlePlayer.h"
 #include "Components/WidgetComponent.h"
+#include "daisy/DaisyBlueprintFunctionLibrary.h"
 #include "Debug/DebugHelper.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "UI/HeadBarUI.h"
+#include "Game/DaisyGameInstance.h"
+#include "Game/BattleManager.h"
 
 ABattleEnemy::ABattleEnemy()
 {
@@ -150,6 +154,11 @@ float ABattleEnemy::PlaySpecificAnim(const FString& AnimKey)
 	return AnimTime;
 }
 
+void ABattleEnemy::EndEnemyTurnFromBP(ABattleEnemy* ActiveActor)
+{
+	OnEnemyTurnEnd.Broadcast(ActiveActor);
+}
+
 void ABattleEnemy::EnterStun(int32 DelayTurns)
 {
 	bStun = true;
@@ -179,7 +188,21 @@ void ABattleEnemy::PlayStunVFX()
 
 void ABattleEnemy::SetDelayedTarget(bool Delay, ABattlePlayer* Target)
 {
-	//
+	// BOSS战时需设置
+	bDelayed_ATK = Delay;
+	if(Target == nullptr) return;
+	// 设置玩家角色的锁定图标
+	Target->SetDelayedMark(bDelayed_ATK);
+
+	// 根据锁定的布尔值，重置延迟锁定目标
+	if (bDelayed_ATK)
+	{
+		DelayedTarget = Target;
+	}
+	else
+	{
+		DelayedTarget = nullptr;
+	}
 }
 
 void ABattleEnemy::RecoverFromStun()
@@ -198,6 +221,145 @@ void ABattleEnemy::RecoverFromStun()
 		StunVFXComp->DestroyComponent();
 		StunVFXComp = nullptr;
 	}
+}
+
+EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef)
+{
+	TArray<ABattlePlayer*> l_playerRef = playersRef;
+	if (DelayedTarget != nullptr)
+	{
+		if (!DelayedTarget->bDead && bDelayed_ATK)
+		{
+			// 优先延迟攻击
+			actionAnimKey = "DelayedATK";
+		}
+		else
+		{
+			actionAnimKey = RandomActionByRatio();
+		}
+	}
+	else
+	{
+		actionAnimKey = RandomActionByRatio();
+	}
+
+	if(actionAnimKey == "None") return EAttackType::AT_EMAX;
+
+	// 是否范围攻击？远程攻击？攻击距离是？
+	if(!ValidATKStr.Contains(actionAnimKey)) return EAttackType::AT_EMAX;
+	bRadialATK = ValidATKStr.Find(actionAnimKey)->bRadialAction;
+	bRangeATK = ValidATKStr.Find(actionAnimKey)->bRangeAction;
+	ATKDistance = int32(ValidATKStr.Find(actionAnimKey)->ATK_Distance);
+
+	if (bRadialATK)
+	{
+		// 范围攻击
+		RadialATK(l_playerRef);
+		// 如果切换视角，切换至受击的玩家角色视角
+		if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+		{
+			return EAttackType::AT_SkillATK;
+		}
+		else
+		{
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_playerRef[0]);
+			return EAttackType::AT_SkillATK;
+		}	
+	}
+	else
+	{
+		if (bDelayed_ATK)
+		{
+			// 延迟攻击
+			SingleATK(DelayedTarget);
+			// 延迟攻击已结束，重置相关bool
+			SetDelayedTarget(false, DelayedTarget);
+			// 如果切换视角，切换至受击的玩家角色视角
+			if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+			{
+				return EAttackType::AT_DelayATK_E;
+			}
+			else
+			{
+				UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, DelayedTarget);
+				return EAttackType::AT_DelayATK_E;
+			}		
+		}
+		else
+		{
+			// 普通单体攻击时，优先攻击带盾（嘲讽效果）的玩家角色
+			// 具体表现为查找特定tag
+			ABattlePlayer* l_ShieldPlayerRef = nullptr;
+
+			for (auto ArrayElem : l_playerRef)
+			{
+				if (ArrayElem->ActorHasTag("tag_shield"))
+				{
+					l_ShieldPlayerRef = ArrayElem;
+				}
+			}
+
+			if (l_ShieldPlayerRef != nullptr)
+			{
+				// 有套盾对象（使用Enemy的SingleATK函数）
+				SingleATK(l_ShieldPlayerRef);
+				// 如果切换视角，切换至受击的玩家角色视角
+				if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+				{
+					return EAttackType::AT_NormalATK;
+				}
+				else
+				{
+					UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_ShieldPlayerRef);
+					return EAttackType::AT_NormalATK;
+				}
+			}
+			else
+			{
+				// 无套盾对象
+				ABattlePlayer* l_TargetActor = nullptr;
+				// 打乱数组l_playerRef后取第一个，相当于随机取一个
+				l_TargetActor = l_playerRef[FMath::RandRange(0, (l_playerRef.Num()-1))];
+
+				if(l_TargetActor == nullptr) return EAttackType::AT_EMAX;
+
+				// 单体攻击
+				SingleATK(l_TargetActor);
+
+				// 如果切换视角，切换至受击的玩家角色视角
+				if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
+				{
+					return EAttackType::AT_NormalATK;
+				}
+				else
+				{
+					UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_TargetActor);
+					return EAttackType::AT_NormalATK;
+				}
+			}
+		}
+	}	
+}
+
+FString ABattleEnemy::RandomActionByRatio()
+{
+	// 按照概率选择攻击招式（在DataTable中设置概率，至少有一个攻击应为1.0概率，兜底）
+	TArray<FString> l_StrChoices;
+	choices.GenerateKeyArray(l_StrChoices);
+	for (auto ArrayElem : l_StrChoices)
+	{
+		//必然存在，故无需用Contain检查；若为空，则报错
+		if(!choices.Contains(ArrayElem)) return "None";
+
+		bool l_selected = UKismetMathLibrary::RandomBoolWithWeight(*(choices.Find(ArrayElem)));
+		if (l_selected)
+		{
+			// 立刻跳出
+			return ArrayElem;
+		}		
+	}
+
+	return "None";
 }
 
 void ABattleEnemy::UpdateLockIcon(bool bHide)

@@ -337,6 +337,11 @@ void ABattlePlayer::CalculateDmg(bool Buff, float& hpDmg, float& toughnessDmg)
 	
 }
 
+void ABattlePlayer::SetDelayedMark(bool bNewVisibility)
+{
+	MarkedIcon->bHiddenInGame = !bNewVisibility;
+}
+
 void ABattlePlayer::BeginPlay()
 {
 	Super::BeginPlay();

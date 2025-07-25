@@ -75,7 +75,8 @@ public:
 	void HandleEP(EAttackType ATKType,bool bDirect,float val);
 
 	void CalculateDmg(bool Buff,float &hpDmg,float &toughnessDmg);
-	
+
+	void SetDelayedMark(bool bNewVisibility);
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
