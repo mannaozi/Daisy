@@ -8,7 +8,7 @@ public class Daisy : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore","EnhancedInput","AIModule"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore","EnhancedInput","AIModule","Niagara" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayAbilities","GameplayTags","GameplayTasks","AIModule","NavigationSystem" });
 

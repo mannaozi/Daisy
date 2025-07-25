@@ -158,6 +158,9 @@ public:
 	int32 IndexForLockedTarget = 2; //初始选择的敌人
 	int32 SkillPoints = 2;
 	
+	bool bTryFollowingATK = false;
+	AActor* GuardedChar = nullptr;
+	
 	FTimerHandle DisplayEnemyTimerHandle;
 	FTimerHandle HandleDelaysTimerHandle;
 	FTimerHandle BattleEndCameraStartingFadeTimerHandle;

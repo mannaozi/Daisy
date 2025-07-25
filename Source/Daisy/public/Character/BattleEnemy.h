@@ -94,7 +94,8 @@ public:
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;
-	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo) override;
+	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info) override;
+	virtual void SetATK(EAttackType ATKType, int32 AttackCountInOneCycle) override;
 	/* Combat Interface */
 
 	float CurThoughness;
@@ -102,6 +103,7 @@ public:
 	float CurHP;
 	float MaxHP;
 	float StunVFXHeight;
+	float totalATK;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FVector originLocation;
 	TArray<ECombatType> Weaknesses;
@@ -114,6 +116,9 @@ public:
 	UParticleSystemComponent* StunVFXComp;
 	bool bDelayed_ATK = false;
 	ABattlePlayer* DelayedTarget;
+	
+	ABattlePlayer* currentTarget;
+	TArray<ABattlePlayer*> currentTargetsArr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")
 	FString actionAnimKey;

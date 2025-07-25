@@ -11,6 +11,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Actors/FloatingInicator.h"
+#include "daisy/daisyEnum.h"
 
 ABattlePlayer::ABattlePlayer()
 {
@@ -68,6 +70,133 @@ void ABattlePlayer::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
 			CalculateDmg(bCastingBuff,hpdmg,tdmg);
 			Interface->HitHandle(this,hpdmg,tdmg,BuffInfo);
 		}
+	}
+}
+
+void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
+{
+	// 受击逻辑
+	float l_RealRecievedDmg = HP_Dmg;
+	EBuffTypes BuffType = buff_Info.BuffType;
+	switch (BuffType)
+	{
+	case EBuffTypes::BT_EMAX:
+		
+		// 来自敌人攻击时再考虑防御力；增益魔法不考虑防御力
+			l_RealRecievedDmg = HP_Dmg * (200.0f / (200.0f + playerAtr.DEF));
+		
+		// 处理盾值和血量
+		HandleShieldAndHP(l_RealRecievedDmg);
+
+		// 判断播放受击动画还是击败动画（可复活）
+		if (CurHp <= 0.0f)
+		{
+			bDead = true;
+			PlaySpecifiedAnim("Die");
+		}
+		else
+		{
+			PlaySpecifiedAnim("Hit_F");
+			// 每受击1次增加能量，设定增加5点
+			HandleEP(EAttackType::AT_EMAX, true, 5.0f);
+		}
+		break;
+	case EBuffTypes::BT_Shield:
+		// TBD - 盾值不可叠加，但重复被释放可刷新持续时间
+
+			break;
+	case EBuffTypes::BT_Heal:
+		// TBD - 治疗
+
+			break;
+	case EBuffTypes::BT_Resurrection:
+		// TBD - 复活逻辑
+
+			break;
+	case EBuffTypes::BT_MoveForward:
+		// TBD - 行动提前（拉条）
+			
+			break;
+	default:
+		break;
+	}
+}
+
+void ABattlePlayer::HandleShieldAndHP(float dmg)
+{
+	// 有套盾先扣盾值，盾值不够再扣血，无套盾直接扣血
+	if (CurShield > 0.0f)
+	{
+		CurShield = CurShield - dmg;
+
+		// 生成白色数字
+		// 需传入显示的数字，故使用延迟生成
+		FTransform CustomTransform3;
+		CustomTransform3.GetLocation() = GetActorLocation();
+		CustomTransform3.GetRotation() = FQuat(0, 0, 0, 0);
+		CustomTransform3.GetScale3D() = FVector(1, 1, 1);
+		AFloatingInicator* l_FI3 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(FloatingIndicatorClass, CustomTransform3);
+		l_FI3->FloatingNum = dmg;
+		l_FI3->SpecifiedColor = FColor::White;
+		l_FI3->CurrentLocation = GetActorLocation();
+		l_FI3->FinishSpawning(CustomTransform3);
+
+		// 扣除后，是否还有剩余盾值
+		if (CurShield > 0.0f)
+		{
+			// 如有，释放套盾技能的玩家角色如果也存活，则追加攻击
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->bTryFollowingATK = true;
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->GuardedChar = this;
+		}
+		else
+		{
+			// 如果没有，则把curThougness不足的部分加算到血量上
+			// curToughness <= 0;
+			CurHp = CurHp + CurShield;
+			
+			// 生成红色数字
+			FTransform CustomTransform1;
+			CustomTransform1.GetLocation() = GetActorLocation();
+			CustomTransform1.GetRotation() = FQuat(0, 0, 0, 0);
+			CustomTransform1.GetScale3D() = FVector(1, 1, 1);
+			AFloatingInicator* l_FI1 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(
+				FloatingIndicatorClass, CustomTransform1);
+			l_FI1->FloatingNum = CurShield * (-1.0f);
+			l_FI1->SpecifiedColor = FColor::Red;
+			l_FI1->CurrentLocation = GetActorLocation();
+			l_FI1->FinishSpawning(CustomTransform1);
+
+			// 播放血量减少时的受击声音
+			//UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSFX, GetActorLocation());
+
+			// 重置盾值相关的变量值
+			CurShield = 0.0f;
+			shieldDuration = 0;
+			MaxShield = 0.0f;
+			Tags.Remove(*shieldTag);
+
+			// TBD - 删除盾的特效Actor
+
+		}
+	}
+	else
+	{
+		CurHp = FMath::Clamp(CurHp - dmg, 0.0f, MaxHP);
+
+		// 生成红色数字
+		FTransform CustomTransform2;
+		CustomTransform2.GetLocation() = GetActorLocation();
+		CustomTransform2.GetRotation() = FQuat(0, 0, 0, 0);
+		CustomTransform2.GetScale3D() = FVector(1, 1, 1);
+		AFloatingInicator* l_FI2 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(
+			FloatingIndicatorClass, CustomTransform2);
+		l_FI2->FloatingNum = dmg;
+		l_FI2->SpecifiedColor = FColor::Red;
+		l_FI2->CurrentLocation = GetActorLocation();
+		l_FI2->FinishSpawning(CustomTransform2);
+
+		// 播放血量减少时的受击声音
+		//UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSFX, GetActorLocation());
 	}
 }
 

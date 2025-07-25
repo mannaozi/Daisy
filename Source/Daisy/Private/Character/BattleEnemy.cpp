@@ -35,6 +35,7 @@ void ABattleEnemy::InitializeData()
 	AnimMontages = EnemyAtr.AnimMontages;
 	ValidATKStr = EnemyAtr.ValidATKStr;
 	choices = EnemyAtr.Choices;
+	totalATK = EnemyAtr.ATK;
 	originLocation = GetActorLocation();
 	// 初始化行动值
 	RefreshActionValueBySpd();
@@ -254,6 +255,7 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 	if (bRadialATK)
 	{
 		// 范围攻击
+		currentTargetsArr = l_playerRef;
 		RadialATK(l_playerRef);
 		// 如果切换视角，切换至受击的玩家角色视角
 		if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
@@ -271,6 +273,7 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 		if (bDelayed_ATK)
 		{
 			// 延迟攻击
+			currentTarget = DelayedTarget;
 			SingleATK(DelayedTarget);
 			// 延迟攻击已结束，重置相关bool
 			SetDelayedTarget(false, DelayedTarget);
@@ -302,6 +305,8 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 			if (l_ShieldPlayerRef != nullptr)
 			{
 				// 有套盾对象（使用Enemy的SingleATK函数）
+				DelayedTarget = l_ShieldPlayerRef;
+				currentTarget = l_ShieldPlayerRef;
 				SingleATK(l_ShieldPlayerRef);
 				// 如果切换视角，切换至受击的玩家角色视角
 				if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
@@ -324,6 +329,8 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 				if(l_TargetActor == nullptr) return EAttackType::AT_EMAX;
 
 				// 单体攻击
+				DelayedTarget = l_TargetActor;
+				currentTarget = l_TargetActor;
 				SingleATK(l_TargetActor);
 
 				// 如果切换视角，切换至受击的玩家角色视角
@@ -372,7 +379,7 @@ void ABattleEnemy::RefreshActionValueBySpd()
 	ActionValue = Distance / EnemyAtr.SPD;
 }
 
-void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo)
+void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
 {
 	if (bDead) return;
 	//FString str = FString::SanitizeFloat(HP_Dmg);
@@ -454,6 +461,40 @@ void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, 
 				str = "Hit2";
 			}
 			PlaySpecificAnim(str);
+		}
+	}
+}
+
+void ABattleEnemy::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
+{
+	FBuffInfo tempBuffInfo;
+	tempBuffInfo.BuffRatio = 0.0f;
+	tempBuffInfo.BuffType = EBuffTypes::BT_EMAX;
+
+	if (ATKType == EAttackType::AT_DelayATK_E)
+	{
+		SetDelayedTarget(true, currentTarget);
+	}
+	else
+	{
+		if (bRadialATK)
+		{
+			for (auto ArrayElem : currentTargetsArr)
+			{
+				ICombatInterface* tempInterface = Cast<ICombatInterface>(ArrayElem);
+				if (tempInterface)
+				{
+					tempInterface->HitHandle(this, (totalATK / AttackCountInOneCycle), 0.0f, tempBuffInfo);
+				}
+			}
+		}
+		else
+		{
+			ICombatInterface* tempInterface = Cast<ICombatInterface>(currentTarget);
+			if (tempInterface)
+			{
+				tempInterface->HitHandle(this, (totalATK / AttackCountInOneCycle), 0.0f, tempBuffInfo);
+			}
 		}
 	}
 }

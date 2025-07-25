@@ -866,7 +866,7 @@ void ABattleManager::SwitchAndHideOtherPlayerChars(bool bHideOther, ABattlePlaye
 	TeamInstForUI.GenerateValueArray(TempPlayers);
 	for (auto ArrayElem : TempPlayers)
 	{
-		ArrayElem->SetHiddenForPlayer(bHideOther);
+		//ArrayElem->SetHiddenForPlayer(bHideOther);
 	}
 	ActiveChar->SetHiddenForPlayer(false);
 	// 自动切换视角

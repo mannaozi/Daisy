@@ -55,7 +55,7 @@ void ABattleCharacterBase::SetATK(EAttackType ATKType, int32 AttackCountInOneCyc
 	
 }
 
-void ABattleCharacterBase::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo BuffInfo)
+void ABattleCharacterBase::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
 {
 	
 }

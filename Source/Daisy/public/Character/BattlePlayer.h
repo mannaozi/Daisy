@@ -11,7 +11,7 @@
 struct FPlayerCharAttributes;
 class UCurveFloat;
 struct FTimeline;
-
+class AFloatingInicator;
 /**
  * 
  */
@@ -40,9 +40,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	UWidgetComponent* MarkedIcon;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
+	TSubclassOf<AFloatingInicator> FloatingIndicatorClass;
+	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;
 	virtual void SetATK(EAttackType ATKType, int32 AttackCountInOneCycle) override;
+	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info) override;
 	/* Combat Interface */
 
 	EAttackType AttackType {EAttackType::AT_NormalATK};
@@ -77,6 +81,8 @@ public:
 	void CalculateDmg(bool Buff,float &hpDmg,float &toughnessDmg);
 
 	void SetDelayedMark(bool bNewVisibility);
+
+	void HandleShieldAndHP(float dmg);
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -111,6 +117,8 @@ public:
 
 	float attackCountInOneCycle;
 	FBuffInfo BuffInfo;
+	int32 shieldDuration = 0;
+	FString shieldTag = FString("tag_shield");
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}
 };
