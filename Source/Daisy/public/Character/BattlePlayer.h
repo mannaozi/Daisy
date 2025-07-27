@@ -87,6 +87,7 @@ public:
 	void SpawnFloatingAndPlaySound(FVector loc, float num, FColor col);
 
 	void Healing(float val);
+	void AddShieldBuff(float val);
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -123,6 +124,9 @@ public:
 	FBuffInfo BuffInfo;
 	int32 shieldDuration = 0;
 	FString shieldTag = FString("tag_shield");
+	AActor* shieldGuard = nullptr;
+	AActor* DmgCauser = nullptr;
+	float receivedDmg = 0.0f;
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}
 };

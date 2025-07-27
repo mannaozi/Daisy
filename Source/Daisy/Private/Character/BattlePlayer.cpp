@@ -76,6 +76,8 @@ void ABattlePlayer::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
 void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
 {
 	// 受击逻辑
+	DmgCauser = causer;
+	receivedDmg = HP_Dmg;
 	float l_RealRecievedDmg = HP_Dmg;
 	EBuffTypes BuffType = buff_Info.BuffType;
 	switch (BuffType)
@@ -102,11 +104,11 @@ void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg,
 		}
 		break;
 	case EBuffTypes::BT_Shield:
-		// TBD - 盾值不可叠加，但重复被释放可刷新持续时间
-
+		// 盾值不可叠加，但重复被释放可刷新持续时间
+			AddShieldBuff(receivedDmg);
 			break;
 	case EBuffTypes::BT_Heal:
-		// TBD - 治疗
+		//治疗
 			Healing(l_RealRecievedDmg);	
 			break;
 	case EBuffTypes::BT_Resurrection:
@@ -128,6 +130,26 @@ void ABattlePlayer::Healing(float val)
 	FVector l_loc = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - 80.0f);
 	CurHp = FMath::Clamp(CurHp + val, 0.0f, MaxHP);
 	SpawnFloatingAndPlaySound(GetActorLocation(), val, FColor::Green);
+}
+
+void ABattlePlayer::AddShieldBuff(float val)
+{
+	// 给玩家角色属性刷新临时盾值
+	CurShield = MaxShield = val;
+	
+	// 设置持续回合数
+	shieldDuration = 1;
+
+	// 尝试删除盾的标签后再加上
+	Tags.Remove(*shieldTag);
+	Tags.Add(*shieldTag);
+
+	// 明确发动追加攻击的对象
+	shieldGuard = DmgCauser;
+
+	// 弹出盾值数字和播放声音
+	SpawnFloatingAndPlaySound(GetActorLocation(), receivedDmg, FColor::Cyan);
+
 }
 
 void ABattlePlayer::HandleShieldAndHP(float dmg)
@@ -163,8 +185,6 @@ void ABattlePlayer::HandleShieldAndHP(float dmg)
 			shieldDuration = 0;
 			MaxShield = 0.0f;
 			Tags.Remove(*shieldTag);
-
-			// TBD - 删除盾的特效Actor
 
 		}
 	}
