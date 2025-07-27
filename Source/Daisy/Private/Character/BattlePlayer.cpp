@@ -107,7 +107,7 @@ void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg,
 			break;
 	case EBuffTypes::BT_Heal:
 		// TBD - 治疗
-
+			Healing(l_RealRecievedDmg);	
 			break;
 	case EBuffTypes::BT_Resurrection:
 		// TBD - 复活逻辑
@@ -122,6 +122,14 @@ void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg,
 	}
 }
 
+void ABattlePlayer::Healing(float val)
+{
+	// 生成特效
+	FVector l_loc = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - 80.0f);
+	CurHp = FMath::Clamp(CurHp + val, 0.0f, MaxHP);
+	SpawnFloatingAndPlaySound(GetActorLocation(), val, FColor::Green);
+}
+
 void ABattlePlayer::HandleShieldAndHP(float dmg)
 {
 	// 有套盾先扣盾值，盾值不够再扣血，无套盾直接扣血
@@ -130,16 +138,7 @@ void ABattlePlayer::HandleShieldAndHP(float dmg)
 		CurShield = CurShield - dmg;
 
 		// 生成白色数字
-		// 需传入显示的数字，故使用延迟生成
-		FTransform CustomTransform3;
-		CustomTransform3.GetLocation() = GetActorLocation();
-		CustomTransform3.GetRotation() = FQuat(0, 0, 0, 0);
-		CustomTransform3.GetScale3D() = FVector(1, 1, 1);
-		AFloatingInicator* l_FI3 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(FloatingIndicatorClass, CustomTransform3);
-		l_FI3->FloatingNum = dmg;
-		l_FI3->SpecifiedColor = FColor::White;
-		l_FI3->CurrentLocation = GetActorLocation();
-		l_FI3->FinishSpawning(CustomTransform3);
+		SpawnFloatingAndPlaySound(GetActorLocation(), dmg, FColor::White);
 
 		// 扣除后，是否还有剩余盾值
 		if (CurShield > 0.0f)
@@ -155,17 +154,7 @@ void ABattlePlayer::HandleShieldAndHP(float dmg)
 			CurHp = CurHp + CurShield;
 			
 			// 生成红色数字
-			FTransform CustomTransform1;
-			CustomTransform1.GetLocation() = GetActorLocation();
-			CustomTransform1.GetRotation() = FQuat(0, 0, 0, 0);
-			CustomTransform1.GetScale3D() = FVector(1, 1, 1);
-			AFloatingInicator* l_FI1 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(
-				FloatingIndicatorClass, CustomTransform1);
-			l_FI1->FloatingNum = CurShield * (-1.0f);
-			l_FI1->SpecifiedColor = FColor::Red;
-			l_FI1->CurrentLocation = GetActorLocation();
-			l_FI1->FinishSpawning(CustomTransform1);
-
+			SpawnFloatingAndPlaySound(GetActorLocation(), CurShield * (-1.0f), FColor::Red);
 			// 播放血量减少时的受击声音
 			//UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSFX, GetActorLocation());
 
@@ -184,20 +173,26 @@ void ABattlePlayer::HandleShieldAndHP(float dmg)
 		CurHp = FMath::Clamp(CurHp - dmg, 0.0f, MaxHP);
 
 		// 生成红色数字
-		FTransform CustomTransform2;
-		CustomTransform2.GetLocation() = GetActorLocation();
-		CustomTransform2.GetRotation() = FQuat(0, 0, 0, 0);
-		CustomTransform2.GetScale3D() = FVector(1, 1, 1);
-		AFloatingInicator* l_FI2 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(
-			FloatingIndicatorClass, CustomTransform2);
-		l_FI2->FloatingNum = dmg;
-		l_FI2->SpecifiedColor = FColor::Red;
-		l_FI2->CurrentLocation = GetActorLocation();
-		l_FI2->FinishSpawning(CustomTransform2);
+		SpawnFloatingAndPlaySound(GetActorLocation(), dmg, FColor::Red);
 
 		// 播放血量减少时的受击声音
 		//UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSFX, GetActorLocation());
 	}
+}
+
+void ABattlePlayer::SpawnFloatingAndPlaySound(FVector loc, float num, FColor col)
+{
+	// 需传入显示的数字，故使用延迟生成
+	FTransform CustomTransform;
+	CustomTransform.GetLocation() = loc;
+	CustomTransform.GetRotation() = FQuat(0, 0, 0, 0);
+	CustomTransform.GetScale3D() = FVector(1, 1, 1);
+	AFloatingInicator* l_FI3 = GetWorld()->SpawnActorDeferred<AFloatingInicator>(
+		FloatingIndicatorClass, CustomTransform);
+	l_FI3->FloatingNum = num;
+	l_FI3->SpecifiedColor = col;
+	l_FI3->CurrentLocation = GetActorLocation();
+	l_FI3->FinishSpawning(CustomTransform);
 }
 
 void ABattlePlayer::InitializeData()

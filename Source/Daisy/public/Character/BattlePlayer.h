@@ -83,6 +83,10 @@ public:
 	void SetDelayedMark(bool bNewVisibility);
 
 	void HandleShieldAndHP(float dmg);
+
+	void SpawnFloatingAndPlaySound(FVector loc, float num, FColor col);
+
+	void Healing(float val);
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
