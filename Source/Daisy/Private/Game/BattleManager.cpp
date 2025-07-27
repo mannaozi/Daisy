@@ -422,6 +422,19 @@ void ABattleManager::CheckPlayerRevive()
 {
 	
 }
+
+void ABattleManager::StartFollowingATK(AActor* atkTarget)
+{
+	ProgressPhase = EProgressPhase::PP_B2c_Animating;
+	HideAllLockedIcons();
+	if(ActivePlayerRef == nullptr) return;
+	// 追加攻击只打一人（示例）
+	ActivePlayerRef->SingleAtk(atkTarget, false, IsMeleeAction(), EAttackType::AT_FollowTK);
+
+	FString name = ActivePlayerRef->playerAtr.CharName;
+	BattleLayout->FollowATKHint(name);
+}
+
 void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
 {
 	ActivePlayerRef = activePlayerChar;
@@ -486,7 +499,12 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	//消耗回合数的情况下，减少Buff的持续回合数，重置ActionValue，检查追加攻击。
 	if (bConsumeTurn)
 	{
-		
+		// 减少Buff的持续回合数（如套盾）
+		ICombatInterface* tempCombatInterface = Cast<ICombatInterface>(EndTurnActor);
+		if (tempCombatInterface != nullptr)
+		{
+			tempCombatInterface->CountBuffsTimer();
+		}
 	}
 	ResetActionValueAndATKType(bConsumeTurn,EndTurnActor);
 	//重置UI面板
@@ -496,7 +514,21 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 		BattleLayout->HandleStatsPanelAnimating(Player,false);
 	}
 	//检测是否执行追加攻击
-	
+	if (bTryFollowingATK && GuardedChar != nullptr)
+	{
+		// 发起追加攻击
+		bTryFollowingATK = false;
+		B1b_CalculateActionValue();
+		// 检查守护者是否死亡、晕眩
+		ICombatInterface* tempCombatInterface = Cast<ICombatInterface>(GuardedChar);
+		if (tempCombatInterface != nullptr)
+		{
+			tempCombatInterface->TryFollowingATK();
+		}
+		GuardedChar = nullptr;
+		// 跳出
+		return;
+	}
 	//检查是否有大招在等待
 	if (UltimatePlayerQueue.Num() > 0)
 	{
@@ -912,6 +944,7 @@ void ABattleManager::HandlePlayerATK(EAttackType AttackType)
 		if (SkillPoints <= 0)
 		{
 			UGameplayStatics::SpawnSound2D(GetWorld(),UnableSFX);
+			return;
 		}
 	}
 	if (ActivePlayerRef->AttackType != AttackType)

@@ -124,6 +124,32 @@ void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg,
 	}
 }
 
+void ABattlePlayer::CountBuffsTimer()
+{
+	CheckShieldModifier();
+}
+
+void ABattlePlayer::TryFollowingATK()
+{
+	// 检查是否可动作
+	ABattlePlayer* l_playerChar = Cast<ABattlePlayer>(shieldGuard);
+	if (l_playerChar != nullptr)
+	{
+		if (!l_playerChar->bStun && !l_playerChar->bDead)
+		{
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->ActivePlayerRef = l_playerChar;
+			// 执行追加攻击动画；传入攻击对象DmgCauser
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->StartFollowingATK(DmgCauser);
+
+			// 记得跳出，等到追加攻击完成后，再进入下一个动作
+			return;
+		}
+	}
+
+	// 结束回合，不消耗回合数
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->B3_TurnEnd(nullptr, false);
+}
+
 void ABattlePlayer::Healing(float val)
 {
 	// 生成特效
@@ -150,6 +176,23 @@ void ABattlePlayer::AddShieldBuff(float val)
 	// 弹出盾值数字和播放声音
 	SpawnFloatingAndPlaySound(GetActorLocation(), receivedDmg, FColor::Cyan);
 
+}
+
+void ABattlePlayer::CheckShieldModifier()
+{
+	if (shieldDuration != 0)
+	{
+		--shieldDuration;
+	}
+	else
+	{
+		// 重置
+		shieldDuration = 0;
+		CurShield = 0.0f;
+		MaxShield = 0.0f;
+		Tags.Remove(*shieldTag);
+		shieldGuard = nullptr;
+	}
 }
 
 void ABattlePlayer::HandleShieldAndHP(float dmg)

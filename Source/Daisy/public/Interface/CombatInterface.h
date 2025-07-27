@@ -22,4 +22,6 @@ public:
 	virtual void RefreshActionValueBySpd() = 0;
 	virtual void SetATK(EAttackType ATKType,int32 AttackCountInOneCycle) = 0;
 	virtual void HitHandle(AActor* causer,float HP_Dmg,float Toughness_Dmg,FBuffInfo BuffInfo) = 0;
+	virtual void CountBuffsTimer() = 0;
+	virtual void TryFollowingATK() = 0;
 };

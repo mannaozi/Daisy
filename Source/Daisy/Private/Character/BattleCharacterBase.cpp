@@ -60,6 +60,16 @@ void ABattleCharacterBase::HitHandle(AActor* causer, float HP_Dmg, float Toughne
 	
 }
 
+void ABattleCharacterBase::CountBuffsTimer()
+{
+	
+}
+
+void ABattleCharacterBase::TryFollowingATK()
+{
+	
+}
+
 void ABattleCharacterBase::GetFactionAVAvatar(bool& bPF, float& aV, UTexture2D* &AI)
 {
 	bPF = bPlayerFaction;

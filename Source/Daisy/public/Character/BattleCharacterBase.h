@@ -52,6 +52,8 @@ public:
 	virtual void RefreshActionValueBySpd() override;
 	virtual void SetATK(EAttackType ATKType,int32 AttackCountInOneCycle) override;
 	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info) override;
+	virtual void CountBuffsTimer() override;
+	virtual void TryFollowingATK() override;
 	/* Combat Interface */
 	
 };

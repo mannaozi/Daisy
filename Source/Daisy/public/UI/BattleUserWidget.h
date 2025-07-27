@@ -43,4 +43,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BattleOverHint();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void FollowATKHint(const FString &charName);
 };

@@ -82,6 +82,7 @@ public:
 	void ReadyForUltimate(ABattlePlayer* ReadyPlayer);
 	void RemoveUltimateTurn(AActor* CharRef);
 	void CheckPlayerRevive();
+	void StartFollowingATK(AActor* atkTarget);
 	//Camera
 	void CameraForBuffSelections();
 	
