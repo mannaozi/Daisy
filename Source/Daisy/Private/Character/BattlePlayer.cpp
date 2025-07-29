@@ -112,12 +112,12 @@ void ABattlePlayer::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg,
 			Healing(l_RealRecievedDmg);	
 			break;
 	case EBuffTypes::BT_Resurrection:
-		// TBD - 复活逻辑
-
+		//复活逻辑
+			Resurrection();
 			break;
 	case EBuffTypes::BT_MoveForward:
-		// TBD - 行动提前（拉条）
-			
+		// 行动提前（拉条）
+			MoveForward();
 			break;
 	default:
 		break;
@@ -193,6 +193,24 @@ void ABattlePlayer::CheckShieldModifier()
 		Tags.Remove(*shieldTag);
 		shieldGuard = nullptr;
 	}
+}
+
+void ABattlePlayer::Resurrection()
+{
+	bDead = false;
+
+	StopAnimMontage();
+
+	// 仅1点血
+	CurHp = 1.0f;
+
+	RefreshActionValueBySpd();
+}
+
+void ABattlePlayer::MoveForward()
+{
+	ActionValue -= 50;
+	ActionValue = FMath::Max(0.0f, ActionValue);
 }
 
 void ABattlePlayer::HandleShieldAndHP(float dmg)

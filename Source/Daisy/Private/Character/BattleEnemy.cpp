@@ -16,9 +16,19 @@
 
 ABattleEnemy::ABattleEnemy()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	HeadBar = CreateDefaultSubobject<UWidgetComponent>("Head Bar");
 	HeadBar->SetupAttachment(RootComponent);
 	HeadBar->bHiddenInGame = true;
+}
+
+void ABattleEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	FVector WidgetLocation = HeadBar->GetComponentLocation();
+	FVector CameraLocation = UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation();
+	FRotator NewRotation = (CameraLocation - WidgetLocation).Rotation();
+	HeadBar->SetWorldRotation(NewRotation);
 }
 
 void ABattleEnemy::InitializeData()

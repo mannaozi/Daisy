@@ -23,6 +23,8 @@ public:
 
 	ABattleEnemy();
 
+	virtual void Tick(float DeltaTime) override;
+	
 	void InitializeData();
 	
 	void UpdateLockIcon(bool bHide);

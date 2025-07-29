@@ -91,6 +91,8 @@ public:
 	void Healing(float val);
 	void AddShieldBuff(float val);
 	void CheckShieldModifier();
+	void Resurrection();
+	void MoveForward();
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

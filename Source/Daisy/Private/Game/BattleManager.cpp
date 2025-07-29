@@ -420,7 +420,51 @@ void ABattleManager::B1b_CalculateActionValue()
 
 void ABattleManager::CheckPlayerRevive()
 {
-	
+	// 若复活，重新在行动列表上显示
+	TArray<ABattlePlayer*> l_SortedRefs;
+	// 为了不卡顿，分离deadPlayerRefArr遍历时的对象
+	TArray<ABattlePlayer*> l_d_arr = Dead_Player_Arr;
+	for (auto ArrayElem : l_d_arr)
+	{
+		if (!ArrayElem->bDead)
+		{
+			Player_Arr.AddUnique(ArrayElem);
+			Dead_Player_Arr.Remove(ArrayElem);
+		}
+	}
+
+	// 按队伍顺序，在玩家角色数组中重新排列位置
+	TMap<ABattlePlayer*, int32> l_AbsoluteIndex;
+	TMap<ABattlePlayer*, int32> l_FilteredIndex;
+	TArray<ABattlePlayer*> l_pr_arr;
+	TeamInstForUI.GenerateValueArray(l_pr_arr);
+	for (int32 i = 0; i < l_pr_arr.Num(); i++)
+	{
+		l_AbsoluteIndex.Add(l_pr_arr[i], i+1);
+	}
+	for (ABattlePlayer* ArrayElem : Player_Arr)
+	{
+		
+		int32 deadPlayerIndex = *(l_AbsoluteIndex.Find(ArrayElem));
+		l_FilteredIndex.Add(ArrayElem, deadPlayerIndex);
+	}
+	for (int32 i = 0; i <= 3; i++)
+	{
+		TArray<int32> l_int_arr;
+		int32 min_index;
+		int32 min_val;
+		l_FilteredIndex.GenerateValueArray(l_int_arr);
+		UKismetMathLibrary::MinOfIntArray(l_int_arr, min_index, min_val);
+		TArray<ABattlePlayer*> l_player_arr;
+		l_FilteredIndex.GenerateKeyArray(l_player_arr);
+		if(!l_player_arr.IsValidIndex(min_index)) return;
+		ABattlePlayer* l_player = l_player_arr[min_index];
+		if(l_player == nullptr) return;
+		l_SortedRefs.AddUnique(l_player);
+		l_FilteredIndex.Remove(l_player);
+	}
+
+	Player_Arr = l_SortedRefs;
 }
 
 void ABattleManager::StartFollowingATK(AActor* atkTarget)
@@ -846,7 +890,7 @@ void ABattleManager::UpdatePlayerLockedIconToMultiple()
 	{
 		if (Dead_Player_Arr.Num() != 0)
 		{
-			IndexForLockedTarget = (Dead_Player_Arr.Num()-1) / 2;
+			IndexForLockedTarget = 0;
 		}
 		else
 		{
@@ -855,6 +899,7 @@ void ABattleManager::UpdatePlayerLockedIconToMultiple()
 		if (!Dead_Player_Arr.IsValidIndex(IndexForLockedTarget)) return;
 		if (Dead_Player_Arr[IndexForLockedTarget])
 		{
+			CurrentPlayerTarget = Dead_Player_Arr[IndexForLockedTarget];
 			Dead_Player_Arr[IndexForLockedTarget]->UpdateLockIcon(false);
 		}
 	}
