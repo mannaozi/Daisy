@@ -85,6 +85,7 @@ void ABattleManager::A1_PreInitializeBattle()
 		{
 			BattleLayout->ConstructDeferred(this);
 			BattleLayout->AddToViewport();
+			BattleLayout->DisplaySkillPoints(SkillPoints);
 		}
 	}
 }
@@ -1076,6 +1077,7 @@ void ABattleManager::HandlePlayerATK(EAttackType AttackType)
 		int32 skillPoints = SkillPoints + SkillPointsDelta;
 		SkillPoints = UKismetMathLibrary::Clamp(skillPoints,0,5);
 
+		BattleLayout->DisplaySkillPoints(skillPoints);
 		//UI文字提示
 		BattleLayout->HandlePhaseHint_CPP(ActivePlayerRef,AttackType);
 		//战斗中隐藏UI

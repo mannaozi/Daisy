@@ -46,4 +46,7 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void FollowATKHint(const FString &charName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DisplaySkillPoints(const int32& CharName);
 };

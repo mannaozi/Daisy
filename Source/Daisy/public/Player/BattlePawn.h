@@ -27,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TryEnterUltimate(int32 Index);
+
+	UFUNCTION(BlueprintCallable)
+	void TryExecuteAction(EAttackType ATKType);
 	
 	UPROPERTY()
 	TObjectPtr<ADaisyPlayerController> PC; 

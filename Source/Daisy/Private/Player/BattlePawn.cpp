@@ -5,6 +5,7 @@
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
 #include "Debug/DebugHelper.h"
 #include "Game/BattleManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/DaisyPlayerController.h"
 
 ABattlePawn::ABattlePawn()
@@ -32,10 +33,14 @@ void ABattlePawn::TryEnterUltimate(int32 Index)
 	UDaisyBlueprintFunctionLibrary::FindBattleManager()->EnterUltimate(Index);
 }
 
+void ABattlePawn::TryExecuteAction(EAttackType ATKType)
+{
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ExecuteAction(ATKType);
+}
+
 void ABattlePawn::Destroyed()
 {
 	Super::Destroyed();
-	PC = Cast<ADaisyPlayerController>(GetController());
 	if (PC == nullptr) return;
 	PC->bShowMouseCursor = false;
 	PC->SetInputMode(FInputModeGameOnly());
@@ -44,7 +49,7 @@ void ABattlePawn::Destroyed()
 void ABattlePawn::BeginPlay()
 {
 	Super::BeginPlay();
-	PC = Cast<ADaisyPlayerController>(GetController());
+	PC = Cast<ADaisyPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PC == nullptr) return;
 	PC->bShowMouseCursor = true;
 	PC->SetInputMode(FInputModeGameAndUI());
