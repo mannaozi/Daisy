@@ -4,6 +4,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
+#include "AbilitySystem/DaisyAbilitySystemComponent.h"
+#include "AbilitySystem/DaisyAttributeSet.h"
 
 
 ABattleCharacterBase::ABattleCharacterBase()
@@ -68,6 +70,16 @@ void ABattleCharacterBase::CountBuffsTimer()
 void ABattleCharacterBase::TryFollowingATK()
 {
 	
+}
+
+UAbilitySystemComponent* ABattleCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+void ABattleCharacterBase::InitAbilityActorInfo()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this,this);
 }
 
 void ABattleCharacterBase::GetFactionAVAvatar(bool& bPF, float& aV, UTexture2D* &AI)

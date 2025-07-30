@@ -2,6 +2,9 @@
 
 
 #include "Character/BattlePlayer.h"
+
+#include "AbilitySystem/DaisyAbilitySystemComponent.h"
+#include "AbilitySystem/DaisyAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "Character/BattleEnemy.h"
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
@@ -16,6 +19,12 @@
 
 ABattlePlayer::ABattlePlayer()
 {
+	AbilitySystemComponent = CreateDefaultSubobject<UDaisyAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	AttributeSet = CreateDefaultSubobject<UDaisyAttributeSet>("AttributeSet");
+
+	
 	MarkedIcon = CreateDefaultSubobject<UWidgetComponent>("Marked Icon");
 	MarkedIcon->SetupAttachment(RootComponent);
 	MarkedIcon->bHiddenInGame = true;
@@ -28,7 +37,8 @@ void ABattlePlayer::UpdateLockIcon(bool bHide)
 
 void ABattlePlayer::RefreshActionValueBySpd()
 {
-	ActionValue = Distance / playerAtr.SPD;
+	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
+	ActionValue = Distance / DaisyAS->GetSpeed();
 }
 
 void ABattlePlayer::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
@@ -555,7 +565,8 @@ void ABattlePlayer::BeginPlay()
 	playerAtr = *(PlayerCharsDT->FindRow<FPlayerCharAttributes>(DataRow, s, true));
 
 	InitializeData();
-
+	InitAbilityActorInfo();
+	
 	//初始镜头角度
 	float SpringArmYaw = 0.0f;
 	if (positionID != -1)

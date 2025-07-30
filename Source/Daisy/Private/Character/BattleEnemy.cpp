@@ -13,6 +13,8 @@
 #include "UI/HeadBarUI.h"
 #include "Game/DaisyGameInstance.h"
 #include "Game/BattleManager.h"
+#include "AbilitySystem/DaisyAbilitySystemComponent.h"
+#include "AbilitySystem/DaisyAttributeSet.h"
 
 ABattleEnemy::ABattleEnemy()
 {
@@ -20,6 +22,11 @@ ABattleEnemy::ABattleEnemy()
 	HeadBar = CreateDefaultSubobject<UWidgetComponent>("Head Bar");
 	HeadBar->SetupAttachment(RootComponent);
 	HeadBar->bHiddenInGame = true;
+	
+	AbilitySystemComponent = CreateDefaultSubobject<UDaisyAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	AttributeSet = CreateDefaultSubobject<UDaisyAttributeSet>("AttributeSet");
 }
 
 void ABattleEnemy::Tick(float DeltaTime)
@@ -386,7 +393,8 @@ void ABattleEnemy::UpdateLockIcon(bool bHide)
 
 void ABattleEnemy::RefreshActionValueBySpd()
 {
-	ActionValue = Distance / EnemyAtr.SPD;
+	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
+	ActionValue = Distance / DaisyAS->GetSpeed();
 }
 
 void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
@@ -517,4 +525,6 @@ void ABattleEnemy::BeginPlay()
 	EnemyAtr = *(EnemyCharsDT->FindRow<FEnemyCharAttributes>(DataRow, s, true));
 	
 	InitializeData();
+
+	InitAbilityActorInfo();
 }

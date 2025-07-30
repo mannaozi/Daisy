@@ -2,17 +2,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
+#include "AttributeSet.h"
 #include "GameFramework/Character.h"
 #include "Interface/CombatInterface.h"
 #include "Interface/VFXInterface.h"
 #include "BattleCharacterBase.generated.h"
 
+class UDaisyAttributeSet;
+class UDaisyAbilitySystemComponent;
 class UWidgetComponent;
 class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface,public IVFXInterface
+class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface,public IVFXInterface,public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -55,5 +59,15 @@ public:
 	virtual void CountBuffsTimer() override;
 	virtual void TryFollowingATK() override;
 	/* Combat Interface */
-	
+
+	/* Abilitysystem */
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+	/* Abilitysystem */
+
+	virtual void InitAbilityActorInfo();
 };
