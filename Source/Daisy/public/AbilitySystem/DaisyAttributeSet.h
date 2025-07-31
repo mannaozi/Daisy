@@ -12,6 +12,40 @@
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+USTRUCT()
+struct FEffectProperties
+{
+	GENERATED_BODY()
+
+	FEffectProperties(){}
+
+	FGameplayEffectContextHandle EffectContextHandle;
+
+	UPROPERTY()
+	UAbilitySystemComponent* SourceASC = nullptr;
+
+	UPROPERTY()
+	AActor* SourceAvatarActor = nullptr;
+
+	UPROPERTY()
+	AController* SourceController = nullptr;
+
+	UPROPERTY()
+	ACharacter* SourceCharacter = nullptr;
+
+	UPROPERTY()
+	UAbilitySystemComponent* TargetASC = nullptr;
+
+	UPROPERTY()
+	AActor* TargetAvatarActor = nullptr;
+
+	UPROPERTY()
+	AController* TargetController = nullptr;
+
+	UPROPERTY()
+	ACharacter* TargetCharacter = nullptr;
+};
+
 /**
  * 
  */
@@ -22,6 +56,9 @@ class DAISY_API UDaisyAttributeSet : public UAttributeSet
 public:
 	UDaisyAttributeSet();
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	
 	//Attribute
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Health,Category="Attributes")
 	FGameplayAttributeData Health;
@@ -68,25 +105,27 @@ public:
 	ATTRIBUTE_ACCESSORS(UDaisyAttributeSet,Level);
 	
 	UFUNCTION()
-	void OnRep_Health(const FGameplayAttributeData& OldHealth);
+	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 	UFUNCTION()
-	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
+	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 	UFUNCTION()
-	void OnRep_Shield(const FGameplayAttributeData& OldShield);
+	void OnRep_Shield(const FGameplayAttributeData& OldShield) const;
 	UFUNCTION()
-	void OnRep_Energy(const FGameplayAttributeData& OldEnergy);
+	void OnRep_Energy(const FGameplayAttributeData& OldEnergy) const;
 	UFUNCTION()
-	void OnRep_MaxEnergy(const FGameplayAttributeData& OldMaxEnergy);
+	void OnRep_MaxEnergy(const FGameplayAttributeData& OldMaxEnergy) const;
 	UFUNCTION()
-	void OnRep_Attack(const FGameplayAttributeData& OldAttack);
+	void OnRep_Attack(const FGameplayAttributeData& OldAttack) const;
 	UFUNCTION()
-	void OnRep_Defense(const FGameplayAttributeData& OldDefense);
+	void OnRep_Defense(const FGameplayAttributeData& OldDefense) const;
 	UFUNCTION()
-	void OnRep_Critical(const FGameplayAttributeData& OldCritical);
+	void OnRep_Critical(const FGameplayAttributeData& OldCritical) const;
 	UFUNCTION()
-	void OnRep_CriticalDamage(const FGameplayAttributeData& OldCriticalDamage);
+	void OnRep_CriticalDamage(const FGameplayAttributeData& OldCriticalDamage) const;
 	UFUNCTION()
-	void OnRep_Speed(const FGameplayAttributeData& OldSpeed);
+	void OnRep_Speed(const FGameplayAttributeData& OldSpeed) const;
 	UFUNCTION()
-	void OnRep_Level(const FGameplayAttributeData& OldLevel);
+	void OnRep_Level(const FGameplayAttributeData& OldLevel) const;
+private:
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };

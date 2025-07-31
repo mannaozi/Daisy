@@ -613,9 +613,10 @@ void ABattlePlayer::BeginPlay()
 	
 	FString s = DataRow.ToString();
 	playerAtr = *(PlayerCharsDT->FindRow<FPlayerCharAttributes>(DataRow, s, true));
-
-	InitializeData();
+	
 	InitAbilityActorInfo();
+	InitializeDefaultAttributes();
+	InitializeData();
 	BindAttributeDelegate();
 	
 	//初始镜头角度

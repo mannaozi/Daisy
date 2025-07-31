@@ -77,6 +77,16 @@ UAbilitySystemComponent* ABattleCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+void ABattleCharacterBase::InitializeDefaultAttributes() const
+{
+	check(IsValid(GetAbilitySystemComponent()))
+	check(DefaultAttributes);
+	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(DefaultAttributes,Level,ContextHandle);
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(),GetAbilitySystemComponent());
+}
+
 void ABattleCharacterBase::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this,this);

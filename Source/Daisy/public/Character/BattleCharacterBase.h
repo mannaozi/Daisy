@@ -9,6 +9,7 @@
 #include "Interface/VFXInterface.h"
 #include "BattleCharacterBase.generated.h"
 
+class UGameplayEffect;
 class UDaisyAttributeSet;
 class UDaisyAbilitySystemComponent;
 class UWidgetComponent;
@@ -61,13 +62,20 @@ public:
 	/* Combat Interface */
 
 	/* Abilitysystem */
+	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Attributes")
+	TSubclassOf<UGameplayEffect> DefaultAttributes;
+
+	virtual void InitializeDefaultAttributes() const;
 	/* Abilitysystem */
 
+	int32 Level = 1;
 	virtual void InitAbilityActorInfo();
 };

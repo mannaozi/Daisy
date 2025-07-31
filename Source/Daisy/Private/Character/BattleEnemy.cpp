@@ -524,9 +524,10 @@ void ABattleEnemy::BeginPlay()
 	FString s = DataRow.ToString();
 	EnemyAtr = *(EnemyCharsDT->FindRow<FEnemyCharAttributes>(DataRow, s, true));
 	
+	InitAbilityActorInfo();
+	InitializeDefaultAttributes();
 	InitializeData();
 
-	InitAbilityActorInfo();
 	if (UDaisyUserWidget* AuraUserWidget = Cast<UDaisyUserWidget>(HeadBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
