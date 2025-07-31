@@ -394,7 +394,7 @@ void ABattleEnemy::UpdateLockIcon(bool bHide)
 void ABattleEnemy::RefreshActionValueBySpd()
 {
 	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
-	ActionValue = Distance / DaisyAS->GetSpeed();
+	ActionValue = Distance / EnemyAtr.SPD;
 }
 
 void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
@@ -527,4 +527,26 @@ void ABattleEnemy::BeginPlay()
 	InitializeData();
 
 	InitAbilityActorInfo();
+	if (UDaisyUserWidget* AuraUserWidget = Cast<UDaisyUserWidget>(HeadBar->GetUserWidgetObject()))
+	{
+		AuraUserWidget->SetWidgetController(this);
+	}
+	
+	if (const UDaisyAttributeSet* AuraAS = Cast<UDaisyAttributeSet>(AttributeSet))
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		OnHealthChanged.Broadcast(AuraAS->GetHealth());
+		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
+	}
 }

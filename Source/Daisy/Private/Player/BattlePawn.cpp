@@ -38,6 +38,11 @@ void ABattlePawn::TryExecuteAction(EAttackType ATKType)
 	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ExecuteAction(ATKType);
 }
 
+void ABattlePawn::Apply()
+{
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ApplyEffect();
+}
+
 void ABattlePawn::Destroyed()
 {
 	Super::Destroyed();

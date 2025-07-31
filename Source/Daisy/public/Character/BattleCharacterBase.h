@@ -14,7 +14,7 @@ class UDaisyAbilitySystemComponent;
 class UWidgetComponent;
 class UCameraComponent;
 class USpringArmComponent;
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSigature, float, NewValue);
 UCLASS()
 class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface,public IVFXInterface,public IAbilitySystemInterface
 {

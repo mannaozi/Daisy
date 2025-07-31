@@ -7,8 +7,9 @@
 
 UDaisyAttributeSet::UDaisyAttributeSet()
 {
-	InitHealth(1000.f);
+	InitHealth(800.f);
 	InitSpeed(200.f);
+	InitMaxHealth(1000.f);
 }
 
 void UDaisyAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

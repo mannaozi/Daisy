@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "Character/DaisyEnemyCharacter.h"
 #include "GameFramework/Actor.h"
 #include "daisy/daisyEnum.h"
@@ -99,6 +100,10 @@ public:
 	void PlayerWin();
 	void EnemyWin();
 	void ExitGame();
+
+	/*Abilitysubsystem*/
+	
+	/*Abilitysubsystem*/
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -167,4 +172,9 @@ public:
 	FTimerHandle BattleEndCameraStartingFadeTimerHandle;
 	FTimerHandle CleanBattleFieldTimerHandle;
 	FTimerHandle ExitGameTimerHandle;
+		
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
+	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
+
+	void ApplyEffect();
 };

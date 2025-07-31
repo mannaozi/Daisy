@@ -132,6 +132,26 @@ public:
 	AActor* shieldGuard = nullptr;
 	AActor* DmgCauser = nullptr;
 	float receivedDmg = 0.0f;
+	//
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnHealthChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnMaxHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnShieldChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnEnergyChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnMaxEnergyChanged;
+
+	UFUNCTION(BlueprintCallable)
+	void InitValue();
+
+	void BindAttributeDelegate();
+	
 	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}
 };

@@ -30,7 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TryExecuteAction(EAttackType ATKType);
-	
+
+	UFUNCTION(BlueprintCallable)
+	void Apply();
 	UPROPERTY()
 	TObjectPtr<ADaisyPlayerController> PC; 
 protected:

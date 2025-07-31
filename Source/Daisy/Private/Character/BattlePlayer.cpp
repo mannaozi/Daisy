@@ -364,8 +364,9 @@ void ABattlePlayer::PlayAnimationAndTimeLine()
 
 void ABattlePlayer::GetPlayerAttributes(float& mHP, float& cHP, float& mEP, float& cEP, float& mT, float& cT)
 {
-	mHP = MaxHP;
-	cHP = CurHp;
+	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
+	mHP = DaisyAS->GetMaxHealth();
+	cHP = DaisyAS->GetHealth();
 	mEP = MaxEnergy;
 	cEP =  CurEnergy;
 	mT = MaxShield;
@@ -557,6 +558,55 @@ void ABattlePlayer::SetDelayedMark(bool bNewVisibility)
 	MarkedIcon->bHiddenInGame = !bNewVisibility;
 }
 
+void ABattlePlayer::InitValue()
+{
+	if (const UDaisyAttributeSet* AuraAS = Cast<UDaisyAttributeSet>(AttributeSet))
+	{
+		OnHealthChanged.Broadcast(AuraAS->GetHealth());
+		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
+		OnShieldChanged.Broadcast(AuraAS->GetShield());
+		OnEnergyChanged.Broadcast(AuraAS->GetEnergy());
+		OnMaxEnergyChanged.Broadcast(AuraAS->GetMaxEnergy());
+	}
+}
+
+void ABattlePlayer::BindAttributeDelegate()
+{
+	if (const UDaisyAttributeSet* AuraAS = Cast<UDaisyAttributeSet>(AttributeSet))
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetShieldAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetEnergyAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxEnergyAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+	}
+}
+
 void ABattlePlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -566,6 +616,7 @@ void ABattlePlayer::BeginPlay()
 
 	InitializeData();
 	InitAbilityActorInfo();
+	BindAttributeDelegate();
 	
 	//初始镜头角度
 	float SpringArmYaw = 0.0f;

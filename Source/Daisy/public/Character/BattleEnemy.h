@@ -86,7 +86,8 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Presets")
 	TSubclassOf<UCameraShakeBase> UltimateCS;
 	
-	UHeadBarUI* HeadBarUI;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	TObjectPtr<UHeadBarUI> HeadBarUI;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Dispatcher")
 	FOnEnemyDeath OnEnemyDeath;
@@ -136,6 +137,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	TSubclassOf<AFloatingInicator> FloatingIndicatorClass;
+
+	//
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnMaxHealthChanged;
+
 protected:
 	virtual void BeginPlay() override;
 };

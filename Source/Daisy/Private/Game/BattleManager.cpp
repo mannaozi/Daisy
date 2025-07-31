@@ -1,6 +1,8 @@
 
 
 #include "Game/BattleManager.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Character/DaisyCharacter.h"
 #include "Character/BattleEnemy.h"
 #include "Character/DaisyEnemyCharacter.h"
@@ -18,6 +20,7 @@
 #include "UI/BattleUserWidget.h"
 #include "UI/DaisyUserWidget.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystem/DaisyAttributeSet.h"
 
 
 ABattleManager::ABattleManager()
@@ -1325,6 +1328,19 @@ void ABattleManager::Tick(float DeltaSeconds)
 	float FinalY = FMath::FInterpTo(BuffCamera->GetActorLocation().Y, Location_Y, DeltaSeconds, 1.f);
 	FVector FinalTargetLocation = FVector(BuffCameraOriginLocation.X,FinalY,BuffCameraOriginLocation.Z);
 	BuffCamera->SetActorLocation(FinalTargetLocation);
+}
+
+void ABattleManager::ApplyEffect()
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ActivePlayerRef);
+	if(TargetASC == nullptr) return;
+
+	check(InstantGameplayEffectClass)
+	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(InstantGameplayEffectClass,1,EffectContextHandle);
+	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+
 }
 
 void ABattleManager::RetrieveEnemyPosition(int32 PosIndex, FVector& TargetPos, float& Yaw)
