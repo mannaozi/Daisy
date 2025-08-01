@@ -1343,6 +1343,123 @@ void ABattleManager::ApplyEffect()
 
 }
 
+bool ABattleManager::IsTarget(AActor* ClickedTarget)
+{
+	if (IsBuffTarget())
+	{
+		ABattlePlayer* PlayerRef = Cast<ABattlePlayer>(ClickedTarget);
+		if (PlayerRef == nullptr) return false;
+	}
+	else
+	{
+		ABattleEnemy* EnemyRef = Cast<ABattleEnemy>(ClickedTarget);
+		if (EnemyRef == nullptr) return false;
+	}
+	return true;
+}
+
+void ABattleManager::ClickOnCharacter(AActor* ClickedTarget)
+{
+	if (ClickedTarget == nullptr) return;
+	if (ProgressPhase != EProgressPhase::PP_B2a_PlayerActionTime) return;
+	if (!IsTarget(ClickedTarget)) return;
+	
+	if (ClickedTarget != LastClickedActor)
+	{
+		LastClickedActor = ClickedTarget;
+		if (IsBuffTarget())
+		{
+			ABattlePlayer* PlayerRef = Cast<ABattlePlayer>(LastClickedActor);
+			if (PlayerRef == nullptr) return;
+		}
+		else
+		{
+			ABattleEnemy* EnemyRef = Cast<ABattleEnemy>(LastClickedActor);
+			if (EnemyRef == nullptr) return;
+		}
+		if (NotResurrectSkill())
+		{
+			RetrieveIndex(LastClickedActor);
+		}
+		else
+		{
+			if (IndexForLockedTarget == -1) return;
+			else
+			{
+				RetrieveIndex(LastClickedActor);
+			}
+		}
+		if (NotResurrectSkill())
+		{
+			if (IsBuffTarget())
+			{
+				SetPlayerLockedIcons();
+			}
+			else
+			{
+				SetMultipeEnemyLocks();
+			}
+		}
+	}
+	else
+	{
+		if (ActivePlayerRef != nullptr)
+		{
+			ExecuteAction(ActivePlayerRef->AttackType);
+		}
+		return;
+	}
+}
+
+void ABattleManager::RetrieveIndex(AActor* ClickedActorForIndex)
+{
+	if (Player_Arr.IsValidIndex(0))
+	{
+		for (int32 i = 0;i<Player_Arr.Num();i++)
+		{
+			if (ClickedActorForIndex == Player_Arr[i])
+			{
+				IndexForLockedTarget = i;
+				return;
+			}
+		}
+	}
+	if (Enemies_Arr.IsValidIndex(0))
+	{
+		for (int32 i = 0;i<Enemies_Arr.Num();i++)
+		{
+			if (ClickedActorForIndex == Enemies_Arr[i])
+			{
+				IndexForLockedTarget = i;
+				return;
+			}
+		}
+	}
+	if (Dead_Player_Arr.IsValidIndex(0))
+	{
+		for (int32 i = 0;i<Dead_Player_Arr.Num();i++)
+		{
+			if (ClickedActorForIndex == Dead_Player_Arr[i])
+			{
+				IndexForLockedTarget = i;
+				return;
+			}
+		}
+	}
+	if (Dead_Enemies_Arr.IsValidIndex(0))
+	{
+		for (int32 i = 0;i<Dead_Enemies_Arr.Num();i++)
+		{
+			if (ClickedActorForIndex == Dead_Enemies_Arr[i])
+			{
+				IndexForLockedTarget = i;
+				return;
+			}
+		}
+	}
+	IndexForLockedTarget = -1;
+}
+
 void ABattleManager::RetrieveEnemyPosition(int32 PosIndex, FVector& TargetPos, float& Yaw)
 {
 	for (auto ArrayElem : EnemySpawnPoints_Arr)

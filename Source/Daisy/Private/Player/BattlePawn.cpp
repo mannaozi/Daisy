@@ -43,6 +43,11 @@ void ABattlePawn::Apply()
 	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ApplyEffect();
 }
 
+void ABattlePawn::TryClickOnCharacter(AActor* ClickedTarget)
+{
+	UDaisyBlueprintFunctionLibrary::FindBattleManager()->ClickOnCharacter(ClickedTarget);
+}
+
 void ABattlePawn::Destroyed()
 {
 	Super::Destroyed();

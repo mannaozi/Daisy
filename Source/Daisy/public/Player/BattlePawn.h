@@ -33,6 +33,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Apply();
+
+	UFUNCTION(BlueprintCallable)
+	void TryClickOnCharacter(AActor* ClickedTarget);
+	
 	UPROPERTY()
 	TObjectPtr<ADaisyPlayerController> PC; 
 protected:

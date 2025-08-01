@@ -177,4 +177,7 @@ public:
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 
 	void ApplyEffect();
+	void ClickOnCharacter(AActor* ClickedTarget);
+	void RetrieveIndex(AActor* ClickedActorForIndex);
+	bool IsTarget(AActor* ClickedTarget);
 };
