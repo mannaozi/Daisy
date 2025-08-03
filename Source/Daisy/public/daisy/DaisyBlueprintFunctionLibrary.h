@@ -17,6 +17,8 @@ class DAISY_API UDaisyBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 	GENERATED_BODY()
 public:
 
+	UFUNCTION(BlueprintPure)
 	static ABattleManager* FindBattleManager();
+	
 	static UDaisyGameInstance* GetGameInstance();
 };

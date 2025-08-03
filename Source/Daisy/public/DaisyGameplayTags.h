@@ -46,6 +46,10 @@ public:
 	//通用
 	FGameplayTag HitReact;
 	FGameplayTag Death;
+
+	//Montage
+	FGameplayTag Ability_Montage_Remote;
+	FGameplayTag Ability_Montage_Melee;
 	
 private:
 	static FDaisyGameplayTags GameplayTags;

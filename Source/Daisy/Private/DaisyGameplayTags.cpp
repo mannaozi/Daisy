@@ -136,4 +136,14 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FString("死亡")
 	);
 
+	//Montage
+	GameplayTags.Ability_Montage_Remote = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Montage.Remote"),
+		FString("远程攻击")
+	);
+
+	GameplayTags.Ability_Montage_Melee = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Montage.Melee"),
+		FString("近战攻击")
+	);
 }

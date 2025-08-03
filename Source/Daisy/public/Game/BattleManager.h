@@ -176,6 +176,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 
+	UFUNCTION(BlueprintCallable)
 	void ApplyEffect();
 	void ClickOnCharacter(AActor* ClickedTarget);
 	void RetrieveIndex(AActor* ClickedActorForIndex);
