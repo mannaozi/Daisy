@@ -9,6 +9,7 @@
 #include "Interface/VFXInterface.h"
 #include "BattleCharacterBase.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UDaisyAttributeSet;
 class UDaisyAbilitySystemComponent;
@@ -72,8 +73,17 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
-
+	
+	UPROPERTY(EditAnywhere,Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
+	UPROPERTY(EditAnywhere,Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
+	
 	virtual void InitializeDefaultAttributes() const;
+
+	void AddCharacterAbilities();
+	
 	/* Abilitysystem */
 
 	int32 Level = 1;

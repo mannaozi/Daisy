@@ -13,5 +13,8 @@ UCLASS()
 class DAISY_API UDaisyAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
+public:
+	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+
+	void ActiveAbilityByTag(const FGameplayTag& Tag);
 };

@@ -3,6 +3,7 @@
 
 #include "Character/BattlePlayer.h"
 
+#include "DaisyGameplayTags.h"
 #include "AbilitySystem/DaisyAbilitySystemComponent.h"
 #include "AbilitySystem/DaisyAttributeSet.h"
 #include "Components/WidgetComponent.h"
@@ -448,8 +449,8 @@ void ABattlePlayer::PlayATKAnimByATKType()
 		break;
 	}
 	float AnimTime = PlaySpecifiedAnim(SpecifiedActionString);
-
-	//能量处理
+	Cast<UDaisyAbilitySystemComponent>(GetAbilitySystemComponent())->ActiveAbilityByTag(FDaisyGameplayTags::Get().AttackType_NormalAtk);
+	//能量处理)
 	HandleEP(AttackType,false,0.0f);
 	
 	if (Melee)
@@ -616,6 +617,7 @@ void ABattlePlayer::BeginPlay()
 	
 	InitAbilityActorInfo();
 	InitializeDefaultAttributes();
+	AddCharacterAbilities();
 	InitializeData();
 	BindAttributeDelegate();
 	

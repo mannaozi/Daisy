@@ -87,6 +87,12 @@ void ABattleCharacterBase::InitializeDefaultAttributes() const
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(),GetAbilitySystemComponent());
 }
 
+void ABattleCharacterBase::AddCharacterAbilities()
+{
+	UDaisyAbilitySystemComponent* AuraASC = Cast<UDaisyAbilitySystemComponent>(AbilitySystemComponent);
+	AuraASC->AddCharacterAbilities(StartupAbilities);
+}
+
 void ABattleCharacterBase::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this,this);
