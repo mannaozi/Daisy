@@ -82,7 +82,11 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 			}
 			else
 			{
-				if (ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter)) Enemy->Die();
+				if (ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter))
+				{
+					Enemy->HandleIndicatorNums(Enemy->GetActorLocation(),LocalIncomingDamage);
+					Enemy->Die();
+				}
 				//玩家死亡
 			}
 		}
