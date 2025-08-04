@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "DaisyGameplayAbilityBase.generated.h"
 
+class ABattleEnemy;
 /**
  * 
  */
@@ -16,4 +17,11 @@ class DAISY_API UDaisyGameplayAbilityBase : public UGameplayAbility
 public:
 	UPROPERTY(EditDefaultsOnly,Category="Input")
 	FGameplayTag StartupInputTag;
+	
+	UPROPERTY(EditDefaultsOnly,Category="GE")
+	TSubclassOf<UGameplayEffect> InitGameplayEffectClass;
+	
+	UFUNCTION(BlueprintCallable)
+	void ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,TSubclassOf<UGameplayEffect> InstantGameplayEffectClass);
+	
 };

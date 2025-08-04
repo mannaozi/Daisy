@@ -151,10 +151,15 @@ public:
 	
 	UPROPERTY()
 	ABattlePawn* BattlePawn;
+	UPROPERTY(BlueprintReadWrite)
 	ABattlePlayer* ActivePlayerRef;
+	UPROPERTY(BlueprintReadWrite)
 	ABattleEnemy* CurrentEnemyTarget;
+	UPROPERTY(BlueprintReadWrite)
 	ABattlePlayer* CurrentPlayerTarget;
+	UPROPERTY(BlueprintReadWrite)
 	TArray<ABattleEnemy*> CurrentEnemyTargets;
+	UPROPERTY(BlueprintReadWrite)
 	TArray<ABattlePlayer*> CurrentPlayerTargets;
 	
 	AActor* LastClickedActor;
