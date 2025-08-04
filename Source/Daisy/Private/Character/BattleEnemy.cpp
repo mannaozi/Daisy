@@ -517,6 +517,27 @@ void ABattleEnemy::SetATK(EAttackType ATKType, int32 AttackCountInOneCycle)
 	}
 }
 
+void ABattleEnemy::Die()
+{
+	bDead = true;
+	
+	PlaySpecificAnim("Die");
+
+	HeadBar->SetVisibility(false);
+
+	ExtraActionWhenStun(true);
+
+	// 如果该组件有效，则删除
+	if (StunVFXComp != nullptr)
+	{
+		StunVFXComp->DestroyComponent();
+		StunVFXComp = nullptr;
+	}
+
+	// 将死亡事件派发给Player，添加EP（能量）
+	OnEnemyDeath.Broadcast(this, DmgCauser);
+}
+
 void ABattleEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -526,6 +547,7 @@ void ABattleEnemy::BeginPlay()
 	
 	InitAbilityActorInfo();
 	InitializeDefaultAttributes();
+	AddCharacterAbilities();
 	InitializeData();
 
 	if (UDaisyUserWidget* AuraUserWidget = Cast<UDaisyUserWidget>(HeadBar->GetUserWidgetObject()))

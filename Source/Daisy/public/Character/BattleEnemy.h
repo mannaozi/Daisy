@@ -138,13 +138,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Presets")
 	TSubclassOf<AFloatingInicator> FloatingIndicatorClass;
 
-	//
+	//Ability
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSigature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSigature OnMaxHealthChanged;
 
+	void Die();
 protected:
 	virtual void BeginPlay() override;
 };

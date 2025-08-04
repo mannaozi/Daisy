@@ -4,7 +4,10 @@
 #include "AbilitySystem/DaisyAttributeSet.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "DaisyGameplayTags.h"
 #include "GameplayEffect.h"
+#include "Character/BattleEnemy.h"
+#include "Character/BattlePlayer.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
 
@@ -62,6 +65,26 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 		{
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
+			const bool bFatal = NewHealth <= 0.f;
+			if (!bFatal)
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FDaisyGameplayTags::Get().HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+				if (ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter))
+				{
+					Enemy->HandleIndicatorNums(Enemy->GetActorLocation(),LocalIncomingDamage);
+				}
+				if (ABattlePlayer* Player = Cast<ABattlePlayer>(Props.TargetCharacter))
+				{
+					Player->SpawnFloatingAndPlaySound(Player->GetActorLocation(),LocalIncomingDamage,FColor::Red);
+				}
+			}
+			else
+			{
+				if (ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter)) Enemy->Die();
+				//玩家死亡
+			}
 		}
 	}
 }
