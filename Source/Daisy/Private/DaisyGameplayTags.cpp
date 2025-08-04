@@ -66,6 +66,10 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	//Damage Type
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage"),
+	FString("Damage")
+	);
 	
 	GameplayTags.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Damage.Fire"),

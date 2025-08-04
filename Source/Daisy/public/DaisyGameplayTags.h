@@ -28,7 +28,7 @@ public:
 	FGameplayTag Attribute_Level;
 
 	//Damage Type
-	
+	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;
 	FGameplayTag Damage_Lightning;
 	FGameplayTag Damage_Ice;

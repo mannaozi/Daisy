@@ -20,6 +20,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly,Category="GE")
 	TSubclassOf<UGameplayEffect> InitGameplayEffectClass;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Damage")
+	FScalableFloat Damage;
 	
 	UFUNCTION(BlueprintCallable)
 	void ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,TSubclassOf<UGameplayEffect> InstantGameplayEffectClass);

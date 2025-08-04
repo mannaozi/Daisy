@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Character/BattleEnemy.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "DaisyGameplayTags.h"
 
 
 void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,
@@ -12,12 +13,17 @@ void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*>
 {
 	for (auto EnemyBase : Enemy)
 	{
+		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EnemyBase);
-		if(TargetASC == nullptr) return;
+		if(SourceASC == nullptr) return;
 
-		FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
+		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
-		const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(InstantGameplayEffectClass,1,EffectContextHandle);
+		const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(InstantGameplayEffectClass,1,EffectContextHandle);
+		FDaisyGameplayTags GameplayTags = FDaisyGameplayTags::Get();
+		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+		
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,GameplayTags.Damage,ScaledDamage);
 		const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	}
 }

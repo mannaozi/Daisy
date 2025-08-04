@@ -103,6 +103,10 @@ public:
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Level,Category="Attributes")
 	FGameplayAttributeData Level;
 	ATTRIBUTE_ACCESSORS(UDaisyAttributeSet,Level);
+
+	UPROPERTY(BlueprintReadOnly,Replicated,Category="Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UDaisyAttributeSet,IncomingDamage);
 	
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;

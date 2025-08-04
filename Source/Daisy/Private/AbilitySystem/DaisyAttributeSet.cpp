@@ -52,7 +52,17 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 	SetEffectProperties(Data, Props);
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Health: %f"),GetHealth());
+		SetHealth(FMath::Clamp(GetHealth(),0.f,GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (LocalIncomingDamage > 0.f)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
+		}
 	}
 }
 
