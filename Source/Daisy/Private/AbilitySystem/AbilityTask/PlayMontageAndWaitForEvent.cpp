@@ -180,7 +180,7 @@ void UPlayMontageAndWaitForEvent::Activate()
 void UPlayMontageAndWaitForEvent::ExternalCancel()
 {
 	UAbilitySystemComponent* ASC = GetTargetASC();
-	if (ASC)
+	if (!ASC) return;
 	OnAbilityCancelled();
 
 	Super::ExternalCancel();
