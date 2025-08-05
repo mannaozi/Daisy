@@ -25,4 +25,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn="true"))
 	FVector CurrentLocation;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn="true"))
+	bool bCriticalHit = false;
 };

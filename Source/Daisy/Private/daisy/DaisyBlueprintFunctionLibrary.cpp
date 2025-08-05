@@ -2,6 +2,8 @@
 
 
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
+
+#include "DaisyAbilityTypes.h"
 #include "Game/BattleManager.h"
 #include "Game/DaisyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
@@ -16,4 +18,22 @@ ABattleManager* UDaisyBlueprintFunctionLibrary::FindBattleManager()
 UDaisyGameInstance* UDaisyBlueprintFunctionLibrary::GetGameInstance()
 {
 	return Cast<UDaisyGameInstance>(UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
+}
+
+bool UDaisyBlueprintFunctionLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FDaisyGameplayEffectContext* DaisyEffectContext = static_cast<const FDaisyGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return DaisyEffectContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void UDaisyBlueprintFunctionLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle,
+	bool bInCriticalHit)
+{
+	if (FDaisyGameplayEffectContext* DaisyEffectContext = static_cast<FDaisyGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		DaisyEffectContext->SetIsCriticalHit(bInCriticalHit);
+	}
 }

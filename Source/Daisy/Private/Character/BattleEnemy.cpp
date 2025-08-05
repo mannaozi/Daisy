@@ -149,7 +149,7 @@ bool ABattleEnemy::CheckElementATK(ECombatType CauserCType)
 	return false;
 }
 
-void ABattleEnemy::HandleIndicatorNums(FVector Location, float FloatingNum)
+void ABattleEnemy::HandleIndicatorNums(FVector Location, float FloatingNum,bool bCriticalHit)
 {
 	FTransform CustomTransform;
 	CustomTransform.SetLocation(Location);
@@ -431,7 +431,7 @@ void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, 
 
 	CurHP = CurHP - ReceivedHPDmg;
 
-	HandleIndicatorNums(GetActorLocation(),ReceivedHPDmg);
+	HandleIndicatorNums(GetActorLocation(),ReceivedHPDmg,false);
 
 	UpdateHeadBar();
 

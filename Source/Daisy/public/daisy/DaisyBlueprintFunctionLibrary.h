@@ -6,6 +6,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "DaisyBlueprintFunctionLibrary.generated.h"
 
+struct FGameplayEffectContextHandle;
+struct FGameplayEffectSpecHandle;
 class ABattleManager;
 class UDaisyGameInstance;
 /**
@@ -20,5 +22,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	static ABattleManager* FindBattleManager();
 	
+	UFUNCTION(BlueprintPure)
 	static UDaisyGameInstance* GetGameInstance();
+
+	UFUNCTION(BlueprintPure,Category="DaisyAbilitySystemLibrary | GameplayEffects")
+	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category="DaisyAbilitySystemLibrary | GameplayEffects")
+	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle,bool bInCriticalHit);
 };

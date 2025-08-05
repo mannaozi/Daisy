@@ -37,7 +37,7 @@ public:
 	void PlayerCameraShake();
 	bool HandleToughness(float ReceivedT,ECombatType CauserCType);
 	bool CheckElementATK(ECombatType CauserCType);
-	void HandleIndicatorNums(FVector Location,float FloatingNum);
+	void HandleIndicatorNums(FVector Location,float FloatingNum,bool bCriticalHit);
 	
 	UFUNCTION(BlueprintCallable)
 	float PlaySpecificAnim(const FString &AnimKey);

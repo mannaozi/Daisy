@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "DaisyGameplayTags.h"
 #include "AbilitySystem/DaisyAttributeSet.h"
+#include "daisy/DaisyBlueprintFunctionLibrary.h"
 
 struct DaisyDamageStatics
 {
@@ -47,6 +48,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
@@ -65,6 +67,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalDef,EvaluateParameters,Critical);
 	Critical = FMath::Max<float>(0, Critical);
 	const bool bCriticalHit = FMath::RandRange(1,100) < Critical;
+
+	UDaisyBlueprintFunctionLibrary::SetIsCriticalHit(EffectContextHandle,bCriticalHit);
 	
 	//暴击额外伤害
 	float CriticalDamage = 0.f;
