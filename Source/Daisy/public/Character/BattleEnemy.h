@@ -145,6 +145,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSigature OnMaxHealthChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnToughnessChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSigature OnMaxToughnessChanged;
+
 	void Die();
 protected:
 	virtual void BeginPlay() override;

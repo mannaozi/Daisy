@@ -32,6 +32,8 @@ void UDaisyAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UDaisyAttributeSet,CriticalDamage,COND_None,REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDaisyAttributeSet,Speed,COND_None,REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UDaisyAttributeSet,Level,COND_None,REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UDaisyAttributeSet,Toughness,COND_None,REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UDaisyAttributeSet,MaxToughness,COND_None,REPNOTIFY_Always);
 }
 
 void UDaisyAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -105,6 +107,14 @@ void UDaisyAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHea
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDaisyAttributeSet, MaxHealth, OldMaxHealth);
 }
 
+void UDaisyAttributeSet::OnRep_Toughness(const FGameplayAttributeData& OldToughness) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDaisyAttributeSet, Toughness, OldToughness);
+}
+void UDaisyAttributeSet::OnRep_MaxToughness(const FGameplayAttributeData& OldMaxToughness) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDaisyAttributeSet, MaxToughness, OldMaxToughness);
+}
 void UDaisyAttributeSet::OnRep_Shield(const FGameplayAttributeData& OldShield) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UDaisyAttributeSet, Shield, OldShield);

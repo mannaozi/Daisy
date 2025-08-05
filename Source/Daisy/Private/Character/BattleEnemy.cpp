@@ -159,6 +159,7 @@ void ABattleEnemy::HandleIndicatorNums(FVector Location, float FloatingNum,bool 
 	FloatingInicator->FloatingNum = FloatingNum;
 	FloatingInicator->SpecifiedColor = FColor::Yellow;
 	FloatingInicator->CurrentLocation = CustomTransform.GetLocation();
+	FloatingInicator->bCriticalHit = bCriticalHit;
 	FloatingInicator->FinishSpawning(CustomTransform);
 }
 
@@ -550,26 +551,40 @@ void ABattleEnemy::BeginPlay()
 	AddCharacterAbilities();
 	InitializeData();
 
-	if (UDaisyUserWidget* AuraUserWidget = Cast<UDaisyUserWidget>(HeadBar->GetUserWidgetObject()))
+	if (UDaisyUserWidget* DaisyUserWidget = Cast<UDaisyUserWidget>(HeadBar->GetUserWidgetObject()))
 	{
-		AuraUserWidget->SetWidgetController(this);
+		DaisyUserWidget->SetWidgetController(this);
 	}
 	
-	if (const UDaisyAttributeSet* AuraAS = Cast<UDaisyAttributeSet>(AttributeSet))
+	if (const UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet))
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetHealthAttribute()).AddLambda(
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(DaisyAS->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxHealthAttribute()).AddLambda(
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(DaisyAS->GetMaxHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
-		OnHealthChanged.Broadcast(AuraAS->GetHealth());
-		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(DaisyAS->GetToughnessAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnToughnessChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(DaisyAS->GetMaxToughnessAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxToughnessChanged.Broadcast(Data.NewValue);
+			}
+		);
+		OnHealthChanged.Broadcast(DaisyAS->GetHealth());
+		OnMaxHealthChanged.Broadcast(DaisyAS->GetMaxHealth());
+		OnToughnessChanged.Broadcast(DaisyAS->GetToughness());
+		OnMaxToughnessChanged.Broadcast(DaisyAS->GetMaxToughness());
 	}
 }

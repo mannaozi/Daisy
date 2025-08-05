@@ -67,6 +67,14 @@ public:
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_MaxHealth,Category="Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UDaisyAttributeSet,MaxHealth);
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Toughness,Category="Attributes")
+	FGameplayAttributeData Toughness;
+	ATTRIBUTE_ACCESSORS(UDaisyAttributeSet,Toughness);
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_MaxToughness,Category="Attributes")
+	FGameplayAttributeData MaxToughness;
+	ATTRIBUTE_ACCESSORS(UDaisyAttributeSet,MaxToughness);
 	
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Shield,Category="Attributes")
 	FGameplayAttributeData Shield;
@@ -112,6 +120,10 @@ public:
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 	UFUNCTION()
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
+	UFUNCTION()
+	void OnRep_Toughness(const FGameplayAttributeData& OldToughness) const;
+	UFUNCTION()
+	void OnRep_MaxToughness(const FGameplayAttributeData& OldMaxToughness) const;
 	UFUNCTION()
 	void OnRep_Shield(const FGameplayAttributeData& OldShield) const;
 	UFUNCTION()
