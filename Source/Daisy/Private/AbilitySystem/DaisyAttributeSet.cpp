@@ -95,6 +95,14 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 			}
 		}
 	}
+	if (Data.EvaluatedData.Attribute == GetToughnessAttribute())
+	{
+		if (GetToughness()<=0.f)
+		{
+			ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter);
+			if (Enemy) Enemy->EnterStun(1);
+		}
+	}
 }
 
 void UDaisyAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const

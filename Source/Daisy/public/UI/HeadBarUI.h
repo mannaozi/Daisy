@@ -7,6 +7,7 @@
 #include "UI/DaisyUserWidget.h"
 #include "HeadBarUI.generated.h"
 
+struct FGameplayTag;
 /**
  * 
  */
@@ -18,4 +19,7 @@ class DAISY_API UHeadBarUI : public UDaisyUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateEnemyHeadBar(float CurHP,float CurThoughness,float MaxHP,float MaxThoughness,const TArray<ECombatType> &Weaknesses);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddWeakness(const TArray<FGameplayTag> &Weak);
 };

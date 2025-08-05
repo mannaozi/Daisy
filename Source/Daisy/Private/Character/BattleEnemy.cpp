@@ -67,6 +67,7 @@ void ABattleEnemy::InitializeData()
 void ABattleEnemy::UpdateHeadBar()
 {
 	HeadBarUI->UpdateEnemyHeadBar(CurHP, CurThoughness, MaxHP, MaxThoughness, Weaknesses);
+	HeadBarUI->AddWeakness(WeakNess);
 }
 
 void ABattleEnemy::HandleFX()
@@ -183,7 +184,8 @@ void ABattleEnemy::EnterStun(int32 DelayTurns)
 	bStun = true;
 	PlaySpecificAnim("Stun");
 	//行动推迟25%
-	ActionValue = ActionValue + (10000 / EnemyAtr.SPD) * 0.25;
+	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
+	ActionValue = ActionValue + (10000 / DaisyAS->GetSpeed()) * 0.25;
 
 	//设置stun回合
 	RecoverFromStunTurns = DelayTurns;
@@ -231,6 +233,8 @@ void ABattleEnemy::RecoverFromStun()
 
 	StopAnimMontage();
 	RecoverFromStunTurns = 0;
+	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
+	DaisyAS->SetToughness(DaisyAS->GetMaxToughness());
 	CurThoughness = MaxThoughness;
 	UpdateHeadBar();
 	bStun = false;
@@ -395,7 +399,7 @@ void ABattleEnemy::UpdateLockIcon(bool bHide)
 void ABattleEnemy::RefreshActionValueBySpd()
 {
 	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
-	ActionValue = Distance / EnemyAtr.SPD;
+	ActionValue = Distance / DaisyAS->GetSpeed();
 }
 
 void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info)
@@ -539,6 +543,14 @@ void ABattleEnemy::Die()
 	OnEnemyDeath.Broadcast(this, DmgCauser);
 }
 
+void ABattleEnemy::AddWeakness(const TArray<FGameplayTag>& Weak)
+{
+	for (auto Tag : Weak)
+	{
+		AbilitySystemComponent->AddLooseGameplayTag(Tag);
+	}
+}
+
 void ABattleEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -549,6 +561,7 @@ void ABattleEnemy::BeginPlay()
 	InitAbilityActorInfo();
 	InitializeDefaultAttributes();
 	AddCharacterAbilities();
+	AddWeakness(WeakNess);
 	InitializeData();
 
 	if (UDaisyUserWidget* DaisyUserWidget = Cast<UDaisyUserWidget>(HeadBar->GetUserWidgetObject()))

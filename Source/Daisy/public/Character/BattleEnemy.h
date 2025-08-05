@@ -7,6 +7,7 @@
 #include "daisy/daisyEnum.h"
 #include "BattleEnemy.generated.h"
 
+struct FGameplayTag;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyDeath, ABattleEnemy*, enemyRef, AActor*, causerRef);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyTurnEnd, ABattleEnemy*, enemyRef);
 
@@ -152,6 +153,12 @@ public:
 	FOnAttributeChangedSigature OnMaxToughnessChanged;
 
 	void Die();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TArray<FGameplayTag> WeakNess;
+
+	void AddWeakness(const TArray<FGameplayTag>& Weak);
+	
 protected:
 	virtual void BeginPlay() override;
 };

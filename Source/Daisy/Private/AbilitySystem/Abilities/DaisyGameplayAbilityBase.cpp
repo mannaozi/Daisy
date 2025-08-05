@@ -9,14 +9,15 @@
 
 
 void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,
-                                                           TSubclassOf<UGameplayEffect> InstantGameplayEffectClass)
+                                                           TSubclassOf<UGameplayEffect> InstantGameplayEffectClass,
+                                                           TSubclassOf<UGameplayEffect> WeakNessGameplayEffectClass)
 {
 	for (auto EnemyBase : Enemy)
 	{
 		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EnemyBase);
 		if(SourceASC == nullptr) return;
-
+		if(TargetASC == nullptr) return;
 		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
 		const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(InstantGameplayEffectClass,1,EffectContextHandle);
@@ -25,6 +26,14 @@ void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*>
 		
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,GameplayTags.Damage,ScaledDamage);
 		const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
-		int32 a =0;
+		
+		bool IsWeakness = TargetASC->HasMatchingGameplayTag(AttackTag);
+		if (IsWeakness)
+		{
+			FGameplayEffectContextHandle EffectContextHandle_Weak = SourceASC->MakeEffectContext();
+			EffectContextHandle_Weak.AddSourceObject(GetAvatarActorFromActorInfo());
+			const FGameplayEffectSpecHandle EffectSpecHandle_Weak = SourceASC->MakeOutgoingSpec(WeakNessGameplayEffectClass,1,EffectContextHandle_Weak);
+			const FActiveGameplayEffectHandle ActiveEffectHandle_Weak = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle_Weak.Data.Get());
+		}
 	}
 }

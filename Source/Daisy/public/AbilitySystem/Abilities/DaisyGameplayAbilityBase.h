@@ -17,6 +17,9 @@ class DAISY_API UDaisyGameplayAbilityBase : public UGameplayAbility
 public:
 	UPROPERTY(EditDefaultsOnly,Category="Input")
 	FGameplayTag StartupInputTag;
+
+	UPROPERTY(EditDefaultsOnly,Category="Input")
+	FGameplayTag AttackTag;
 	
 	UPROPERTY(EditDefaultsOnly,Category="GE")
 	TSubclassOf<UGameplayEffect> InitGameplayEffectClass;
@@ -25,6 +28,6 @@ public:
 	FScalableFloat Damage;
 	
 	UFUNCTION(BlueprintCallable)
-	void ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,TSubclassOf<UGameplayEffect> InstantGameplayEffectClass);
+	void ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,TSubclassOf<UGameplayEffect> InstantGameplayEffectClass,TSubclassOf<UGameplayEffect> WeakNessGameplayEffectClass);
 	
 };
