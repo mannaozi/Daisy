@@ -30,4 +30,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="DaisyAbilitySystemLibrary | GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle,bool bInCriticalHit);
+
+	UFUNCTION(BlueprintPure,Category="DaisyAbilitySystemLibrary | GameplayEffects")
+	static FColor GetDamageColor(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category="DaisyAbilitySystemLibrary | GameplayEffects")
+	static void SetDamageColor(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle,FColor InColor);
 };

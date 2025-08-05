@@ -70,6 +70,7 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
 			const bool bFatal = NewHealth <= 0.f;
 			const bool bCritical = UDaisyBlueprintFunctionLibrary::IsCriticalHit(Props.EffectContextHandle);
+			const FColor DamageColor = UDaisyBlueprintFunctionLibrary::GetDamageColor(Props.EffectContextHandle);
 			if (!bFatal)
 			{
 				FGameplayTagContainer TagContainer;
@@ -77,7 +78,7 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 				if (ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter))
 				{
-					Enemy->HandleIndicatorNums(Enemy->GetActorLocation(),LocalIncomingDamage,bCritical);
+					Enemy->HandleIndicatorNums(Enemy->GetActorLocation(),LocalIncomingDamage,bCritical,DamageColor);
 				}
 				if (ABattlePlayer* Player = Cast<ABattlePlayer>(Props.TargetCharacter))
 				{
@@ -88,7 +89,7 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 			{
 				if (ABattleEnemy* Enemy = Cast<ABattleEnemy>(Props.TargetCharacter))
 				{
-					Enemy->HandleIndicatorNums(Enemy->GetActorLocation(),LocalIncomingDamage,bCritical);
+					Enemy->HandleIndicatorNums(Enemy->GetActorLocation(),LocalIncomingDamage,bCritical,DamageColor);
 					Enemy->Die();
 				}
 				//玩家死亡

@@ -19,6 +19,7 @@ void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*>
 		if(SourceASC == nullptr) return;
 		if(TargetASC == nullptr) return;
 		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
 		EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
 		const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(InstantGameplayEffectClass,1,EffectContextHandle);
 		FDaisyGameplayTags GameplayTags = FDaisyGameplayTags::Get();

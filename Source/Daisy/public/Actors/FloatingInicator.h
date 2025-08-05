@@ -21,7 +21,7 @@ public:
 	float FloatingNum = 0.0f;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn="true"))
-	FColor SpecifiedColor = FColor::Blue;
+	FColor SpecifiedColor;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn="true"))
 	FVector CurrentLocation;

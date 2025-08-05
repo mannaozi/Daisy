@@ -3,6 +3,7 @@
 #include "Game/BattleManager.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "DaisyGameplayTags.h"
 #include "Character/DaisyCharacter.h"
 #include "Character/BattleEnemy.h"
 #include "Character/DaisyEnemyCharacter.h"
@@ -26,7 +27,11 @@
 ABattleManager::ABattleManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	FDaisyGameplayTags Tag = FDaisyGameplayTags::Get();
+	TagColorMap.Add(Tag.Damage_Fire,FColor::Red);
+	TagColorMap.Add(Tag.Damage_Lightning,FColor::Blue);
+	TagColorMap.Add(Tag.Damage_Physical,FColor::Orange);
+	TagColorMap.Add(Tag.Damage_Quantum,FColor::Purple);
 }
 
 void ABattleManager::InitBattle(ADaisyCharacter* Player, ADaisyEnemyCharacter* Enemy,TMap<int32,TSubclassOf<ABattleEnemy>> EnemyInfo)
@@ -1328,6 +1333,19 @@ void ABattleManager::Tick(float DeltaSeconds)
 	float FinalY = FMath::FInterpTo(BuffCamera->GetActorLocation().Y, Location_Y, DeltaSeconds, 1.f);
 	FVector FinalTargetLocation = FVector(BuffCameraOriginLocation.X,FinalY,BuffCameraOriginLocation.Z);
 	BuffCamera->SetActorLocation(FinalTargetLocation);
+}
+
+FColor ABattleManager::GetColorByTag(const FGameplayTag& Tag) const
+{
+	// 使用Find方法检查映射中是否存在该标签
+	if (const FColor* ColorPtr = TagColorMap.Find(Tag))
+	{
+		return *ColorPtr; // 返回找到的颜色
+	}
+	// 未找到标签时的处理
+	UE_LOG(LogTemp, Warning, TEXT("Tag %s not found in TagColorMap!"), *Tag.ToString());
+	// 返回默认颜色
+	return FColor::Red;
 }
 
 void ABattleManager::ApplyEffect()

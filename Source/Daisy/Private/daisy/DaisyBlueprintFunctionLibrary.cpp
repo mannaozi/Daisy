@@ -37,3 +37,20 @@ void UDaisyBlueprintFunctionLibrary::SetIsCriticalHit(FGameplayEffectContextHand
 		DaisyEffectContext->SetIsCriticalHit(bInCriticalHit);
 	}
 }
+
+FColor UDaisyBlueprintFunctionLibrary::GetDamageColor(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FDaisyGameplayEffectContext* DaisyEffectContext = static_cast<const FDaisyGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return DaisyEffectContext->GetColor();
+	}
+	return FColor::Red;
+}
+
+void UDaisyBlueprintFunctionLibrary::SetDamageColor(FGameplayEffectContextHandle& EffectContextHandle, FColor InColor)
+{
+	if (FDaisyGameplayEffectContext* DaisyEffectContext = static_cast<FDaisyGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		DaisyEffectContext->SetColor(InColor);
+	}
+}

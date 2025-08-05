@@ -150,7 +150,7 @@ bool ABattleEnemy::CheckElementATK(ECombatType CauserCType)
 	return false;
 }
 
-void ABattleEnemy::HandleIndicatorNums(FVector Location, float FloatingNum,bool bCriticalHit)
+void ABattleEnemy::HandleIndicatorNums(FVector Location, float FloatingNum,bool bCriticalHit,FColor DamageColor)
 {
 	FTransform CustomTransform;
 	CustomTransform.SetLocation(Location);
@@ -158,7 +158,7 @@ void ABattleEnemy::HandleIndicatorNums(FVector Location, float FloatingNum,bool 
 	CustomTransform.SetScale3D(FVector(1,1,1));
 	AFloatingInicator* FloatingInicator = GetWorld()->SpawnActorDeferred<AFloatingInicator>(FloatingIndicatorClass,CustomTransform);
 	FloatingInicator->FloatingNum = FloatingNum;
-	FloatingInicator->SpecifiedColor = FColor::Yellow;
+	FloatingInicator->SpecifiedColor = DamageColor;
 	FloatingInicator->CurrentLocation = CustomTransform.GetLocation();
 	FloatingInicator->bCriticalHit = bCriticalHit;
 	FloatingInicator->FinishSpawning(CustomTransform);
@@ -436,7 +436,7 @@ void ABattleEnemy::HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, 
 
 	CurHP = CurHP - ReceivedHPDmg;
 
-	HandleIndicatorNums(GetActorLocation(),ReceivedHPDmg,false);
+	HandleIndicatorNums(GetActorLocation(),ReceivedHPDmg,false,FColor::Red);
 
 	UpdateHeadBar();
 

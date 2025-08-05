@@ -4,7 +4,9 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 #include "AbilitySystemComponent.h"
 #include "DaisyGameplayTags.h"
+#include "Game/BattleManager.h"
 #include "AbilitySystem/DaisyAttributeSet.h"
+#include "AbilitySystem/Abilities/DaisyGameplayAbilityBase.h"
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
 
 struct DaisyDamageStatics
@@ -49,6 +51,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	//找到Ability的伤害类型，更改damage颜色
+	FGameplayTag Tag = Cast<UDaisyGameplayAbilityBase>(EffectContextHandle.GetAbility())->AttackTag;
+	FColor DamageColor = UDaisyBlueprintFunctionLibrary::FindBattleManager()->GetColorByTag(Tag);
+	UDaisyBlueprintFunctionLibrary::SetDamageColor(EffectContextHandle,DamageColor);
 	
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();

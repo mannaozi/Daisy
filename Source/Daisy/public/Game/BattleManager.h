@@ -180,7 +180,13 @@ public:
 		
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Color Mapping")
+	TMap<FGameplayTag, FColor> TagColorMap;
+	
+	UFUNCTION(BlueprintCallable, Category = "Color Mapping")
+	FColor GetColorByTag(const FGameplayTag& Tag) const;
+	
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffect();
 	void ClickOnCharacter(AActor* ClickedTarget);
