@@ -28,10 +28,12 @@ ABattleManager::ABattleManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	FDaisyGameplayTags Tag = FDaisyGameplayTags::Get();
+	/*
 	TagColorMap.Add(Tag.Damage_Fire,FColor::Red);
 	TagColorMap.Add(Tag.Damage_Lightning,FColor::Blue);
 	TagColorMap.Add(Tag.Damage_Physical,FColor::Orange);
 	TagColorMap.Add(Tag.Damage_Quantum,FColor::Purple);
+	*/
 }
 
 void ABattleManager::InitBattle(ADaisyCharacter* Player, ADaisyEnemyCharacter* Enemy,TMap<int32,TSubclassOf<ABattleEnemy>> EnemyInfo)
@@ -538,6 +540,9 @@ void ABattleManager::B2b_HandleEnemyAttack(ABattleEnemy* activeEnemyChar)
 
 void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 {
+	Damage_End = 0;
+	UpdateDamage(false);
+	
 	//回合结束
 	ProgressPhase = EProgressPhase::PP_B3_TurnEnd;
 	//如果释放大招，删除UI
@@ -1346,6 +1351,11 @@ FColor ABattleManager::GetColorByTag(const FGameplayTag& Tag) const
 	UE_LOG(LogTemp, Warning, TEXT("Tag %s not found in TagColorMap!"), *Tag.ToString());
 	// 返回默认颜色
 	return FColor::Red;
+}
+
+void ABattleManager::UpdateDamage(bool bShow) const
+{
+	OnDamageChanged.Broadcast(Damage_End, bShow);
 }
 
 void ABattleManager::ApplyEffect()

@@ -9,6 +9,7 @@
 #include "Character/BattleEnemy.h"
 #include "Character/BattlePlayer.h"
 #include "daisy/DaisyBlueprintFunctionLibrary.h"
+#include "Game/BattleManager.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
 
@@ -69,8 +70,12 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth,0.f,GetMaxHealth()));
 			const bool bFatal = NewHealth <= 0.f;
+			//获取EffectContex中的暴击和颜色
 			const bool bCritical = UDaisyBlueprintFunctionLibrary::IsCriticalHit(Props.EffectContextHandle);
 			const FColor DamageColor = UDaisyBlueprintFunctionLibrary::GetDamageColor(Props.EffectContextHandle);
+			//将伤害值加到最终伤害上
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->Damage_End += LocalIncomingDamage;
+			UDaisyBlueprintFunctionLibrary::FindBattleManager()->UpdateDamage(true);
 			if (!bFatal)
 			{
 				FGameplayTagContainer TagContainer;

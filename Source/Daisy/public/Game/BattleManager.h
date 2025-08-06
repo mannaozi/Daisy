@@ -18,6 +18,7 @@ class ABattlePawn;
 class ACameraActor;
 class UUserWidget;
 class USoundBase;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamageSigature, float, NewValue,bool,bShow);
 
 UCLASS()
 class DAISY_API ABattleManager : public AActor
@@ -181,11 +182,19 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Color Mapping")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Color Mapping")
 	TMap<FGameplayTag, FColor> TagColorMap;
-	
+
+	//伤害类型颜色映射
 	UFUNCTION(BlueprintCallable, Category = "Color Mapping")
 	FColor GetColorByTag(const FGameplayTag& Tag) const;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float Damage_End = 0.0f;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDamageSigature OnDamageChanged;
+	void UpdateDamage(bool bShow) const ;
 	
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffect();
