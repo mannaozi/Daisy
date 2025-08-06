@@ -8,20 +8,18 @@
 #include "DaisyGameplayTags.h"
 
 
-void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy,
-                                                           TSubclassOf<UGameplayEffect> InstantGameplayEffectClass,
-                                                           TSubclassOf<UGameplayEffect> WeakNessGameplayEffectClass)
+void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy)
 {
+	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	for (auto EnemyBase : Enemy)
 	{
-		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EnemyBase);
 		if(SourceASC == nullptr) return;
 		if(TargetASC == nullptr) return;
 		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 		EffectContextHandle.SetAbility(this);
 		EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
-		const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(InstantGameplayEffectClass,1,EffectContextHandle);
+		const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(InitGameplayEffectClass,1,EffectContextHandle);
 		FDaisyGameplayTags GameplayTags = FDaisyGameplayTags::Get();
 		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
 		
@@ -37,4 +35,17 @@ void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*>
 			const FActiveGameplayEffectHandle ActiveEffectHandle_Weak = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle_Weak.Data.Get());
 		}
 	}
+}
+
+void UDaisyGameplayAbilityBase::AddEnergy()
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+	if(TargetASC == nullptr) return;
+
+	check(EnergyGameplayEffectClass);
+	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(EnergyGameplayEffectClass,1,EffectContextHandle);
+	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+
 }

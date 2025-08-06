@@ -109,6 +109,10 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 			if (Enemy) Enemy->EnterStun(1);
 		}
 	}
+	if (Data.EvaluatedData.Attribute == GetEnergyAttribute())
+	{
+		float energy = GetEnergy();
+	}
 }
 
 void UDaisyAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const

@@ -448,19 +448,21 @@ void ABattlePlayer::PlayATKAnimByATKType()
 	case EAttackType::AT_DelayATK_E:
 		break;
 	}
-	float AnimTime = PlaySpecifiedAnim(SpecifiedActionString);
-	Cast<UDaisyAbilitySystemComponent>(GetAbilitySystemComponent())->ActiveAbilityByTag(FDaisyGameplayTags::Get().AttackType_NormalAtk);
+	FGameplayTag ActiveTag = UDaisyBlueprintFunctionLibrary::FindBattleManager()->GetTagByName(SpecifiedActionString);
+	
+	//float AnimTime = PlaySpecifiedAnim(SpecifiedActionString);
+	Cast<UDaisyAbilitySystemComponent>(GetAbilitySystemComponent())->ActiveAbilityByTag(ActiveTag);
 	//能量处理)
 	HandleEP(AttackType,false,0.0f);
 	
 	if (Melee)
 	{
 		//播放动画后执行下一逻辑
-		GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::AfterPlayingMeleeATKAnim,AnimTime,false);
+		//GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::AfterPlayingMeleeATKAnim,AnimTime,false);
 	}
 	else
 	{
-		GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::GeneralPlayerAttackOver,AnimTime,false);
+		//GetWorldTimerManager().SetTimer(PlayATKAnimHandle,this,&ABattlePlayer::GeneralPlayerAttackOver,AnimTime,false);
 	}
 }
 
@@ -590,19 +592,19 @@ void ABattlePlayer::BindAttributeDelegate()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetShieldAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxHealthChanged.Broadcast(Data.NewValue);
+				OnShieldChanged.Broadcast(Data.NewValue);
 			}
 		);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetEnergyAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxHealthChanged.Broadcast(Data.NewValue);
+				OnEnergyChanged.Broadcast(Data.NewValue);
 			}
 		);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxEnergyAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxHealthChanged.Broadcast(Data.NewValue);
+				OnMaxEnergyChanged.Broadcast(Data.NewValue);
 			}
 		);
 	}

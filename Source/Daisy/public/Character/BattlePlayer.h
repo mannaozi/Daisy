@@ -75,7 +75,9 @@ public:
 	void SetHiddenForPlayer(bool bCustomHidden);
 	float PlaySpecifiedAnim(FString Str);
 	void PlayATKAnimByATKType();
+	UFUNCTION(BlueprintCallable)
 	void AfterPlayingMeleeATKAnim();
+	UFUNCTION(BlueprintCallable)
 	void GeneralPlayerAttackOver();
 
 	void HandleEP(EAttackType ATKType,bool bDirect,float val);

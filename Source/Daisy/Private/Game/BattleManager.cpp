@@ -1353,6 +1353,19 @@ FColor ABattleManager::GetColorByTag(const FGameplayTag& Tag) const
 	return FColor::Red;
 }
 
+FGameplayTag ABattleManager::GetTagByName(const FString& Name) const
+{
+	// 使用Find方法检查映射中是否存在该标签
+	if (const FGameplayTag* Tag = StringTagMap.Find(Name))
+	{
+		return *Tag; // 返回找到的
+	}
+	// 未找到标签时的处理
+	UE_LOG(LogTemp, Warning, TEXT("Tag %s not found in StringTagMap!"), *Name);
+	// 返回默认
+	return FGameplayTag();
+}
+
 void ABattleManager::UpdateDamage(bool bShow) const
 {
 	OnDamageChanged.Broadcast(Damage_End, bShow);

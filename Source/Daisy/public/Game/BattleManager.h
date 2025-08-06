@@ -182,12 +182,17 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 	
+	//伤害类型颜色映射
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Color Mapping")
 	TMap<FGameplayTag, FColor> TagColorMap;
-
-	//伤害类型颜色映射
 	UFUNCTION(BlueprintCallable, Category = "Color Mapping")
 	FColor GetColorByTag(const FGameplayTag& Tag) const;
+
+	//StingTOGameplayTag
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	TMap<FString, FGameplayTag> StringTagMap;
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	FGameplayTag GetTagByName(const FString& Name) const;
 	
 	UPROPERTY(BlueprintReadWrite)
 	float Damage_End = 0.0f;
