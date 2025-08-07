@@ -155,5 +155,6 @@ public:
 
 	void BindAttributeDelegate();
 	
+	bool bCanUltimate;
 	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}
 };

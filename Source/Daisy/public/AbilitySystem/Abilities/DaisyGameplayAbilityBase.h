@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "DaisyGameplayAbilityBase.generated.h"
 
+class ABattlePlayer;
 class ABattleEnemy;
 /**
  * 
@@ -38,4 +39,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddEnergy();
+
+	UFUNCTION(BlueprintCallable)
+	FActiveGameplayEffectHandle AddBuffToPlayer(ABattlePlayer* Player,TSubclassOf<UGameplayEffect> BuffGameplayEffectClass);
 };

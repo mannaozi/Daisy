@@ -27,6 +27,7 @@ public:
 
 	bool bDead = false;
 	bool bStun = false;
+	UPROPERTY(BlueprintReadWrite)
 	float ActionValue = 0.0f;
 	float Distance = 10000.0f;
 

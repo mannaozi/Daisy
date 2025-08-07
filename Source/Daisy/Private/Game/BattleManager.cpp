@@ -1119,13 +1119,18 @@ void ABattleManager::EnterUltimate(int32 PlayerIndex)
 	bool bP2 = ProgressPhase == EProgressPhase::PP_A2_BattleEnd;
 	bool bP3 = ProgressPhase == EProgressPhase::PP_EMAX;
 	if (!bAlive || bP1 || bP2 || bP3) return;
-	/*
+	
 	//判断并消耗能量
+	/*
 	bool bFullEP = (SpecifiedPlayer->CurEnergy / SpecifiedPlayer->MaxEnergy) > 1.0f;
 	if (!bFullEP) return;
 	float AllEP = SpecifiedPlayer->MaxEnergy * (-1.0f);
 	SpecifiedPlayer->HandleEP(EAttackType::AT_EMAX,true,AllEP);
 	*/
+	if (!SpecifiedPlayer->bCanUltimate) return;
+	ClearEnergy(SpecifiedPlayer);
+	SpecifiedPlayer->bCanUltimate = false;
+	
 	//加入大招序列
 	UltimatePlayerQueue.Add(SpecifiedPlayer);
 	BattleLayout->RefreshUItimateOrder(UltimatePlayerQueue);
@@ -1384,6 +1389,17 @@ void ABattleManager::ApplyEffect()
 
 }
 
+void ABattleManager::ClearEnergy(AActor* ClearTarget)
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ClearTarget);
+	if(TargetASC == nullptr) return;
+
+	check(ClearEnergyGameplayEffectClass)
+	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(ClearEnergyGameplayEffectClass,1,EffectContextHandle);
+	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+}
 bool ABattleManager::IsTarget(AActor* ClickedTarget)
 {
 	if (IsBuffTarget())

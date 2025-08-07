@@ -181,7 +181,10 @@ public:
 		
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
-	
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
+	TSubclassOf<UGameplayEffect> ClearEnergyGameplayEffectClass;
+	void ClearEnergy(AActor* ClearTarget);
 	//伤害类型颜色映射
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Color Mapping")
 	TMap<FGameplayTag, FColor> TagColorMap;

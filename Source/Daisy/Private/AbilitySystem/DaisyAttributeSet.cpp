@@ -111,7 +111,12 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 	}
 	if (Data.EvaluatedData.Attribute == GetEnergyAttribute())
 	{
-		float energy = GetEnergy();
+		SetEnergy(FMath::Clamp(GetEnergy(),0.f,GetMaxEnergy()));
+		if (GetEnergy() == GetMaxEnergy())
+		{
+			ABattlePlayer* Player = Cast<ABattlePlayer>(Props.TargetCharacter);
+			if (Player) Player->bCanUltimate = true;
+		}
 	}
 }
 
