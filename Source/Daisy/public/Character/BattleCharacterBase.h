@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/CombatInterface.h"
 #include "Interface/VFXInterface.h"
+#include "GameplayEffectTypes.h"
 #include "BattleCharacterBase.generated.h"
 
 class UGameplayAbility;
@@ -89,4 +90,8 @@ public:
 
 	int32 Level = 1;
 	virtual void InitAbilityActorInfo();
+
+	//Buff
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FActiveGameplayEffectHandle,int32> BuffMap;
 };

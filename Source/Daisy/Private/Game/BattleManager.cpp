@@ -542,6 +542,22 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 {
 	Damage_End = 0;
 	UpdateDamage(false);
+
+	//TODO:
+	UAbilitySystemComponent* SourASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EndTurnActor);
+	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
+	if(Player == nullptr) return;
+	for (auto& Pair : Player->BuffMap)
+	{
+		if (Pair.Value == 0)
+		{
+			SourASC->RemoveActiveGameplayEffect(Pair.Key);
+		}
+		else
+		{
+			Pair.Value -= 1;
+		}
+	}
 	
 	//回合结束
 	ProgressPhase = EProgressPhase::PP_B3_TurnEnd;
@@ -566,7 +582,7 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	}
 	ResetActionValueAndATKType(bConsumeTurn,EndTurnActor);
 	//重置UI面板
-	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
+	//ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
 	if (Player)
 	{
 		BattleLayout->HandleStatsPanelAnimating(Player,false);
