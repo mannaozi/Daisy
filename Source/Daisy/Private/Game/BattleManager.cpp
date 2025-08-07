@@ -1321,9 +1321,9 @@ void ABattleManager::Tick(float DeltaSeconds)
 		else
 		{
 			bool b1 = ActivePlayerRef->AttackType == EAttackType::AT_SkillATK;
-			FBuffInfo FBI = *(ActivePlayerRef->playerAtr.BuffSkillStats.Find(EAttackType::AT_SkillATK));
-			bool b2 = FBI.BuffType == EBuffTypes::BT_Resurrection;
-			if (b1 && b2)
+			//FBuffInfo FBI = *(ActivePlayerRef->playerAtr.BuffSkillStats.Find(EAttackType::AT_SkillATK));
+			//bool b2 = FBI.BuffType == EBuffTypes::BT_Resurrection;
+			if (b1)
 			{
 				TargetActor = ActivePlayerRef;
 			}

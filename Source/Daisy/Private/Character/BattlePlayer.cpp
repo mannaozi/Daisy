@@ -410,7 +410,7 @@ void ABattlePlayer::TL_SlideF_Finished()
 
 void ABattlePlayer::TL_SlideB(float DeltaTime)
 {
-	FVector targetLocation = UKismetMathLibrary::VLerp(TargetLocation,OriginLocation,DeltaTime);
+	FVector targetLocation = UKismetMathLibrary::VLerp(GetActorLocation(),OriginLocation,DeltaTime);
 	SetActorLocation(targetLocation);
 }
 
