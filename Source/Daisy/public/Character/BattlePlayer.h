@@ -95,6 +95,8 @@ public:
 	void CheckShieldModifier();
 	void Resurrection();
 	void MoveForward();
+
+	void Die();
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

@@ -81,6 +81,9 @@ public:
 	
 	UPROPERTY(EditAnywhere,Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	UFUNCTION(BlueprintCallable)
+	UAnimMontage* GetHitReackMontage();
 	
 	virtual void InitializeDefaultAttributes() const;
 

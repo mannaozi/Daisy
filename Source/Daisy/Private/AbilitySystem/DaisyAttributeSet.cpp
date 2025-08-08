@@ -98,6 +98,10 @@ void UDaisyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectM
 					Enemy->Die();
 				}
 				//玩家死亡
+				if (ABattlePlayer* Player = Cast<ABattlePlayer>(Props.TargetCharacter))
+				{
+					Player->Die();
+				}
 			}
 		}
 	}

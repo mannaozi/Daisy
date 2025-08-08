@@ -77,6 +77,11 @@ UAbilitySystemComponent* ABattleCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+UAnimMontage* ABattleCharacterBase::GetHitReackMontage()
+{
+	return HitReactMontage;
+}
+
 void ABattleCharacterBase::InitializeDefaultAttributes() const
 {
 	check(IsValid(GetAbilitySystemComponent()))

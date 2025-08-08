@@ -43,6 +43,11 @@ public:
 	FGameplayTag AttackType_UltimateAtk;
 	FGameplayTag AttackType_FollowAtk;
 
+	//Enemy Attack
+	FGameplayTag EnemyAttack_ATK1;
+	FGameplayTag EnemyAttack_ATK2;
+	FGameplayTag EnemyAttack_ATK3;
+	
 	//通用
 	FGameplayTag HitReact;
 	FGameplayTag Death;

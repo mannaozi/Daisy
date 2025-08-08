@@ -38,6 +38,27 @@ void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*>
 	}
 }
 
+void UDaisyGameplayAbilityBase::ApplyGameplayEffectToPlayer(TArray<ABattlePlayer*> Player)
+{
+	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+	for (auto PlayerBase : Player)
+	{
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(PlayerBase);
+		if(SourceASC == nullptr) return;
+		if(TargetASC == nullptr) return;
+		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
+		const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(InitGameplayEffectClass,1,EffectContextHandle);
+		FDaisyGameplayTags GameplayTags = FDaisyGameplayTags::Get();
+		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+		
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,GameplayTags.Damage,ScaledDamage);
+		const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+		
+	}
+}
+
 void UDaisyGameplayAbilityBase::AddEnergy()
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());

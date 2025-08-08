@@ -196,6 +196,14 @@ public:
 	TMap<FString, FGameplayTag> StringTagMap;
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	FGameplayTag GetTagByName(const FString& Name) const;
+	//EnemyStringToGameplayTag
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	TMap<FString, FGameplayTag> Enemy_StringTagMap;
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	FGameplayTag GetTagByName_Enemy(const FString& Name) const;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AbilityEnd();
 	
 	UPROPERTY(BlueprintReadWrite)
 	float Damage_End = 0.0f;

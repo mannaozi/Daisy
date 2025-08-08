@@ -120,8 +120,10 @@ public:
 	UParticleSystemComponent* StunVFXComp;
 	bool bDelayed_ATK = false;
 	ABattlePlayer* DelayedTarget;
-	
+
+	UPROPERTY(BlueprintReadWrite)
 	ABattlePlayer* currentTarget;
+	UPROPERTY(BlueprintReadWrite)
 	TArray<ABattlePlayer*> currentTargetsArr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")

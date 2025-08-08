@@ -169,9 +169,10 @@ float ABattleEnemy::PlaySpecificAnim(const FString& AnimKey)
 	if (!AnimMontages.Contains(AnimKey)) return 0;
 	if (*(AnimMontages.Find(AnimKey)) == nullptr) return 0;
 	GetMesh()->GetAnimInstance()->StopAllMontages(0);
-	float AnimTime = PlayAnimMontage(*(AnimMontages.Find(AnimKey)));
-	
-	return AnimTime;
+	//float AnimTime = PlayAnimMontage(*(AnimMontages.Find(AnimKey)));
+	FGameplayTag Tag = UDaisyBlueprintFunctionLibrary::FindBattleManager()->GetTagByName_Enemy(AnimKey);
+	Cast<UDaisyAbilitySystemComponent>(GetAbilitySystemComponent())->ActiveAbilityByTag(Tag);
+	return 0;
 }
 
 void ABattleEnemy::EndEnemyTurnFromBP(ABattleEnemy* ActiveActor)

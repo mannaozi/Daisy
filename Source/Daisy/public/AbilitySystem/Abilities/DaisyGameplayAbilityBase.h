@@ -38,6 +38,9 @@ public:
 	void ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy);
 
 	UFUNCTION(BlueprintCallable)
+	void ApplyGameplayEffectToPlayer(TArray<ABattlePlayer*> Player);
+	
+	UFUNCTION(BlueprintCallable)
 	void AddEnergy();
 
 	UFUNCTION(BlueprintCallable)

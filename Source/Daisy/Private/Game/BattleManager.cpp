@@ -543,19 +543,20 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	Damage_End = 0;
 	UpdateDamage(false);
 
-	//TODO:
 	UAbilitySystemComponent* SourASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EndTurnActor);
 	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
-	if(Player == nullptr) return;
-	for (auto& Pair : Player->BuffMap)
+	if(Player)
 	{
-		if (Pair.Value == 0)
+		for (auto& Pair : Player->BuffMap)
 		{
-			SourASC->RemoveActiveGameplayEffect(Pair.Key);
-		}
-		else
-		{
-			Pair.Value -= 1;
+			if (Pair.Value == 0)
+			{
+				SourASC->RemoveActiveGameplayEffect(Pair.Key);
+			}
+			else
+			{
+				Pair.Value -= 1;
+			}
 		}
 	}
 	
@@ -1383,6 +1384,19 @@ FGameplayTag ABattleManager::GetTagByName(const FString& Name) const
 	}
 	// 未找到标签时的处理
 	UE_LOG(LogTemp, Warning, TEXT("Tag %s not found in StringTagMap!"), *Name);
+	// 返回默认
+	return FGameplayTag();
+}
+
+FGameplayTag ABattleManager::GetTagByName_Enemy(const FString& Name) const
+{
+	// 使用Find方法检查映射中是否存在该标签
+	if (const FGameplayTag* Tag = Enemy_StringTagMap.Find(Name))
+	{
+		return *Tag; // 返回找到的
+	}
+	// 未找到标签时的处理
+	UE_LOG(LogTemp, Warning, TEXT("Tag %s not found in Enemy_StringTagMap!"), *Name);
 	// 返回默认
 	return FGameplayTag();
 }

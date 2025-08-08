@@ -224,6 +224,12 @@ void ABattlePlayer::MoveForward()
 	ActionValue = FMath::Max(0.0f, ActionValue);
 }
 
+void ABattlePlayer::Die()
+{
+	bDead = true;
+	PlaySpecifiedAnim("Die");
+}
+
 void ABattlePlayer::HandleShieldAndHP(float dmg)
 {
 	// 有套盾先扣盾值，盾值不够再扣血，无套盾直接扣血

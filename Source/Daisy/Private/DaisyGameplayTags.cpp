@@ -150,4 +150,20 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FName("Ability.Montage.Melee"),
 		FString("近战攻击")
 	);
+
+	//Enemy Attack
+	GameplayTags.EnemyAttack_ATK1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EnemyAttack.ATK1"),
+		FString("敌人攻击")
+	);
+	
+	GameplayTags.EnemyAttack_ATK2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EnemyAttack.ATK2"),
+		FString("敌人攻击")
+	);
+	
+	GameplayTags.EnemyAttack_ATK3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EnemyAttack.ATK3"),
+		FString("敌人攻击")
+	);
 }
