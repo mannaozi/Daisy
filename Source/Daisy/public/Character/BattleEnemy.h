@@ -160,7 +160,8 @@ public:
 	TArray<FGameplayTag> WeakNess;
 
 	void AddWeakness(const TArray<FGameplayTag>& Weak);
-	
+
+	int32 PositionID;
 protected:
 	virtual void BeginPlay() override;
 };

@@ -178,7 +178,10 @@ public:
 	FTimerHandle BattleEndCameraStartingFadeTimerHandle;
 	FTimerHandle CleanBattleFieldTimerHandle;
 	FTimerHandle ExitGameTimerHandle;
-		
+
+	float CurrentSpringArmYaw;
+	float TargetSpringArmYaw;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 

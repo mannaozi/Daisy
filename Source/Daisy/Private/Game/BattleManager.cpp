@@ -22,6 +22,7 @@
 #include "UI/DaisyUserWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "AbilitySystem/DaisyAttributeSet.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 ABattleManager::ABattleManager()
@@ -558,6 +559,7 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 				Pair.Value -= 1;
 			}
 		}
+		Player->GetCameraBoom()->SetRelativeRotation(Player->StartRotation);
 	}
 	
 	//回合结束
@@ -701,12 +703,58 @@ void ABattleManager::SetMultipeEnemyLocks()
 		{
 			CurrentEnemyTargets.Add(Enemies_Arr[IndexForLockedTarget+1]);
 		}
+		switch (Enemies_Arr[IndexForLockedTarget]->PositionID)
+		{
+		case 0:
+			break;
+		case 1:
+			TargetSpringArmYaw  = -60.0f;
+			break;
+		case 2:
+			TargetSpringArmYaw  = -50.0f;
+			break;
+		case 3:
+			TargetSpringArmYaw  = -40.0f;
+			break;
+		case 4:
+			TargetSpringArmYaw  = -30.0f;
+			break;
+		case 5:
+			TargetSpringArmYaw  = -20.0f;
+			break;
+		case 6:
+			TargetSpringArmYaw  = -10.0f;
+			break;
+		}
 		ShowEnemyMultipleLockIcons(CurrentEnemyTargets);
 	}
 	else
 	{
 		CurrentEnemyTarget = Enemies_Arr[IndexForLockedTarget];
 		LastClickedActor = CurrentEnemyTarget;
+		switch (CurrentEnemyTarget->PositionID)
+		{
+		case 0:
+			break;
+		case 1:
+			TargetSpringArmYaw  = -60.0f;
+			break;
+		case 2:
+			TargetSpringArmYaw  = -50.0f;
+			break;
+		case 3:
+			TargetSpringArmYaw  = -40.0f;
+			break;
+		case 4:
+			TargetSpringArmYaw  = -30.0f;
+			break;
+		case 5:
+			TargetSpringArmYaw  = -20.0f;
+			break;
+		case 6:
+			TargetSpringArmYaw  = -10.0f;
+			break;
+		}
 		ShowEnemyLockIconByIndex(IndexForLockedTarget);
 	}
 }
@@ -735,6 +783,7 @@ void ABattleManager::ShowEnemyLockIconByIndex(int32 index)
 	{
 		Enemies_Arr[index]->UpdateLockIcon(false);
 	}
+	//TODO:
 }
 
 void ABattleManager::ShowEnemyMultipleLockIcons(TArray<ABattleEnemy*> indexRefs)
@@ -1329,6 +1378,14 @@ void ABattleManager::Tick(float DeltaSeconds)
 	if (BuffCamera == nullptr) return;
 	
 	float Location_Y;
+	
+	if (ActivePlayerRef && ActivePlayerRef->GetCameraBoom())
+	{
+		CurrentSpringArmYaw = FMath::FInterpTo(CurrentSpringArmYaw, TargetSpringArmYaw, DeltaSeconds, 2);
+		ActivePlayerRef->GetCameraBoom()->SetRelativeRotation(FRotator(0.0f, CurrentSpringArmYaw, 0.0f));
+	}
+	
+	if (!IsBuffTarget()) return;
 	if (IsMultipleTargets())
 	{
 		Location_Y = BuffCameraOriginLocation.Y;
@@ -1597,6 +1654,7 @@ void ABattleManager::SpawnEnemiesAndDecideLocation()
 		Rotation = FRotator(0,yaw,0);
 		TSubclassOf<ABattleEnemy> tempEnemyClass = *EnemyTeamInfo.Find(It.Key());
 		ABattleEnemy* enemyTemp = GetWorld()->SpawnActor<ABattleEnemy>(tempEnemyClass, Location, Rotation);
+		enemyTemp->PositionID = It.Key();
 		Enemies_Arr.AddUnique(enemyTemp);
 		
 		// 绑定敌人回合结束后的回调

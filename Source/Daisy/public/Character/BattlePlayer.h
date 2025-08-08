@@ -156,6 +156,8 @@ public:
 	void InitValue();
 
 	void BindAttributeDelegate();
+
+	FRotator StartRotation;
 	
 	bool bCanUltimate;
 	FORCEINLINE USpringArmComponent* GetCameraBoom() {return CameraBoom;}

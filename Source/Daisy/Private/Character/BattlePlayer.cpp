@@ -629,7 +629,7 @@ void ABattlePlayer::BeginPlay()
 	InitializeData();
 	BindAttributeDelegate();
 	
-	//初始镜头角度
+	/*//初始镜头角度
 	float SpringArmYaw = 0.0f;
 	if (positionID != -1)
 	{
@@ -650,8 +650,11 @@ void ABattlePlayer::BeginPlay()
 				SpringArmYaw = -10.0f;
 				break;
 		}
-		GetCameraBoom()->SetRelativeRotation(FRotator(0.0f, SpringArmYaw, 0.0f));
+		//GetCameraBoom()->SetRelativeRotation(FRotator(0.0f, SpringArmYaw, 0.0f));
 	}
+	*/
+	//存储初始旋转
+	StartRotation = GetCameraBoom()->GetRelativeRotation();
 	
 	//初始化时间轴
 	if (Curve_RotateToTarget)
