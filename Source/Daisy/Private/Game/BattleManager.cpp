@@ -42,7 +42,7 @@ void ABattleManager::InitBattle(ADaisyCharacter* Player, ADaisyEnemyCharacter* E
 	Player_World = Player;
 	Enemy_World = Enemy;
 	EnemyTeamInfo = EnemyInfo;
-	PlayerTeamInfo = Player->PlayerTeamInfo;
+	PlayerTeamInfo = Cast<ADaisyPlayerController>(UGameplayStatics::GetPlayerController(this,0))->PlayerTeamInfo;
 
 	//初始化
 	A1_PreInitializeBattle();

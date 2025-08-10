@@ -35,8 +35,6 @@ public:
 
 	void FindEnemyInfo(AActor* Enemy);
 
-	UPROPERTY(EditDefaultsOnly, Category = "Presets")
-	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
 	
 	FTimerHandle ResetBattleBooleanTimerHandle;
 	

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/BattlePlayer.h"
 #include "GameFramework/PlayerController.h"
 #include "DaisyPlayerController.generated.h"
 
@@ -16,6 +17,8 @@ class DAISY_API ADaisyPlayerController : public APlayerController
 public:
 	ADaisyPlayerController();
 
+	UPROPERTY(EditDefaultsOnly, Category = "Presets")
+	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
 protected:
 	virtual void BeginPlay() override;
 	
