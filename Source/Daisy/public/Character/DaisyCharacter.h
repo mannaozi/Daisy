@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "AI/DaisyAIController.h"
 #include "Character/DaisyCharacterBase.h"
+#include "daisy/daisyEnum.h"
+#include "Interface/ExploreInterface.h"
 #include "DaisyCharacter.generated.h"
 
+class UDataTable;
 class ABattlePlayer;
 struct FInputActionValue;
 class USpringArmComponent;
@@ -19,12 +22,14 @@ class ADaisyPlayerController;
  * 
  */
 UCLASS()
-class DAISY_API ADaisyCharacter : public ADaisyCharacterBase
+class DAISY_API ADaisyCharacter : public ADaisyCharacterBase, public IExploreInterface
 {
 	GENERATED_BODY()
 public:
 	ADaisyCharacter();
-
+	
+	virtual void INT_E_ATK(bool bStart) override;
+	
 	UPROPERTY(EditAnywhere,Category = "Camera")
 	TObjectPtr<UCameraComponent> Camera;
 	
@@ -35,12 +40,24 @@ public:
 
 	void FindEnemyInfo(AActor* Enemy);
 
+	UPROPERTY(EditAnywhere,Category = "Data")
+	UDataTable* InfoData;
+
+	UPROPERTY(EditAnywhere,Category = "Data")
+	FName DataRow = FName("1");
+	
+	FExplorerInfo explorerInfo;
+	UAnimMontage* ATKAnim;
+	bool bMelee;
 	
 	FTimerHandle ResetBattleBooleanTimerHandle;
 	
 	void FinishBattle();
 
 	void ResetBattleBoolean();
+
+	//Initialization
+	void SetupNewExplorer(int32 TeamPosIndex);
 protected:
 	virtual void BeginPlay() override;
 	
@@ -68,6 +85,8 @@ private:
 	void Attack();
 
 	void Attack_Test();
+
+	void RangeDetectEnemy();
 private:
 	bool bOpenTeamUI = false;
 	bool bAttack = false;

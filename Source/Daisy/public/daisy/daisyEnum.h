@@ -196,3 +196,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<FString, float> Choices;
 };
+
+USTRUCT(BlueprintType)
+struct FExplorerInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMesh* SKM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UAnimInstance> AnimClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* ATKMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bMelee;
+};

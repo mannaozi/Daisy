@@ -35,6 +35,26 @@ ADaisyCharacter::ADaisyCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 }
 
+void ADaisyCharacter::INT_E_ATK(bool bStart)
+{
+	if (bStart)
+	{
+		// 是否近战
+		if (bMelee)
+		{
+			Attack_Test();
+		}
+		else
+		{
+			RangeDetectEnemy();
+		}
+	}
+	else
+	{
+		bAttack = false;
+	}
+}
+
 void ADaisyCharacter::FindEnemyInfo(AActor* Enemy)
 {
 	ADaisyEnemyCharacter* HitEnemy = Cast<ADaisyEnemyCharacter>(Enemy);
@@ -53,6 +73,8 @@ void ADaisyCharacter::BeginPlay()
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
 	check(Subsystem);
 	Subsystem->AddMappingContext(DaisyContext,0);
+
+	SetupNewExplorer(1);
 }
 
 void ADaisyCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -76,7 +98,11 @@ void ADaisyCharacter::Attack()
 {
 	if (!bOpenTeamUI && !bAttack)
 	{
-		Attack_Test();
+		bAttack = true;
+		if (ATKAnim != nullptr)
+		{
+			PlayAnimMontage(ATKAnim);
+		}
 	}
 }
 
@@ -110,6 +136,11 @@ void ADaisyCharacter::Attack_Test()
 	}
 }
 
+void ADaisyCharacter::RangeDetectEnemy()
+{
+	
+}
+
 void ADaisyCharacter::FinishBattle()
 {
 	// 1.8s后再进入战斗，避免连续进入战斗
@@ -120,6 +151,25 @@ void ADaisyCharacter::FinishBattle()
 void ADaisyCharacter::ResetBattleBoolean()
 {
 	bAttack = false;
+}
+
+void ADaisyCharacter::SetupNewExplorer(int32 TeamPosIndex)
+{
+	// TBD - 临时（输入序号等于角色序号）
+	// 根据输入的序号，切换不同的探索角色
+	// 把int32 转化为 FName
+	FString l_charIndex = FString::FromInt(TeamPosIndex);
+	DataRow = FName(*l_charIndex);
+
+	// 读表
+	FString s = DataRow.ToString();
+	explorerInfo = *(InfoData->FindRow<FExplorerInfo>(DataRow, s, true));
+
+	bMelee = explorerInfo.bMelee;
+	ATKAnim = explorerInfo.ATKMontage;
+	GetMesh()->SetSkeletalMesh(explorerInfo.SKM);
+	GetMesh()->SetAnimInstanceClass(explorerInfo.AnimClass);
+	
 }
 
 void ADaisyCharacter::Move(const FInputActionValue& Value)
