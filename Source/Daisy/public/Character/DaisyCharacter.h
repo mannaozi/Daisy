@@ -50,6 +50,9 @@ public:
 	UAnimMontage* ATKAnim;
 	bool bMelee;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	bool bAttack = false;
+
 	FTimerHandle ResetBattleBooleanTimerHandle;
 	
 	void FinishBattle();
@@ -57,6 +60,7 @@ public:
 	void ResetBattleBoolean();
 
 	//Initialization
+	UFUNCTION(BlueprintCallable)
 	void SetupNewExplorer(int32 TeamPosIndex);
 protected:
 	virtual void BeginPlay() override;
@@ -87,7 +91,7 @@ private:
 	void Attack_Test();
 
 	void RangeDetectEnemy();
+	
 private:
 	bool bOpenTeamUI = false;
-	bool bAttack = false;
 };
