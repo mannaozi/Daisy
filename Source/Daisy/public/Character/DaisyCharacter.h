@@ -62,6 +62,10 @@ public:
 	//Initialization
 	UFUNCTION(BlueprintCallable)
 	void SetupNewExplorer(int32 TeamPosIndex);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PostInitialization();
+	
 protected:
 	virtual void BeginPlay() override;
 	

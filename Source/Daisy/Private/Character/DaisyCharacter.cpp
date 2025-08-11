@@ -74,7 +74,7 @@ void ADaisyCharacter::BeginPlay()
 	check(Subsystem);
 	Subsystem->AddMappingContext(DaisyContext,0);
 
-	SetupNewExplorer(1);
+	PostInitialization();
 }
 
 void ADaisyCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

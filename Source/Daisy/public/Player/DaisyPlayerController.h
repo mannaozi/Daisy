@@ -17,7 +17,7 @@ class DAISY_API ADaisyPlayerController : public APlayerController
 public:
 	ADaisyPlayerController();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Presets")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Presets")
 	TMap<int32, TSubclassOf<ABattlePlayer>> PlayerTeamInfo;
 protected:
 	virtual void BeginPlay() override;
