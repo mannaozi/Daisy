@@ -52,7 +52,10 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	bool bAttack = false;
-
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bOpenTeamUI = false;
+	
 	FTimerHandle ResetBattleBooleanTimerHandle;
 	
 	void FinishBattle();
@@ -66,6 +69,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PostInitialization();
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void EnterBattle();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowExploreUI();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	int32 RetrievCharIndexFromTeamPos(int32 TeamIndex);
 protected:
 	virtual void BeginPlay() override;
 	
@@ -97,5 +108,4 @@ private:
 	void RangeDetectEnemy();
 	
 private:
-	bool bOpenTeamUI = false;
 };

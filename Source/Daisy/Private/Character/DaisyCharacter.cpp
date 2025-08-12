@@ -129,6 +129,7 @@ void ADaisyCharacter::Attack_Test()
 		if (DetectedActor != nullptr)
 		{
 			bAttack = true;
+			EnterBattle();
 			FindEnemyInfo(DetectedActor);
 			// 跳出函数
 			return;
@@ -146,6 +147,7 @@ void ADaisyCharacter::FinishBattle()
 	// 1.8s后再进入战斗，避免连续进入战斗
 	GetWorld()->GetTimerManager().SetTimer(ResetBattleBooleanTimerHandle,
 		this, &ADaisyCharacter::ResetBattleBoolean, 1.8f, false);
+	ShowExploreUI();
 }
 
 void ADaisyCharacter::ResetBattleBoolean()
@@ -156,14 +158,16 @@ void ADaisyCharacter::ResetBattleBoolean()
 void ADaisyCharacter::SetupNewExplorer(int32 TeamPosIndex)
 {
 	// TBD - 临时（输入序号等于角色序号）
+	FString l_charIndex = FString::FromInt(RetrievCharIndexFromTeamPos(TeamPosIndex));
 	// 根据输入的序号，切换不同的探索角色
 	// 把int32 转化为 FName
-	FString l_charIndex = FString::FromInt(TeamPosIndex);
 	DataRow = FName(*l_charIndex);
 
 	// 读表
 	FString s = DataRow.ToString();
-	explorerInfo = *(InfoData->FindRow<FExplorerInfo>(DataRow, s, true));
+	FExplorerInfo* Row = InfoData->FindRow<FExplorerInfo>(DataRow, s, true);
+	if (!Row) return;
+	explorerInfo = *Row;
 
 	bMelee = explorerInfo.bMelee;
 	ATKAnim = explorerInfo.ATKMontage;

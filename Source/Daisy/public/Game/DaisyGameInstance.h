@@ -19,6 +19,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool bBOSSFight = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Presets")
 	TArray<int32> UnitsLibrary;
 };

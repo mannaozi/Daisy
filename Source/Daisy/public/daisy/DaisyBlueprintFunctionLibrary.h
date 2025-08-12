@@ -22,7 +22,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	static ABattleManager* FindBattleManager();
 	
-	UFUNCTION(BlueprintPure)
 	static UDaisyGameInstance* GetGameInstance();
 
 	UFUNCTION(BlueprintPure,Category="DaisyAbilitySystemLibrary | GameplayEffects")

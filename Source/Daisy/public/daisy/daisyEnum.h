@@ -128,6 +128,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMesh* SKM = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimSequence* idle = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UObject> AnimClass;
