@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere,Category = "Camera")
 	TObjectPtr<UCameraComponent> Camera;
 	
-	UPROPERTY(EditAnywhere,Category = "Camera")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
 	
 	TObjectPtr<ADaisyPlayerController> PC = nullptr;
