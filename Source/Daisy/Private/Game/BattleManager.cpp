@@ -199,6 +199,38 @@ void ABattleManager::ExitGame()
 	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 }
 
+void ABattleManager::ExitBattle()
+{
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(Player_World);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(Player_World);
+	BattlePawn->Destroy();
+	BattlePawn = nullptr;
+	Player_World->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	Player_World->FinishBattle();
+	for (auto ArrayElem : Player_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	for (auto ArrayElem : Enemies_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	for (auto ArrayElem : Dead_Enemies_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	for (auto ArrayElem : Dead_Player_Arr)
+	{
+		ArrayElem->Destroy();
+	}
+	BattleLayout->RemoveFromParent();
+	BattleLayout = nullptr;
+	
+	// 回复正常视野
+	UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->
+		StartCameraFade(1.0f, 0.0f, 0.5f, FColor::Black, false, false);
+}
+
 void ABattleManager::B1a_CalculateActionValue()
 {
 	ProgressPhase = EProgressPhase::PP_B1_CalculateActionValue;

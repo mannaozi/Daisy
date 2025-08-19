@@ -155,6 +155,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitValue();
 
+	UFUNCTION(BlueprintCallable)
+	FBattleCharacterAttribute GetBattleCharacterAttribute() const;
+	
 	void BindAttributeDelegate();
 
 	FRotator StartRotation;

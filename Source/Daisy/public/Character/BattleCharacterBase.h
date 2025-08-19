@@ -10,6 +10,55 @@
 #include "GameplayEffectTypes.h"
 #include "BattleCharacterBase.generated.h"
 
+USTRUCT(BlueprintType)
+struct FBattleCharacterAttribute
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Shield = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Energy = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxEnergy = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Attack = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Defense = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Critical = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CriticalDamage = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Toughness = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxToughness = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CharIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString CharName;
+};
+
 class UGameplayAbility;
 class UGameplayEffect;
 class UDaisyAttributeSet;
@@ -17,6 +66,7 @@ class UDaisyAbilitySystemComponent;
 class UWidgetComponent;
 class UCameraComponent;
 class USpringArmComponent;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSigature, float, NewValue);
 UCLASS()
 class DAISY_API ABattleCharacterBase : public ACharacter,public ICombatInterface,public IVFXInterface,public IAbilitySystemInterface
@@ -94,7 +144,14 @@ public:
 	int32 Level = 1;
 	virtual void InitAbilityActorInfo();
 
+
 	//Buff
 	UPROPERTY(BlueprintReadWrite)
 	TMap<FActiveGameplayEffectHandle,int32> BuffMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category="BattleAttribute")
+	UTexture2D* CharIcon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category="BattleAttribute")
+	FString CharName;
 };

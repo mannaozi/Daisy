@@ -691,3 +691,27 @@ void ABattlePlayer::Tick(float DeltaTime)
 	Sliding_F_Timeline.TickTimeline(DeltaTime);
 	Sliding_B_Timeline.TickTimeline(DeltaTime);
 }
+
+FBattleCharacterAttribute ABattlePlayer::GetBattleCharacterAttribute() const
+{
+	FBattleCharacterAttribute Attribute;
+	UDaisyAttributeSet* AS = Cast<UDaisyAttributeSet>(AttributeSet);
+	if (AS)
+	{
+		Attribute.Health = AS->GetHealth();
+		Attribute.MaxHealth = AS->GetMaxHealth();
+		Attribute.Attack = AS->GetAttack();
+		Attribute.Shield = AS->GetShield();
+		Attribute.Energy = AS->GetEnergy();
+		Attribute.MaxEnergy = AS->GetMaxEnergy();
+		Attribute.Defense = AS->GetDefense();
+		Attribute.Critical = AS->GetCritical();
+		Attribute.CriticalDamage = AS->GetCriticalDamage();
+		Attribute.Speed = AS->GetSpeed();
+		Attribute.Toughness = AS->GetToughness();
+		Attribute.MaxToughness = AS->GetMaxToughness();
+		Attribute.CharIcon = CharIcon;
+		Attribute.CharName = CharName;
+	}
+	return Attribute;
+}

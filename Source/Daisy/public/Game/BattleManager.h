@@ -101,7 +101,8 @@ public:
 	void PlayerWin();
 	void EnemyWin();
 	void ExitGame();
-
+	UFUNCTION(BlueprintCallable)
+	void ExitBattle();
 	/*Abilitysubsystem*/
 	
 	/*Abilitysubsystem*/
@@ -142,7 +143,8 @@ public:
 	
 	UPROPERTY(EditAnywhere,Category="Battle")
 	TSubclassOf<UUserWidget> BattleLayoutClass;
-	
+
+	UPROPERTY(BlueprintReadOnly)
 	UBattleUserWidget* BattleLayout;
 
 	EBattleFlags curBattleFlag {EBattleFlags::BF_EMAX};
