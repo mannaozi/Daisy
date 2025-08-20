@@ -103,6 +103,16 @@ void ABattleCharacterBase::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this,this);
 }
 
+TArray<FBuffList> ABattleCharacterBase::CreateBuffList()
+{
+	TArray<FBuffList> BuffList;
+	for (auto Pair : BuffMap)
+	{
+		BuffList.Add(Pair.Value);
+	}
+	return BuffList;
+}
+
 void ABattleCharacterBase::GetFactionAVAvatar(bool& bPF, float& aV, UTexture2D* &AI)
 {
 	bPF = bPlayerFaction;

@@ -55,6 +55,14 @@ public:
 	//Montage
 	FGameplayTag Ability_Montage_Remote;
 	FGameplayTag Ability_Montage_Melee;
+
+	//BuffTag
+	FGameplayTag Buff_Shield;
+	FGameplayTag Buff_Attack;
+	FGameplayTag Buff_Defense;
+	FGameplayTag Buff_Critical;
+	FGameplayTag Buff_CriticalDamage;
+	FGameplayTag Buff_Speed;
 	
 private:
 	static FDaisyGameplayTags GameplayTags;

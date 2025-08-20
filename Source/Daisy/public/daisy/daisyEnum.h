@@ -8,6 +8,18 @@
 
 class ABattlePlayer;
 
+USTRUCT(BlueprintType)
+struct FBuffDescription
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText BuffDescription;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* CharIcon_Avatar;
+};
 UENUM(BlueprintType)
 enum class EProgressPhase : uint8
 {

@@ -9,6 +9,7 @@
 #include "DaisyGameplayTags.h"
 
 
+
 void UDaisyGameplayAbilityBase::ApplyGameplayEffectToEnemy(TArray<ABattleEnemy*> Enemy)
 {
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
@@ -72,16 +73,4 @@ void UDaisyGameplayAbilityBase::AddEnergy()
 
 }
 
-FActiveGameplayEffectHandle UDaisyGameplayAbilityBase::AddBuffToPlayer(ABattlePlayer* Player,TSubclassOf<UGameplayEffect> BuffGameplayEffectClass)
-{
-	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-	UAbilitySystemComponent* TargetASC = Player->GetAbilitySystemComponent();
-	check(EnergyGameplayEffectClass);
-	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-	EffectContextHandle.SetAbility(this);
-	const FGameplayEffectSpecHandle EffectSpecHandle = SourceASC->MakeOutgoingSpec(BuffGameplayEffectClass,1,EffectContextHandle);
-	EffectContextHandle.AddSourceObject(this);
-	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
-	return ActiveEffectHandle;
-}
 

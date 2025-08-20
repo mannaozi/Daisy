@@ -43,6 +43,4 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddEnergy();
 
-	UFUNCTION(BlueprintCallable)
-	FActiveGameplayEffectHandle AddBuffToPlayer(ABattlePlayer* Player,TSubclassOf<UGameplayEffect> BuffGameplayEffectClass);
 };

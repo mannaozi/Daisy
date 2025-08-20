@@ -580,18 +580,22 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);
 	if(Player)
 	{
-		for (auto& Pair : Player->BuffMap)
+		if (!Player->BuffMap.IsEmpty())
 		{
-			if (Pair.Value == 0)
+			for (auto& Pair : Player->BuffMap)
 			{
-				SourASC->RemoveActiveGameplayEffect(Pair.Key);
+				if (Pair.Value.BuffNums == 0)
+				{
+					SourASC->RemoveActiveGameplayEffect(Pair.Key);
+					Player->BuffMap.Remove(Pair.Key);
+				}
+				else
+				{
+					Pair.Value.BuffNums -= 1;
+				}
 			}
-			else
-			{
-				Pair.Value -= 1;
-			}
+			Player->GetCameraBoom()->SetRelativeRotation(Player->StartRotation);
 		}
-		Player->GetCameraBoom()->SetRelativeRotation(Player->StartRotation);
 	}
 	
 	//回合结束

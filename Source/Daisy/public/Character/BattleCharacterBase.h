@@ -8,6 +8,7 @@
 #include "Interface/CombatInterface.h"
 #include "Interface/VFXInterface.h"
 #include "GameplayEffectTypes.h"
+#include "daisy/Daisy.h"
 #include "BattleCharacterBase.generated.h"
 
 USTRUCT(BlueprintType)
@@ -57,6 +58,22 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString CharName;
+};
+
+USTRUCT(BlueprintType)
+struct FBuffList
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 BuffNums = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FBuffDescription Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BuffValue = 0;
+	
 };
 
 class UGameplayAbility;
@@ -147,7 +164,10 @@ public:
 
 	//Buff
 	UPROPERTY(BlueprintReadWrite)
-	TMap<FActiveGameplayEffectHandle,int32> BuffMap;
+	TMap<FActiveGameplayEffectHandle,FBuffList> BuffMap;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FBuffList> CreateBuffList();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category="BattleAttribute")
 	UTexture2D* CharIcon;

@@ -166,4 +166,34 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FName("EnemyAttack.ATK3"),
 		FString("敌人攻击")
 	);
+	
+	GameplayTags.Buff_Shield = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.Shield"),
+		FString("加护盾的Buff")
+	);
+	
+	GameplayTags.Buff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.Attack"),
+		FString("加攻击的Buff")
+	);
+
+	GameplayTags.Buff_Defense = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.Defense"),
+		FString("加防御的Buff")
+	);
+	
+	GameplayTags.Buff_Critical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.Critical"),
+		FString("加暴击率的Buff")
+	);
+	
+	GameplayTags.Buff_CriticalDamage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.CriticalDamage"),
+		FString("加暴击伤害的Buff")
+	);
+	
+	GameplayTags.Buff_Speed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.Speed"),
+		FString("加速度的Buff")
+	);
 }

@@ -206,7 +206,7 @@ public:
 	TMap<FString, FGameplayTag> Enemy_StringTagMap;
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	FGameplayTag GetTagByName_Enemy(const FString& Name) const;
-
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void AbilityEnd();
 	
