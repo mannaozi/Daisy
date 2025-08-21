@@ -15,6 +15,21 @@ class AFloatingInicator;
 /**
  * 
  */
+USTRUCT(BlueprintType)
+struct FPlayerSkillImage
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Normal;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Skill;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* N;
+};
+
 UCLASS()
 class DAISY_API ABattlePlayer : public ABattleCharacterBase
 {
@@ -136,6 +151,10 @@ public:
 	AActor* shieldGuard = nullptr;
 	AActor* DmgCauser = nullptr;
 	float receivedDmg = 0.0f;
+
+	//技能图标
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Image")
+	FPlayerSkillImage Image;
 	//
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSigature OnHealthChanged;

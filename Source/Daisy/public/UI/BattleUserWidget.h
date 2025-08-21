@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/BattleEnemy.h"
+#include "Character/BattlePlayer.h"
 #include "UI/DaisyUserWidget.h"
 #include "BattleUserWidget.generated.h"
 
@@ -49,4 +49,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DisplaySkillPoints(const int32& CharName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SwitchUIImage(FPlayerSkillImage Image);
 };

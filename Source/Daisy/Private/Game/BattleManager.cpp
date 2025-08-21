@@ -535,7 +535,7 @@ void ABattleManager::B2a_HandlePlayerAttack(ABattlePlayer* activePlayerChar)
 	//更新UI按钮
 	if (!ActivePlayerRef) return;
 	BattleLayout->SwitchATKMode(ActivePlayerRef->AttackType);
-	
+	BattleLayout->SwitchUIImage(ActivePlayerRef->Image);
 	//镜头切换
 	if (UDaisyBlueprintFunctionLibrary::GetGameInstance()->bBOSSFight)
 	{
