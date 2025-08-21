@@ -16,5 +16,6 @@ class DAISY_API UDaisyAbilitySystemComponent : public UAbilitySystemComponent
 public:
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
+	UFUNCTION(BlueprintCallable)
 	void ActiveAbilityByTag(const FGameplayTag& Tag);
 };

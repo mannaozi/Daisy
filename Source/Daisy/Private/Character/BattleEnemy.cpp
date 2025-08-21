@@ -15,6 +15,7 @@
 #include "Game/BattleManager.h"
 #include "AbilitySystem/DaisyAbilitySystemComponent.h"
 #include "AbilitySystem/DaisyAttributeSet.h"
+#include "Camera/CameraActor.h"
 
 ABattleEnemy::ABattleEnemy()
 {
@@ -249,6 +250,7 @@ void ABattleEnemy::RecoverFromStun()
 
 EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef)
 {
+	ABattleManager* BattleManager = UDaisyBlueprintFunctionLibrary::FindBattleManager();
 	TArray<ABattlePlayer*> l_playerRef = playersRef;
 	if (DelayedTarget != nullptr)
 	{
@@ -287,7 +289,10 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 		}
 		else
 		{
-			UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_playerRef[0]);
+			ACameraActor* TargetCA = BattleManager->RetrieveCamera("tag_c_boss");
+			UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+			SetViewTargetWithBlend(TargetCA);
+			//UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_playerRef[0]);
 			return EAttackType::AT_SkillATK;
 		}	
 	}
@@ -307,7 +312,10 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 			}
 			else
 			{
-				UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, DelayedTarget);
+				ACameraActor* TargetCA = BattleManager->RetrieveCamera("tag_c_boss");
+				UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+				SetViewTargetWithBlend(TargetCA);
+				//UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, DelayedTarget);
 				return EAttackType::AT_DelayATK_E;
 			}		
 		}
@@ -338,7 +346,10 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 				}
 				else
 				{
-					UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_ShieldPlayerRef);
+					ACameraActor* TargetCA = BattleManager->RetrieveCamera("tag_c_boss");
+					UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+					SetViewTargetWithBlend(TargetCA);
+					//UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_ShieldPlayerRef);
 					return EAttackType::AT_NormalATK;
 				}
 			}
@@ -363,7 +374,10 @@ EAttackType ABattleEnemy::ActionDecision(const TArray<ABattlePlayer*> playersRef
 				}
 				else
 				{
-					UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_TargetActor);
+					ACameraActor* TargetCA = BattleManager->RetrieveCamera("tag_c_boss");
+					UGameplayStatics::GetPlayerController(GetWorld(), 0)->
+					SetViewTargetWithBlend(TargetCA);
+					//UDaisyBlueprintFunctionLibrary::FindBattleManager()->SwitchAndHideOtherPlayerChars(true, l_TargetActor);
 					return EAttackType::AT_NormalATK;
 				}
 			}

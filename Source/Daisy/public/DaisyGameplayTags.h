@@ -63,6 +63,13 @@ public:
 	FGameplayTag Buff_Critical;
 	FGameplayTag Buff_CriticalDamage;
 	FGameplayTag Buff_Speed;
+
+	//PlayerState
+	FGameplayTag Player_State_Dodge;
+	FGameplayTag Player_State_Defense;
+	FGameplayTag Player_State_Break;
+	FGameplayTag Player_State_DodgeEnd;
+	FGameplayTag Player_State_ExtremeDodge;
 	
 private:
 	static FDaisyGameplayTags GameplayTags;

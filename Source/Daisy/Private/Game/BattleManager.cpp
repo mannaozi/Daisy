@@ -575,6 +575,8 @@ void ABattleManager::B3_TurnEnd(AActor* EndTurnActor, bool bConsumeTurn)
 {
 	Damage_End = 0;
 	UpdateDamage(false);
+	EnemyAttackTarget = nullptr;
+	EnemyAttackTargets.Empty();
 
 	UAbilitySystemComponent* SourASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EndTurnActor);
 	ABattlePlayer* Player = Cast<ABattlePlayer>(EndTurnActor);

@@ -165,6 +165,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<ABattlePlayer*> CurrentPlayerTargets;
 	
+	//EnemyAttackTarget
+	UPROPERTY(BlueprintReadWrite)
+	ABattlePlayer* EnemyAttackTarget;
+	UPROPERTY(BlueprintReadWrite)
+	TArray<ABattlePlayer*> EnemyAttackTargets;
+	
 	AActor* LastClickedActor;
 	ACameraActor* BuffCamera;
 	FVector BuffCameraOriginLocation;

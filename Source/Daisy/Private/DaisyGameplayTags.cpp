@@ -196,4 +196,35 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FName("Buff.Speed"),
 		FString("加速度的Buff")
 	);
+	
+	//PlayerState
+	GameplayTags.Player_State_Dodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.Dodge"),
+		FString("角色处于闪避状态")
+	);
+
+	GameplayTags.Player_State_Defense = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.Defense"),
+		FString("角色处于格挡状态")
+	);
+
+	GameplayTags.Player_State_Break = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.Break"),
+		FString("打断技能")
+	);
+	
+	GameplayTags.Player_State_DodgeEnd = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.DodgeEnd"),
+		FString("闪避结束")
+	);
+
+	GameplayTags.Player_State_DodgeEnd = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.DodgeEnd"),
+		FString("闪避结束")
+	);
+	
+	GameplayTags.Player_State_ExtremeDodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.ExtremeDodge"),
+		FString("极限闪避")
+	);
 }
