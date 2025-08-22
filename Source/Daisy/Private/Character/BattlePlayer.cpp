@@ -24,7 +24,6 @@ ABattlePlayer::ABattlePlayer()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	AttributeSet = CreateDefaultSubobject<UDaisyAttributeSet>("AttributeSet");
-
 	
 	MarkedIcon = CreateDefaultSubobject<UWidgetComponent>("Marked Icon");
 	MarkedIcon->SetupAttachment(RootComponent);
@@ -628,6 +627,15 @@ void ABattlePlayer::BeginPlay()
 	AddCharacterAbilities();
 	InitializeData();
 	BindAttributeDelegate();
+	//残影组件
+	if (AfterimageClass)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		FTransform SpawnTransform = GetActorTransform();
+		Afterimage = GetWorld()->SpawnActor<AActor>(AfterimageClass, SpawnTransform, SpawnParams);
+	}
 	
 	/*//初始镜头角度
 	float SpringArmYaw = 0.0f;

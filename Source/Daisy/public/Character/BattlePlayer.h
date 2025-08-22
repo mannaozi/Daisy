@@ -152,6 +152,13 @@ public:
 	AActor* DmgCauser = nullptr;
 	float receivedDmg = 0.0f;
 
+	//残影
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Afterimage")
+	TSubclassOf<AActor> AfterimageClass;
+	
+	UPROPERTY(BlueprintReadWrite,Category = "Afterimage")
+	AActor* Afterimage = nullptr;
+	
 	//技能图标
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Image")
 	FPlayerSkillImage Image;
