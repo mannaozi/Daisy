@@ -42,6 +42,7 @@ public:
 	FGameplayTag AttackType_SkillAtk;
 	FGameplayTag AttackType_UltimateAtk;
 	FGameplayTag AttackType_FollowAtk;
+	FGameplayTag AttackType_CounterAtk;
 
 	//Enemy Attack
 	FGameplayTag EnemyAttack_ATK1;
@@ -68,6 +69,7 @@ public:
 	FGameplayTag Player_State_Dodge;
 	FGameplayTag Player_State_Defense;
 	FGameplayTag Player_State_Break;
+	FGameplayTag Player_State_CounterAtkEnd;
 	FGameplayTag Player_State_DodgeEnd;
 	FGameplayTag Player_State_ExtremeDodge;
 	

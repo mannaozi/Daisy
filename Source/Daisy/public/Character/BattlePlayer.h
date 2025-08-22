@@ -8,6 +8,7 @@
 #include "Components/TimelineComponent.h"
 #include "BattlePlayer.generated.h"
 
+class ABattleEnemy;
 struct FPlayerCharAttributes;
 class UCurveFloat;
 struct FTimeline;
@@ -152,6 +153,10 @@ public:
 	AActor* DmgCauser = nullptr;
 	float receivedDmg = 0.0f;
 
+	//反击对象
+	UPROPERTY(BlueprintReadWrite)
+	ABattleEnemy* CounterAtkEnemy;
+	
 	//残影
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Afterimage")
 	TSubclassOf<AActor> AfterimageClass;

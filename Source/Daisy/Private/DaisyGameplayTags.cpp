@@ -127,7 +127,12 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FName("AttackType.FollowAtk"),
 		FString("追加攻击")
 	);
-
+	
+	GameplayTags.AttackType_CounterAtk = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AttackType.CounterAtk"),
+		FString("防御反击")
+	);
+	
 	//通用
 	
 	GameplayTags.HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -226,5 +231,15 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Player_State_ExtremeDodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Player.State.ExtremeDodge"),
 		FString("极限闪避")
+	);
+	
+	GameplayTags.Player_State_ExtremeDodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.ExtremeDodge"),
+		FString("极限闪避")
+	);
+	
+	GameplayTags.Player_State_CounterAtkEnd = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.CounterAtkEnd"),
+		FString("防御反击结束")
 	);
 }
