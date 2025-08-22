@@ -142,6 +142,38 @@ void ADaisyCharacter::RangeDetectEnemy()
 	
 }
 
+void ADaisyCharacter::PlayShiftMontage()
+{
+	// 保存当前速度
+	PreMontageSpeed = GetVelocity().Size();
+        
+	// 播放蒙太奇并绑定结束委托
+	float Duration = GetMesh()->GetAnimInstance()->Montage_Play(ShiftMontage);
+        
+	// 绑定蒙太奇结束事件
+	FOnMontageEnded MontageEndedDelegate;
+	MontageEndedDelegate.BindUObject(this, &ADaisyCharacter::OnShiftMontageEnded);
+	GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(MontageEndedDelegate, ShiftMontage);
+}
+
+void ADaisyCharacter::OnShiftMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage == ShiftMontage)
+	{
+		// 恢复播放蒙太奇前的速度
+		if (GetCharacterMovement())
+		{
+			// 获取角色当前朝向
+			FVector ForwardDirection = GetActorForwardVector();
+			// 设置速度（大小和方向）
+			GetCharacterMovement()->Velocity = ForwardDirection * GetCharacterMovement()->MaxWalkSpeed;
+            
+			// 或者保持最大行走速度
+			//GetCharacterMovement()->MaxWalkSpeed = PreMontageSpeed;
+		}
+	}
+}
+
 void ADaisyCharacter::FinishBattle()
 {
 	// 1.8s后再进入战斗，避免连续进入战斗
@@ -199,6 +231,16 @@ void ADaisyCharacter::Move(const FInputActionValue& Value)
 			// add movement 
 			ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
 			ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
+
+		}
+	}
+	if (CanMove)
+	{
+		if (GetMesh()->GetAnimInstance() && GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+		{
+			GetMesh()->GetAnimInstance()->StopAllMontages(BlendTime); // 0.2秒的混合时间
+			CanRun = true;
+			CanMove = false;
 		}
 	}
 }

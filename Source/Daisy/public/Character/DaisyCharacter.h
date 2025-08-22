@@ -55,6 +55,26 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bOpenTeamUI = false;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool CanMove = false;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool CanRun = true;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Animation")
+	float BlendTime = 0.25;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* ShiftMontage;
+
+	float PreMontageSpeed;
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayShiftMontage();
+	
+	UFUNCTION()
+	void OnShiftMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	
 	FTimerHandle ResetBattleBooleanTimerHandle;
 	
