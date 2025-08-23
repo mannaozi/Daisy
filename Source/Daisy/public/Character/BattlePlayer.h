@@ -66,6 +66,7 @@ public:
 	virtual void CountBuffsTimer() override;
 	virtual void TryFollowingATK() override;
 	virtual UAnimMontage* GetDodgeMontage_Implementation() override;
+	virtual UAnimMontage* GetBlockMontage_Implementation() override;
 	/* Combat Interface */
 
 	EAttackType AttackType {EAttackType::AT_NormalATK};
@@ -168,6 +169,10 @@ public:
 	//闪避Montage
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Montage")
 	UAnimMontage* DodgeMontage = nullptr;
+	
+	//格挡Montage
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Montage")
+	UAnimMontage* BlockMontage = nullptr;
 	
 	//技能图标
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Image")

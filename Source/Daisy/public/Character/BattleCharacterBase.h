@@ -130,6 +130,7 @@ public:
 	virtual void CountBuffsTimer() override;
 	virtual void TryFollowingATK() override;
 	virtual UAnimMontage* GetDodgeMontage_Implementation() override;
+	virtual UAnimMontage* GetBlockMontage_Implementation() override;
 	/* Combat Interface */
 
 	/* Abilitysystem */

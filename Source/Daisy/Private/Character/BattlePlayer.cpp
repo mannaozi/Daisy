@@ -165,6 +165,11 @@ UAnimMontage* ABattlePlayer::GetDodgeMontage_Implementation()
 	return DodgeMontage;
 }
 
+UAnimMontage* ABattlePlayer::GetBlockMontage_Implementation()
+{
+	return BlockMontage;
+}
+
 void ABattlePlayer::Healing(float val)
 {
 	// 生成特效

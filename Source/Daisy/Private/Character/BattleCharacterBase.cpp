@@ -77,6 +77,11 @@ UAnimMontage* ABattleCharacterBase::GetDodgeMontage_Implementation()
 	return nullptr;
 }
 
+UAnimMontage* ABattleCharacterBase::GetBlockMontage_Implementation()
+{
+	return nullptr;
+}
+
 UAbilitySystemComponent* ABattleCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

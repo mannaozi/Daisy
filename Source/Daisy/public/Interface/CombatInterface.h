@@ -26,4 +26,6 @@ public:
 	virtual void TryFollowingATK() = 0;
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	UAnimMontage* GetDodgeMontage();
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	UAnimMontage* GetBlockMontage();
 };
