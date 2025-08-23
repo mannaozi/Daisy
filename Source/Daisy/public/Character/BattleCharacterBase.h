@@ -129,6 +129,7 @@ public:
 	virtual void HitHandle(AActor* causer, float HP_Dmg, float Toughness_Dmg, FBuffInfo buff_Info) override;
 	virtual void CountBuffsTimer() override;
 	virtual void TryFollowingATK() override;
+	virtual UAnimMontage* GetDodgeMontage_Implementation() override;
 	/* Combat Interface */
 
 	/* Abilitysystem */

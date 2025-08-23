@@ -5,7 +5,7 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI,BlueprintType)
 class UCombatInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -24,4 +24,6 @@ public:
 	virtual void HitHandle(AActor* causer,float HP_Dmg,float Toughness_Dmg,FBuffInfo BuffInfo) = 0;
 	virtual void CountBuffsTimer() = 0;
 	virtual void TryFollowingATK() = 0;
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	UAnimMontage* GetDodgeMontage();
 };

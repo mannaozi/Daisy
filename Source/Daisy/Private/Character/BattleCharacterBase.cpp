@@ -72,6 +72,11 @@ void ABattleCharacterBase::TryFollowingATK()
 	
 }
 
+UAnimMontage* ABattleCharacterBase::GetDodgeMontage_Implementation()
+{
+	return nullptr;
+}
+
 UAbilitySystemComponent* ABattleCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

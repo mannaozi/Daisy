@@ -160,6 +160,11 @@ void ABattlePlayer::TryFollowingATK()
 	UDaisyBlueprintFunctionLibrary::FindBattleManager()->B3_TurnEnd(nullptr, false);
 }
 
+UAnimMontage* ABattlePlayer::GetDodgeMontage_Implementation()
+{
+	return DodgeMontage;
+}
+
 void ABattlePlayer::Healing(float val)
 {
 	// 生成特效
