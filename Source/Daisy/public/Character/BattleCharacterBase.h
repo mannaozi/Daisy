@@ -162,7 +162,10 @@ public:
 
 	int32 Level = 1;
 	virtual void InitAbilityActorInfo();
-
+	
+	//Attribute
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Attribute")
+	FPlayerAttribute InitAttribute;
 
 	//Buff
 	UPROPERTY(BlueprintReadWrite)

@@ -9,6 +9,77 @@
 class ABattlePlayer;
 
 USTRUCT(BlueprintType)
+struct FWeaponAttribute
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Attack;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Def;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Crit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CritDamg;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHP;
+};
+
+USTRUCT(BlueprintType)
+struct FPlayerAttribute
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Shield;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Energy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxEnergy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Attack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Defense;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Critical;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CriticalDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Toughness;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxToughness;
+};
+
+USTRUCT(BlueprintType)
 struct FBuffDescription
 {
 	GENERATED_BODY()
@@ -20,6 +91,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* CharIcon_Avatar;
 };
+
 UENUM(BlueprintType)
 enum class EProgressPhase : uint8
 {

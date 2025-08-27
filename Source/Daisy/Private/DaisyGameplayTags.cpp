@@ -65,6 +65,16 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FString("等级")
 	);
 
+	GameplayTags.Attribute_Toughness = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Toughness"),
+		FString("韧性")
+	);
+
+	GameplayTags.Attribute_MaxToughness = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.MaxToughness"),
+		FString("最大韧性值")
+	);
+	
 	//Damage Type
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Damage"),

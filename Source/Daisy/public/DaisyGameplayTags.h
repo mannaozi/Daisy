@@ -26,6 +26,8 @@ public:
 	FGameplayTag Attribute_CriticalDamage;
 	FGameplayTag Attribute_Speed;
 	FGameplayTag Attribute_Level;
+	FGameplayTag Attribute_Toughness;
+	FGameplayTag Attribute_MaxToughness;
 
 	//Damage Type
 	FGameplayTag Damage;
