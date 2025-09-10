@@ -180,6 +180,7 @@ void ABattleManager::PlayerWin()
 	BattlePawn = nullptr;
 	Enemy_World->Destroy();
 	Player_World->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	Player_World->bAttack = false;
 	Player_World->FinishBattle();
 	// 回复正常视野
 	UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->
