@@ -23,6 +23,10 @@ ABattleEnemy::ABattleEnemy()
 	HeadBar = CreateDefaultSubobject<UWidgetComponent>("Head Bar");
 	HeadBar->SetupAttachment(RootComponent);
 	HeadBar->bHiddenInGame = true;
+
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	Weapon->SetupAttachment(GetMesh(),FName("WeaponHandSocket"));
+	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	AbilitySystemComponent = CreateDefaultSubobject<UDaisyAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);

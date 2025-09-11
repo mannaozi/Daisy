@@ -95,6 +95,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Dispatcher")
 	FOnEnemyTurnEnd OnEnemyTurnEnd;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TObjectPtr<USkeletalMeshComponent> Weapon;
 	
 	/* Combat Interface */
 	virtual void RefreshActionValueBySpd() override;
