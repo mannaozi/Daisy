@@ -265,7 +265,7 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 	);
 	
 	GameplayTags.UI_Fail = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("UI_Fail"),
+		FName("UI.Fail"),
 		FString("响应失败")
 	);
 }
