@@ -252,4 +252,20 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 		FName("Player.State.CounterAtkEnd"),
 		FString("防御反击结束")
 	);
+
+	//UI
+	GameplayTags.UI_TimeBar = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("UI.TimeBar"),
+		FString("技能开始的时间条")
+	);
+	
+	GameplayTags.UI_Succeed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("UI.Succeed"),
+		FString("成功响应")
+	);
+	
+	GameplayTags.UI_Fail = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("UI_Fail"),
+		FString("响应失败")
+	);
 }

@@ -74,6 +74,11 @@ public:
 	FGameplayTag Player_State_CounterAtkEnd;
 	FGameplayTag Player_State_DodgeEnd;
 	FGameplayTag Player_State_ExtremeDodge;
+
+	//UI
+	FGameplayTag UI_TimeBar;
+	FGameplayTag UI_Succeed;
+	FGameplayTag UI_Fail;
 	
 private:
 	static FDaisyGameplayTags GameplayTags;
