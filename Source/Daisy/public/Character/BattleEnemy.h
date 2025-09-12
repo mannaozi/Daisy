@@ -138,6 +138,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BP")
 	int32 ATKDistance;
 
+	UPROPERTY(EditDefaultsOnly,Category="Anim")
+	UAnimMontage* StunMontage;
 	
 	FTimerHandle DilationHandle;
 

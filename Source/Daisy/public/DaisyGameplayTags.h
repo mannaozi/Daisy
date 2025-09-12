@@ -74,7 +74,11 @@ public:
 	FGameplayTag Player_State_CounterAtkEnd;
 	FGameplayTag Player_State_DodgeEnd;
 	FGameplayTag Player_State_ExtremeDodge;
-
+	FGameplayTag Player_State_BlockReAndDodge;
+	
+	//PlayerState
+	FGameplayTag Enemy_State_Stun;
+	
 	//UI
 	FGameplayTag UI_TimeBar;
 	FGameplayTag UI_Succeed;

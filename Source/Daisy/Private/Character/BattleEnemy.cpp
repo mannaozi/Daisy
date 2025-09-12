@@ -188,7 +188,7 @@ void ABattleEnemy::EndEnemyTurnFromBP(ABattleEnemy* ActiveActor)
 void ABattleEnemy::EnterStun(int32 DelayTurns)
 {
 	bStun = true;
-	PlaySpecificAnim("Stun");
+	PlayAnimMontage(StunMontage);
 	//行动推迟25%
 	UDaisyAttributeSet* DaisyAS = Cast<UDaisyAttributeSet>(AttributeSet);
 	ActionValue = ActionValue + (10000 / DaisyAS->GetSpeed()) * 0.25;

@@ -28,6 +28,9 @@ public:
 
 	void EnterBattle(ADaisyCharacter* Player);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void CustomDestroy();
+
 protected:
 	UPROPERTY(EditAnywhere,Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;

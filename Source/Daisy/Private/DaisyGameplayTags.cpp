@@ -251,8 +251,19 @@ void FDaisyGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Player_State_CounterAtkEnd = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Player.State.CounterAtkEnd"),
 		FString("防御反击结束")
-	);
+	);FGameplayTag Player_State_BlockReAndDodge;
+	
+	GameplayTags.Player_State_BlockReAndDodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.State.BlockReAndDodge"),
+		FString("阻止RE和Dodge的GA")
+	);FGameplayTag ;
 
+	//Enemy Status
+	GameplayTags.Enemy_State_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Enemy.State.Stun"),
+		FString("眩晕状态")
+	);FGameplayTag ;
+	
 	//UI
 	GameplayTags.UI_TimeBar = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("UI.TimeBar"),
